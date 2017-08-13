@@ -1,0 +1,19 @@
+.td-time{
+	width:80px;
+	vertical-align: middle !important;
+}
+
+.td-commitlog{
+	width:400px;
+	vertical-align: middle !important;
+}
+
+.td-filename{
+	vertical-align: middle !important;
+	width:150px;
+}
+
+.td-icon{
+	padding-right:0px !important;
+	width:30px;
+}

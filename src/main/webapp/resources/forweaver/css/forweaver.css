@@ -1,0 +1,626 @@
+@import url(http://fonts.googleapis.com/earlyaccess/nanumgothic.css);
+
+.icon-white, .nav-pills > .active > a > [class^="icon-"], .nav-pills > .active > a > [class*=" icon-"], .nav-list > .active > a > [class^="icon-"], .nav-list > .active > a > [class*=" icon-"], .navbar-inverse .nav > .active > a > [class^="icon-"], .navbar-inverse .nav > .active > a > [class*=" icon-"], .dropdown-menu > li > a:hover > [class^="icon-"], .dropdown-menu > li > a:focus > [class^="icon-"], .dropdown-menu > li > a:hover > [class*=" icon-"], .dropdown-menu > li > a:focus > [class*=" icon-"], .dropdown-menu > .active > a > [class^="icon-"], .dropdown-menu > .active > a > [class*=" icon-"], .dropdown-submenu:hover > a > [class^="icon-"], .dropdown-submenu:focus > a > [class^="icon-"], .dropdown-submenu:hover > a > [class*=" icon-"], .dropdown-submenu:focus > a > [class*=" icon-"] {
+    background-image: none;
+}
+
+.cherry-pick-tr>td{
+	vertical-align: middle;
+}
+.cherry-pick-img{
+	width:32px;
+}
+.icon-css-padding{
+	padding-top:4px;
+}
+
+.readme {
+	border-color: #AAA;
+	border-width: 1px;
+	padding: 15px;
+	border-style: solid !important;
+	box-shadow: 1px 1px 1px #AAA;
+	width:910px;
+}
+.readme-header {
+	border-color: #AAA;
+	border-width: 1px;
+	padding: 15px;
+	border-style: solid !important;
+	box-shadow: 1px 1px 3px #AAA;
+	background-color: #34495E;
+	color:#ffffff;
+	font-weight: bold;
+	width:910px;
+}
+
+.radio-period{
+	display: inline;
+	margin: 0px 10px;
+}
+h1 a{
+	color:#34495E;
+}
+.font-middle{
+	padding-top: 20px !important;
+}
+.reply{
+	font-size:12px !important;
+}
+.reply-input{
+	font-size:13px !important;
+}
+
+.file-div{
+	margin-left:200px;
+}
+.fileinput{
+	padding-right: 12px;
+}
+.fileinput .form-control {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    width:480px;
+    }
+.form-control {
+    display: block;
+    padding: 10px 10px;
+    font-size: 14px;
+    line-height: 1.42857;
+    color: #555;
+    vertical-align: middle;
+    background-color: #FFF;
+    background-image: none;
+    border: 1px solid #CCC;
+    border-radius: 4px;
+    box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.075) inset;
+    transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
+}
+
+font.post:hover{
+	color: #E4AEC8;
+}
+
+font.post{
+	color: #E92C87;
+}
+
+font.link:hover{
+	color: #E4AEC8;
+}
+
+font.link{
+	color: #E92C87;
+}
+
+
+
+.input-medium2{
+	    width: 180px;
+
+}
+
+.table-hover tbody tr:hover > td, .table-hover tbody tr:hover > th {
+    background-color: rgb(255, 255, 255);
+}
+
+
+.slide-out-div {
+          padding: 20px;
+          width: 640px;
+          background: #fff;
+          border: 1px solid #29216d;
+          z-index:999 ;
+}      
+
+
+.carousel-indicators .active {
+    background-color: rgb(0, 0, 0);
+}
+.carousel-indicators li {
+    background-color: rgba(0, 0, 0, 0.25);
+}
+
+/* Input-append and input-prepend with inline-block-level */
+
+.input-append.input-block-level,
+.input-prepend.input-block-level {
+    display: table;
+    padding-top:5px;
+}
+
+.input-append.input-block-level .add-on,
+.input-prepend.input-block-level .add-on {
+    display: table-cell;
+    width: 1%; /* remove this if you want default bootstrap button width */
+    z-index:2;   
+    position:relative;    
+}
+
+.input-append.input-block-level > input,
+.input-prepend.input-block-level > input {
+    box-sizing: border-box; 
+    display: table; 
+    height: 30px;
+    left:-5px;
+    z-index:1;  
+    position:relative; 
+    padding-bottom: 0px;
+	padding-top: 0px;
+}
+
+.input-append.input-block-level > input {
+    border-right: 0; /* removes the extra right border from the input */
+}
+
+.input-prepend.input-block-level > input {
+    border-left: 0; /* removes the extra left border from the input */
+}
+
+.navbar .nav ul li {
+    background-color: rgb(52, 73, 94);
+    padding: 0px 3px 3px;
+    position: relative;
+}
+
+
+body,table,input,textarea,select,button {
+	font-family: Nanum Gothic, NG, sans-serif !important;
+}
+
+
+.full-button{
+	margin-top:10px;
+	width:90%;
+}
+
+a {
+	text-decoration: none;
+}
+
+.none-color {
+	color: #34495e;
+}
+
+.file-name-title {
+	margin-top: 10px;
+}
+
+.tagarea {
+	margin-left: 0px;
+	height: 37px !important;
+	font-size: 13px !important;
+	padding-top: 8px !important;
+}
+
+.tab-content {
+	overflow: hidden;
+}
+
+.tag-addon {
+	text-align: center;
+	color: #fff;
+	padding-top:12px;
+	margin-left:0px;
+	width:10px;
+	}
+
+.tag-span {
+	margin-bottom: 10px;
+}
+
+#sidenav>li.active a,#sidenav>li a:hover {
+	margin-left: -10px;
+	padding-left: 20px;
+}
+
+.nav-pills>.active>a,.nav-pills>.active>a:hover,.nav-pills>.active>a:focus
+	{
+	text-decoration: none;
+	background-color: #1ABC9C;
+}
+
+.join-form-actions-white{
+	padding: 19px 0px 0px;
+	margin-top: 20px;
+	margin-bottom: 10px;
+	background-color: #FEFEFE;
+	border-top: 1px solid #e5e5e5;
+	*zoom: 1;
+	width: 280px;
+	padding-left: 310px;
+	padding-right: 270px;
+}
+
+.form-actions-white {
+	padding: 19px 0px 0px;
+	margin-top: 20px;
+	margin-bottom: 10px;
+	background-color: #FEFEFE;
+	border-top: 1px solid #e5e5e5;
+	*zoom: 1;
+}
+
+.page-header-none {
+	padding-bottom: 0px;
+	margin: 20px 0px 20px;
+	border-bottom:0px;
+}
+
+ul.unstyled a {
+	font-size: 12px;
+}
+
+.footer-h4 {
+	color: #666;
+	border-bottom: thin solid #E1E1E1;
+	margin-bottom: 5px;
+	padding-bottom: 5px;
+	font-size: 15px;
+}
+
+.post-img{
+	max-width:900px;
+	display: block;
+    margin: 0 auto;
+	
+}
+
+.post-img-td{
+	text-align:center !important;
+}
+
+.post-button {
+	width: 67px;
+}
+
+a.post-button {
+	width: 44px;
+}
+
+.post-button>i {
+	zoom: 1.2;
+	-moz-transform: scale(1.2);
+}
+
+.title,.post-top-title {
+	font-size: 13.3px !important;
+	letter-spacing: -0.5px !important;
+}
+
+
+.navbar .nav>li>a {
+	font-size: 14px;
+}
+
+.post-content {
+	font-size: 13px;
+}
+
+.post-content-max{
+	max-width: 700px;
+}
+
+.post-top-title {
+	padding-bottom: 1px !important;
+	width: 700px;
+
+}
+
+.repost-top-title {
+	padding-bottom: 1px !important;
+	width: 760px;
+}
+
+.repost-right {
+	text-align: right !important;
+}
+
+.post-top-title-short {
+	padding-bottom: 2px !important;
+	width: 760px;
+	font-size:13px;
+}
+
+.td-post-writer-img{
+	width:46px;
+	height:46px;
+}
+.td-post-writer-img img{
+	padding-right: 0px;
+	width:46px;
+	height:46px;
+}
+
+.none-top-border {
+	border-top: none !important;
+}
+
+.dot-top-border {
+	border-top:2px dash #AAA !important;
+}
+
+.post-bottom {
+	border-top: none !important;
+	font-size: 12.5px !important;
+	white-space: nowrap;
+	width:10px;
+	padding-right: 0px !important;
+}
+
+.post-bottom-tag {
+	border-top: none !important;
+	padding-bottom: 0px !important;
+}
+
+.post-bottom-tag {
+	border-top: none !important;
+	padding-bottom: 0px !important;
+}
+
+.post-bottom-tags {
+	margin-left: 20px;
+}
+
+.td-button {
+	padding: 0px 0px 0px 0px !important;
+	width:10px;
+}
+
+.td-commitlog-button {
+	width: 110px;
+	padding: 0px !important;
+	vertical-align: middle !important;
+}
+.td-commitlog-img {
+	width: 32px;
+}
+.p-button {
+	font-size: 13px;
+}
+
+.p-button-mini {
+	font-size: 11px;
+}
+.function-button {
+	cursor: pointer;
+	background-color: #1ABC9C;
+	color: #fff;
+	text-align: center;
+	padding: 1px 4px 1px 4px;
+	border: 1px solid #1ABC9C;
+	border-radius: 4px;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	font-size:11.7px;
+	white-space: nowrap;
+	display:inline-block;
+	margin-bottom:5px;
+
+}
+
+
+.function-button:hover {
+	background-color: #1ED9B4;
+	border-color: #1ED9B4;
+}
+.function-comment {
+	background-color: #3498DB;
+	border-color: #3498DB;
+}
+
+.function-comment:hover {
+	background-color: #67addb;
+	border-color: #67addb;
+}
+
+.function-file {
+	background-color: #423B3B;
+	border-color: #423B3B;
+}
+
+.function-file:hover {
+	background-color: #645E5E;
+	border-color: #645E5E;
+}
+
+
+
+.tag-name {
+	cursor: pointer;
+	background-color: #1ABC9C;
+	color: #fff;
+	text-align: center;
+	padding: 1px 4px 1px 4px;
+	border: 1px solid #1ABC9C;
+	border-radius: 4px;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	font-size:11.7px;
+	white-space: nowrap;
+	display:inline-block;
+	margin-bottom:5px;
+
+}
+
+.tag-name:hover {
+	background-color: #1ED9B4;
+	border-color: #1ED9B4;
+}
+
+
+
+.tag-commit {
+	background-color: #34495E;
+	border-color: #34495E;
+}
+
+.tag-commit:hover {
+	background-color: #557699;
+	border-color: #557699;
+}
+
+.tag-private {
+	background-color: #3498DB;
+	border-color: #3498DB;
+}
+
+.tag-private:hover {
+	background-color: #3CB1FF;
+	border-color: #3CB1FF;
+}
+
+.tag-massage {
+	background-color: #D94738;
+	border-color: #D94738;
+}
+
+.tag-massage:hover {
+	background-color: #F24F3F;
+	border-color: #F24F3F;
+}
+
+.a-post-title {
+	color: #000;
+	text-decoration: none;
+	font-size:13px;
+}
+
+
+.span-button-icon {
+	width: 42px;
+	height: 42px;
+	text-align: center;
+	background-color: #16a085;
+	font-size: 20px;
+	font-weight: bold;
+	color: #fff;
+	border: 5px solid #16a085;
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	border-radius: 6px;
+}
+
+.span-button {
+	margin: 6px 2px 0px;
+	width: 42px;
+	height: 42px;
+	text-align: center;
+	background-color: #16a085;
+	font-size: 20px;
+	font-weight: bold;
+	color: #fff;
+	border: 5px solid #16a085;
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	border-radius: 6px;
+}
+
+.span-button-inverse {
+	margin: 6px 2px 0px;
+	width: 42px;
+	height: 42px;
+	text-align: center;
+	background-color:#34495e;
+	font-size: 20px;
+	font-weight: bold;
+	color: #fff;
+	border: 5px solid #34495e;
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	border-radius: 6px;
+}
+
+.span-button:hover {
+	background-color: #1ABD9D;
+	border-color: #1ABD9D;
+}
+
+.vertical-middle {
+	vertical-align: middle !important;
+}
+
+#custom-search-form {
+	margin: 0;
+	margin-top: 10px;
+	padding: 0;
+}
+
+#custom-search-form .search-query {
+	/* IE7-8 doesn't have border-radius, so don't indent the padding */
+	margin-bottom: 0;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	/**/
+	padding: 5px 5px;
+	color: #333;
+	text-shadow: 0 1px 0 #fff;
+	background-color: #ffffff;
+	outline: 0;
+	-webkit-box-shadow: 0 0 3px rgba(0, 0, 0, 0.15);
+	-moz-box-shadow: 0 0 3px rgba(0, 0, 0, 0.15);
+	box-shadow: 0 0 3px rgba(0, 0, 0, 0.15);
+	width: 850px;
+	margin-left:-20px;
+	margin-bottom:10px;
+}
+
+#custom-search-form button {
+	border: 0;
+	background: none;
+	/** belows styles are working good */
+	padding: 2px 5px;
+	margin-top: 2px;
+	position: relative;
+	left: -28px;
+	/* IE7-8 doesn't have border-radius, so don't indent the padding */
+	margin-bottom: 0;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+}
+
+.search-query:focus+button {
+	z-index: 3;
+}
+
+.navbar .nav ul{
+	width:100%;
+}
+
+.badge-number {
+  background-color: #1ABC9C;
+  color:#FFF;
+}
+
+.nav-pills > .active > a:focus >.badge-number {
+  background-color: #FFF;
+  color:#1ABC9C;
+}
+
+.well-white {
+	min-height: 20px;
+	padding: 19px;
+	margin-bottom: 20px;
+	background-color: #FEFEFE;
+	border: 1px solid #e3e3e3;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+	-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+	-moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+}
+tr:first-child>td {
+	border-top: none !important;
+}
+
+.btn-small{
+	background-color: #415B76;
+}
+
+.md-editor > textarea {
+	background: #fff !important;
+	padding:10px 10px!important;
+}
