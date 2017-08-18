@@ -17,21 +17,21 @@ public class VCSimpleFileInfo implements Serializable {
 	private String path;
 	private boolean isDirectory;
 	private String commitID;
-	private String simpleCommitLog;
+	private String simpleLog;
 	private Date commitDate;
 	private int commitDateInt;
 	private String commiterName;
 	private String commiterEmail;
 		
 	public VCSimpleFileInfo(String name, String path,
-			boolean isDirectory, String commitID, String simpleCommitLog,
+			boolean isDirectory, String commitID, String simpleLog,
 			int commitDateInt,String commiterName,
 			String commiterEmail) {
 		this.name = name;
 		this.path = "/"+path;
 		this.isDirectory = isDirectory;
 		this.commitID = commitID;
-		this.simpleCommitLog = simpleCommitLog;
+		this.simpleLog = simpleLog;
 		this.commitDateInt = commitDateInt;
 		this.commitDate = new Date(commitDateInt*1000L);
 		this.commiterName =commiterName;
@@ -61,11 +61,11 @@ public class VCSimpleFileInfo implements Serializable {
 	public void setCommitID(String commitID) {
 		this.commitID = commitID;
 	}
-	public String getSimpleCommitLog() {
-		return simpleCommitLog;
+	public String getSimpleLog() {
+		return simpleLog;
 	}
-	public void setSimpleCommitLog(String simpleCommitLog) {
-		this.simpleCommitLog = simpleCommitLog;
+	public void setSimpleLog(String simpleLog) {
+		this.simpleLog = simpleLog;
 	}
 	public String getCommitDate() {
 	    SimpleDateFormat sdf = new SimpleDateFormat("yy/MM/dd HH:mm");

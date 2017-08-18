@@ -47,28 +47,28 @@ $(document).ready(function() {
 					<!-- Carousel items -->
 					<div class="carousel-inner">
 						<div style="height: 406px;" class="active item text-center">
-							<embed src="/resources/svg/noun_project_8428.svg" width="240"
+							<embed src="/resources/svg/noun_repository_8428.svg" width="240"
 								height="240" type="image/svg+xml" />
 							<h2>포위버닷컴에 오신것을 환영합니다!</h2>
 							<h5>소스코드 공유가 어려우셨나요?</h5>
 							<h5>분산버젼관리 GIT의 보편화 forweaver.com!</h5>
 						</div>
 						<div style="height: 406px;" class="item text-center">
-							<embed src="/resources/svg/noun_project_14888.svg" width="240"
+							<embed src="/resources/svg/noun_repository_14888.svg" width="240"
 								height="240" type="image/svg+xml" />
 							<h2>강의를 진행해보세요!</h2>
 							<h5>새로운 숙제 제출 시스템을 원하시나요?</h5>
 							<h5>커밋 로그를 통해 숙제를 검사하세요!</h5>
 						</div>
 						<div style="height: 406px;" class="item text-center">
-							<embed src="/resources/svg/noun_project_2174.svg" width="240"
+							<embed src="/resources/svg/noun_repository_2174.svg" width="240"
 								height="240" type="image/svg+xml" />
-							<h2>프로젝트를 개설해보세요!</h2>
-							<h5>같이 프로젝트를 진행할 동료를 찾으시나요?</h5>
+							<h2>저장소를 개설해보세요!</h2>
+							<h5>같이 저장소를 진행할 동료를 찾으시나요?</h5>
 							<h5>forweaver.com을 얼른 사용해보세요!</h5>
 						</div>
 						<div style="height: 406px;" class="item text-center">
-							<embed src="/resources/svg/noun_project_5742.svg" width="240"
+							<embed src="/resources/svg/noun_repository_5742.svg" width="240"
 								height="240" type="image/svg+xml" />
 							<h2>커뮤니티에 질문해보세요!</h2>
 							<h5>혹시 프로그래밍을 하다 궁금한게 있나요?</h5>

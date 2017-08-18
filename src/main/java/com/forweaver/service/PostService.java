@@ -137,15 +137,15 @@ public class PostService {
 		if (weaver.isAdmin() || 	post.getWriter().getId().equals(weaver.getId())) { // 글쓴이 또는 관리자의 경우
 			this.delete(post);
 			return true;
-		} else if (post.getKind() == 2) { // 글쓴이가 아니고 프로젝트 태그의 경우
-			String projectString = "";
+		} else if (post.getKind() == 2) { // 글쓴이가 아니고 저장소 태그의 경우
+			String repositoryString = "";
 			for (String tag : post.getTags()) {
 				if (tag.startsWith("@"))
-					projectString = tag;
+					repositoryString = tag;
 			}
 
 			for (Pass pass : weaver.getPasses()) {
-				if (projectString.equals("@" + pass.getJoinName())
+				if (repositoryString.equals("@" + pass.getJoinName())
 						&& pass.getPermission() == 1) {
 					this.delete(post);
 					return true;
@@ -223,7 +223,7 @@ public class PostService {
 		if(this.isPublicTags(tags)) // 태그가 공개 태그일 경우.
 			return postDao.countPostsWhenLogin(tags,weaver.getPrivateAndMassageTags(),null,null, sort);
 
-		if(this.isPrivateTags(tags)) // 태그가 프로젝트 태그일 경우.
+		if(this.isPrivateTags(tags)) // 태그가 저장소 태그일 경우.
 			return postDao.countPostsAsPrivateTags(tags, null, null, sort);
 
 		if(this.isMassageTags(tags)) // 태그가 메세지 태그의 경우.
@@ -251,7 +251,7 @@ public class PostService {
 		if(this.isPublicTags(tags)) // 태그가 공개 태그일 경우.
 			return postDao.getPostsWhenLogin(tags,weaver.getPrivateAndMassageTags(),null,null, sort, page, size);
 
-		if(this.isPrivateTags(tags)) // 태그가 프로젝트 태그일 경우.
+		if(this.isPrivateTags(tags)) // 태그가 저장소 태그일 경우.
 			return postDao.getPostsAsPrivateTags(tags, null, null, sort, page, size);
 
 		if(this.isMassageTags(tags))// 태그가 메세지 태그의 경우.
@@ -276,7 +276,7 @@ public class PostService {
 			return postDao.countMyPosts(tags,null, weaver, search, sort);
 		if(this.isPublicTags(tags)) // 태그가 공개 태그일 경우.
 			return postDao.countPostsWhenLogin(tags,weaver.getPrivateAndMassageTags(),null,search, sort);
-		if(this.isPrivateTags(tags)) // 태그가 프로젝트 태그일 경우.
+		if(this.isPrivateTags(tags)) // 태그가 저장소 태그일 경우.
 			return postDao.countPostsAsPrivateTags(tags, search, null, sort);
 		if(this.isMassageTags(tags)) // 태그가 메세지 태그의 경우.
 			return postDao.countPostsAsMassageTag( this.getOneMassageTag(weaver.getId(),tags), search, weaver, this.getOneMassageTag(weaver.getId(),tags).equals("$"+weaver.getId()), sort);
@@ -301,7 +301,7 @@ public class PostService {
 			return postDao.getMyPosts(tags,null, weaver, search, sort, page, size);
 		if(this.isPublicTags(tags)) // 태그가 공개 태그일 경우.
 			return postDao.getPostsWhenLogin(tags,weaver.getPrivateAndMassageTags(),null,search, sort, page, size);
-		if(this.isPrivateTags(tags)) // 태그가 프로젝트 태그일 경우.
+		if(this.isPrivateTags(tags)) // 태그가 저장소 태그일 경우.
 			return postDao.getPostsAsPrivateTags(tags, search, null, sort, page, size);
 		if(this.isMassageTags(tags)) // 태그가 메세지 태그의 경우.
 			return postDao.getPostsAsMassageTag( this.getOneMassageTag(weaver.getId(),tags), search, weaver, this.getOneMassageTag(weaver.getId(),tags).equals("$"+weaver.getId()), sort, page, size);
@@ -469,7 +469,7 @@ public class PostService {
 		return tags.get(0).startsWith("$") && !tags.get(0).contains("/");
 	}
 
-	/** 프로젝트 태그인지 확인함.
+	/** 저장소 태그인지 확인함.
 	 * @param tags
 	 * @return
 	 */

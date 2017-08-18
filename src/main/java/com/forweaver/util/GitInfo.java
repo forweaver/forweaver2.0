@@ -165,40 +165,40 @@ public class GitInfo {
 
 	private Map<RevCommit, DuplicateContainer> dupes;
 
-	private String projectName;
+	private String repositoryName;
 
-	private String projectVersion;
+	private String repositoryVersion;
 
 
 	private Repository repository;
 
 
 	/**
-	 * @param projectName
+	 * @param repositoryName
 	 */
-	public void setProjectName(String projectName) {
-		this.projectName = projectName;
+	public void setRepositoryName(String repositoryName) {
+		this.repositoryName = repositoryName;
 	}
 
 	/**
-	 * @return projectName
+	 * @return repositoryName
 	 */
-	public String getProjectName() {
-		return projectName;
+	public String getRepositoryName() {
+		return repositoryName;
 	}
 
 	/**
-	 * @param projectVersion
+	 * @param repositoryVersion
 	 */
-	public void setProjectVersion(String projectVersion) {
-		this.projectVersion = projectVersion;
+	public void setRepositoryVersion(String repositoryVersion) {
+		this.repositoryVersion = repositoryVersion;
 	}
 
 	/**
-	 * @return projectVersion
+	 * @return repositoryVersion
 	 */
-	public String getProjectVersion() {
-		return projectVersion;
+	public String getRepositoryVersion() {
+		return repositoryVersion;
 	}
 
 	/**

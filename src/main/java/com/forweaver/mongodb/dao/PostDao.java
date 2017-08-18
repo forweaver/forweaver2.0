@@ -169,7 +169,7 @@ public class PostDao {
 
 
 
-	/**  프로젝트 태그를 이용하여 글을 파악하고 셈
+	/**  저장소 태그를 이용하여 글을 파악하고 셈
 	 * @param privateAndMassageTags
 	 * @param search
 	 * @param writer
@@ -194,7 +194,7 @@ public class PostDao {
 		return mongoTemplate.count(new Query(criteria), Post.class);
 	}
 
-	/** 프로젝트 태그를 이용하여 글을 검색함
+	/** 저장소 태그를 이용하여 글을 검색함
 	 * @param privateAndMassageTags
 	 * @param search
 	 * @param writer
@@ -516,13 +516,13 @@ public class PostDao {
 		return mongoTemplate.find(query, Post.class);
 	}
 
-	/** // 자기가 진행중인 프로젝트 글 숫자를 셈.
+	/** // 자기가 진행중인 저장소 글 숫자를 셈.
 	 * @param privateAndMassageTags
 	 * @param search
 	 * @param sort
 	 * @return
 	 */
-	public long countMyProjectPosts(List<String> privateAndMassageTags, String search, String sort) {
+	public long countMyRepositoryPosts(List<String> privateAndMassageTags, String search, String sort) {
 		Criteria criteria = new Criteria();
 
 		criteria.and("tags").in(privateAndMassageTags);
@@ -537,7 +537,7 @@ public class PostDao {
 		return mongoTemplate.count(new Query(criteria), Post.class);
 	}
 
-	/** 자기가 진행중인 프로젝트의 글을 검색함.
+	/** 자기가 진행중인 저장소의 글을 검색함.
 	 * @param privateAndMassageTags
 	 * @param search
 	 * @param sort
@@ -545,7 +545,7 @@ public class PostDao {
 	 * @param size
 	 * @return
 	 */
-	public List<Post> getMyProjectPosts(List<String> privateAndMassageTags, String search, 
+	public List<Post> getMyRepositoryPosts(List<String> privateAndMassageTags, String search, 
 			String sort, int page,int size) {
 		Criteria criteria = new Criteria();
 

@@ -185,12 +185,10 @@ function movePage(tagArrayString,searchWord){
 		url = url.substring(0,url.indexOf("/community")+10)+'/';
 	else if(url.indexOf("/weaver") != -1)
 		url = url.substring(0,url.indexOf("/weaver")+7)+'/';
-	else if(url.indexOf("/project") != -1)
-		url = url.substring(0,url.indexOf("/project")+8)+'/';
+	else if(url.indexOf("/repository") != -1)
+		url = url.substring(0,url.indexOf("/repository")+11)+'/';
 	else if(url.indexOf("/code") != -1)
 		url = url.substring(0,url.indexOf("/code")+5)+'/';
-	else if(url.indexOf("/lecture") != -1)
-		url = url.substring(0,url.indexOf("/lecture")+8)+'/';
 	else
 		if(url.indexOf("/m/") != -1 )
 			url = url.substring(0,IndexOf("/",url,5))+"/";

@@ -6,7 +6,7 @@ import java.util.Date;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document
-public class ProjectInvite implements Serializable {
+public class Invite implements Serializable {
 
 	static final long serialVersionUID = 54354364334L;
 	private String joinTeam;
@@ -15,9 +15,9 @@ public class ProjectInvite implements Serializable {
 	private int postID;
 	private Date created;
 	
-	public ProjectInvite(){}
+	public Invite(){}
 
-	public ProjectInvite(String joinTeam, String proposer, String waitingWeaver,int postID) {
+	public Invite(String joinTeam, String proposer, String waitingWeaver,int postID) {
 		this.joinTeam = joinTeam;
 		this.proposer = proposer;
 		this.waitingWeaver = waitingWeaver;

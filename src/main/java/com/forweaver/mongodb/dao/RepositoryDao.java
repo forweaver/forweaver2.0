@@ -10,67 +10,62 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
-import org.springframework.stereotype.Repository;
+import com.forweaver.domain.Repository;
 
-import com.forweaver.domain.Project;
-
-/** 프로젝트 관리를 위한 DAO
+/** 저장소 관리를 위한 DAO
  *
  */
-@Repository
-public class ProjectDao {
+@org.springframework.stereotype.Repository
+public class RepositoryDao {
 	
 	@Autowired private MongoTemplate mongoTemplate;
 	
-	/** 프로젝트를 생성 메서드
-	 * @param project
+	/** 저장소를 생성 메서드
+	 * @param repository
 	 */
-	public void insert(Project project) {
-		mongoTemplate.insert(project);
+	public void insert(Repository repository) {
+		mongoTemplate.insert(repository);
 	}
 	
-	/** 프로젝트명으로 가져옴
-	 * @param projectName
+	/** 저장소명으로 가져옴
+	 * @param repositoryName
 	 * @return
 	 */
-	public Project get(String projectName) {
-		Query query = new Query(Criteria.where("_id").is(projectName));
-		return mongoTemplate.findOne(query, Project.class);
+	public Repository get(String repositoryName) {
+		Query query = new Query(Criteria.where("_id").is(repositoryName));
+		return mongoTemplate.findOne(query, Repository.class);
 	}
 	
-	/** 프로젝트 삭제
-	 * @param project
+	/** 저장소 삭제
+	 * @param repository
 	 */
-	public void delete(Project project) {
-		mongoTemplate.remove(project);
+	public void delete(Repository repository) {
+		mongoTemplate.remove(repository);
 	}
 	
-	/** 프로젝트 수정하기
-	 * @param project
+	/** 저장소 수정하기
+	 * @param repository
 	 */
-	public void update(Project project) {
-		Query query = new Query(Criteria.where("_id").is(project.getName()));
+	public void update(com.forweaver.domain.Repository repository) {
+		Query query = new Query(Criteria.where("_id").is(repository.getName()));
 		Update update = new Update();
-		update.set("category", project.getCategory());
-		update.set("description", project.getDescription());
-		update.set("tags", project.getTags());
-		update.set("push", project.getPush());
-		update.set("adminWeavers", project.getAdminWeavers());
-		update.set("joinWeavers", project.getJoinWeavers());
-		update.set("childProjects", project.getChildProjects());
-		update.set("activeDate", project.getActiveDate());
-		update.set("commitCount", project.getCommitCount());
-		mongoTemplate.updateFirst(query, update, Project.class);
+		update.set("category", repository.getCategory());
+		update.set("description", repository.getDescription());
+		update.set("tags", repository.getTags());
+		update.set("push", repository.getPush());
+		update.set("adminWeavers", repository.getAdminWeavers());
+		update.set("joinWeavers", repository.getJoinWeavers());
+		mongoTemplate.updateFirst(query, update, Repository.class);
 	}
 	
-	/** 프로젝트를 검색하고 수를 셈.
+	/** 저장소를 검색하고 수를 셈.
 	 * @param tags
 	 * @param search
 	 * @param creator
 	 * @param sort
 	 * @return
 	 */
-	public long countProjects(
+	public long countRepositories(
 			List<String> tags,
 			String search,
 			String sort) {
@@ -85,10 +80,10 @@ public class ProjectDao {
 			
 		this.filter(criteria, sort);
 
-		return mongoTemplate.count(new Query(criteria), Project.class);
+		return mongoTemplate.count(new Query(criteria), Repository.class);
 	}
 	
-	/** 프로젝트를 검색
+	/** 저장소를 검색
 	 * @param tags
 	 * @param search
 	 * @param creator
@@ -97,7 +92,7 @@ public class ProjectDao {
 	 * @param size
 	 * @return
 	 */
-	public List<Project> getProjects( 
+	public List<Repository> getRepositories( 
 			List<String> tags,
 			String search,
 			String sort,
@@ -118,52 +113,52 @@ public class ProjectDao {
 		query.with(new PageRequest(page-1, size));
 
 		this.sorting(query, sort);
-		return mongoTemplate.find(query, Project.class);
+		return mongoTemplate.find(query, Repository.class);
 	}
 	
-	/** 특정 회원의 프로젝트를 가져올 때 수를 셈.
+	/** 특정 회원의 저장소를 가져올 때 수를 셈.
 	 * @param tags
 	 * @param search
 	 * @param creator
 	 * @param sort
 	 * @return
 	 */
-	public long countProjects(
-			List<String> projectNames,
+	public long countRepositories(
+			List<String> repositoryNames,
 			List<String> tags,
 			String sort) {
-		Criteria criteria = new Criteria("name").in(projectNames);	
+		Criteria criteria = new Criteria("name").in(repositoryNames);	
 		
 		if(tags != null)
 			criteria.and("tags").all(tags);
 			
 		this.filter(criteria, sort);
 
-		return mongoTemplate.count(new Query(criteria), Project.class);
+		return mongoTemplate.count(new Query(criteria), Repository.class);
 	}
 	
-	/** 특정 회원의 프로젝트를 가져올 때 활용.
-	 * @param projectNames
+	/** 특정 회원의 저장소를 가져올 때 활용.
+	 * @param repositoryNames
 	 * @param tags
 	 * @param sort
 	 * @param page
 	 * @param size
 	 * @return
 	 */
-	public List<Project> getProjects(
-			List<String> projectNames,
+	public List<Repository> getRepositories(
+			List<String> repositoryNames,
 			List<String> tags,
 			String sort,
 			int page, 
 			int size) {
-		Criteria criteria = new Criteria("name").in(projectNames);
+		Criteria criteria = new Criteria("name").in(repositoryNames);
 		if(tags != null)
 			criteria.and("tags").all(tags);
 		this.filter(criteria, sort);
 		Query query = new Query(criteria);
 		query.with(new PageRequest(page-1, size));
 		
-		return mongoTemplate.find(query, Project.class);
+		return mongoTemplate.find(query, Repository.class);
 	}
 	
 	
@@ -188,9 +183,9 @@ public class ProjectDao {
 	 */
 	public void sorting(Query query,String sort){
 		if (sort.equals("age-asc")) 
-			query.with(new Sort(Sort.Direction.ASC, "openingDate"));
+			query.with(new Sort(Sort.Direction.ASC, "date"));
 		else
-			query.with(new Sort(Sort.Direction.DESC, "openingDate"));
+			query.with(new Sort(Sort.Direction.DESC, "date"));
 	}
 
 }

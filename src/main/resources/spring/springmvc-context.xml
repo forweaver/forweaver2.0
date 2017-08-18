@@ -30,8 +30,8 @@
 			<bean class="com.forweaver.intercepter.CommunityIntercepter" />
 		</mvc:interceptor>
 		<mvc:interceptor>
-			<mvc:mapping path="/project/**" />
-			<bean class="com.forweaver.intercepter.ProjectIntercepter" />
+			<mvc:mapping path="/repository/**" />
+			<bean class="com.forweaver.intercepter.RepositoryIntercepter" />
 		</mvc:interceptor>
 	</mvc:interceptors>
 

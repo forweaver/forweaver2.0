@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/includes/taglibs.jsp"%>
 <!DOCTYPE html>
 <html><head>
-<title>${project.name}~${project.description}</title>
+<title>${repository.name}~${repository.description}</title>
 <%@ include file="/WEB-INF/includes/src.jsp"%>
 <%@ include file="/WEB-INF/includes/syntaxhighlighterSrc.jsp"%>
 </head>
@@ -58,7 +58,7 @@ function fileUploadChange(fileUploader){
 		$("#repost-form").hide();
 		$(".comment-form").remove();
 		if(comment != rePostID){
-		$("#comment-form-td-"+rePostID).append("<form class='comment-form' action='/project/${project.name}/commitlog-viewer/commit:${gitCommitLog.commitLogID}/"+rePostID+"/add-reply' method='POST'>"+
+		$("#comment-form-td-"+rePostID).append("<form class='comment-form' action='/repository/${repository.name}/log-viewer/log:${gitLog.logID}/"+rePostID+"/add-reply' method='POST'>"+
 		"<div style='padding-left:20px;' class='span10'>"+
 		"<input id='reply-input'  type ='text' name='content' class='reply-input span10'  placeholder='답변할 내용을 입력해주세요!'></input></div>"+
 		"<div class='span1'><span><button type='submit' class='post-button btn btn-primary'>"+
@@ -105,7 +105,7 @@ function fileUploadChange(fileUploader){
 	
 		SyntaxHighlighter.all();
 		move = false;
-			<c:forEach items='${project.tags}' var='tag'>
+			<c:forEach items='${repository.tags}' var='tag'>
 			$('#tags-input').tagsinput('add',"${tag}");
 			</c:forEach>
 			move = true;
@@ -114,29 +114,25 @@ function fileUploadChange(fileUploader){
 	</script>
 		<div class="page-header page-header-none">
 			<h5>
-				<big><big>	<c:if test="${!project.isForkProject()}">
-							<i class="fa fa-bookmark"></i></c:if>
-							<c:if test="${project.isForkProject()}">
-							<i class="fa fa-code-fork"></i></c:if> 
-							${project.name}</big></big>
-				<small>${project.description}</small>
+				<big><big><i class="fa fa-bookmark"></i> ${repository.name}</big></big>
+<small>${repository.description}</small>
 			</h5>
 		</div>
 		<div class="row">
 			
 			<div class="span8">
 				<ul class="nav nav-tabs">
-					<li><a href="/project/${project.name}/">브라우져</a></li>
-					<li class="active" ><a href="/project/${project.name}/commitlog">커밋</a></li>
-					<li><a href="/project/${project.name}/community">커뮤니티</a></li>
+					<li><a href="/repository/${repository.name}/">브라우져</a></li>
+					<li class="active" ><a href="/repository/${repository.name}/log">로그</a></li>
+					<li><a href="/repository/${repository.name}/community">커뮤니티</a></li>
 					
-					<li><a href="/project/${project.name}/weaver">사용자</a></li>
+					<li><a href="/repository/${repository.name}/weaver">사용자</a></li>
 					<sec:authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN">
-					<c:if test="${project.getCreator().equals(currentUser) }">
-					<li><a href="/project/${project.name}/edit">관리</a></li>
+					<c:if test="${repository.getCreator().equals(currentUser) }">
+					<li><a href="/repository/${repository.name}/edit">관리</a></li>
 					</c:if>
 					</sec:authorize>
-					<li><a href="/project/${project.name}/info">정보</a></li>
+					<li><a href="/repository/${repository.name}/info">정보</a></li>
 					
 					
 				</ul>
@@ -144,7 +140,7 @@ function fileUploadChange(fileUploader){
 			<div class="span4">
 				<div class="input-block-level input-prepend" title="http 주소로 저장소를 복제할 수 있습니다!&#13;복사하려면 ctrl+c 키를 누르세요.">
 					<span class="add-on"><i class="fa fa-git"></i></span> <input
-						value="http://${pageContext.request.serverName}/g/${project.name}.git" type="text"
+						value="http://${pageContext.request.serverName}/g/${repository.name}.git" type="text"
 						class="input-block-level">
 				</div>
 			</div>
@@ -154,63 +150,52 @@ function fileUploadChange(fileUploader){
 					<tbody>
 						<tr>
 							<td class="none-top-border td-post-writer-img" rowspan="2"><img
-								src="${gitCommitLog.getImgSrc()}">
+								src="${gitLog.getImgSrc()}">
 							</td>
 							<td style="width: 710px;"
-								class="none-top-border post-top-title-short">${fn:substring(gitCommitLog.shortMassage,0,50)}</td>
+								class="none-top-border post-top-title-short">${fn:substring(gitLog.shortMassage,0,50)}</td>
 								
-							<td class="none-top-border" 
-								<c:if test="${project.getOriginalProjectName() != null}">
-									style="width:190px" 
-								</c:if>
-								rowspan="2">
-							<c:if test="${project.getOriginalProjectName() != null}">
-								<a	onclick="return confirm('정말 이 커밋을 체리 바구니에 담으시겠습니까?')" 
-								href="/project/${project.name}/cherry-pick/commit:${gitCommitLog.commitLogID}/add">
-										<span class="span-button"> <i  class="icon-css-padding icon-cherry"></i>
-											<p style ="margin-top: -2px;" class="p-button">체리</p></span>
-									</a>
-									</c:if>
-									<a	href="/project/${project.name}/browser/commit:${fn:substring(gitCommitLog.commitLogID,0,8)}">
+							<td class="none-top-border" rowspan="2">
+									<a	href="/repository/${repository.name}/browser/log:${fn:substring(gitLog.logID,0,8)}">
 										<span class="span-button"> <i class="fa fa-eye"></i>
 											<p class="p-button">전체</p></span>
 									</a>
-								<a	href="/project/${project.name}/${fn:substring(gitCommitLog.commitLogID,0,8)}/${project.getChatRoomName()}-${fn:substring(gitCommitLog.commitLogID,0,8)}.zip">
+								<a	href="/repository/${repository.name}/${fn:substring(gitLog.logID,0,8)}/${repository.getRepoName()}-${fn:substring(gitLog.logID,0,8)}.zip">
 										<span class="span-button"> <i class="fa fa-arrow-circle-o-down"></i>
 											<p class="p-button">다운</p></span>
 									</a>									
 							</td>
 						</tr>
 						<tr>
-							<td class="post-bottom"><b>${gitCommitLog.commiterName}</b>
-								${gitCommitLog.getCommitDate()} &nbsp;&nbsp; <span
-								style="cursor: text;" class="tag-commit tag-name">${gitCommitLog.commitLogID}</span>
+							<td class="post-bottom"><b>${gitLog.commiterName}</b>
+								${gitLog.getCommitDate()} &nbsp;&nbsp; <span
+								style="cursor: text;" class="tag-commit tag-name">${gitLog.logID}</span>
 							</td>
 
 						</tr>
 
 						<tr>
 							<td style="border-top: 0px"></td>
-							<td style="font-size:13px;" colspan="3">${cov:htmlEscape(gitCommitLog.fullMassage)}</td>
+							<td style="font-size:13px;" colspan="3">${cov:htmlEscape(gitLog.fullMassage)}</td>
 						</tr>
-						<c:if test="${gitCommitLog.getNote().length() > 0}">
+						<c:if test="${gitLog.getNote().length() > 0}">
 						<tr>
 							<td style="border-top: 0px"></td>
 							<td style="font-size:13px;" colspan="3">
 							 <span class="label label-warning"><i class="fa fa-book"></i> 노트:</span> 
-    						${cov:htmlEscape(gitCommitLog.getNote())}</td>
+    						${cov:htmlEscape(gitLog.getNote())}</td>
 						</tr>
 						</c:if>
 					</tbody>
 				</table>
-				<c:if test="${fn:length(gitCommitLog.diff)>0}">
+				<c:if test="${fn:length(gitLog.diff)>0}">
 				<div style="padding-top:30px;" class="well-white">
-					<pre id="source-code" class="span9 brush: diff">${cov:htmlEscape(gitCommitLog.diff)}</pre>
+					<pre id="source-code" class="span9 brush: diff">${cov:htmlEscape(gitLog.diff)}</pre>
 				</div>
 				</c:if>
 				<!-- 답변 작성란 
 				<form enctype="multipart/form-data" id="repost-form"
-					action="/project/${project.name}/commitlog-viewer/commit:${gitCommitLog.commitLogID}/add-repost" method="POST">
+					action="/repository/${repository.name}/log-viewer/log:${gitLog.logID}/add-repost" method="POST">
 
 					<div style="margin-left: 0px; margin-bottom:10px" class="span11">
 						<textarea name="content" id="repost-content"
@@ -242,7 +227,7 @@ function fileUploadChange(fileUploader){
 										<a onClick='javascript:showCommentAdd(${rePost.rePostID})'><span
 											class="function-button function-comment">댓글달기</span></a>
 										<a onclick="return confirm('정말로 삭제하시겠습니까?');"
-											href='/project/${project.name}/commitlog-viewer/commit:${gitCommitLog.commitLogID}/${rePost.rePostID}/delete'>
+											href='/repository/${repository.name}/log-viewer/log:${gitLog.logID}/${rePost.rePostID}/delete'>
 											<span class="function-button">삭제</span>
 										</a>
 									</div>
@@ -283,7 +268,7 @@ function fileUploadChange(fileUploader){
 										${reply.getFormatCreated()}
 										<div class="function-div pull-right">
 											<a onclick="return confirm('정말로 삭제하시겠습니까?');"
-											href="/project/${project.name}/commitlog-viewer/commit:${gitCommitLog.commitLogID}/${rePost.rePostID}/${reply.number}/delete">
+											href="/repository/${repository.name}/log-viewer/log:${gitLog.logID}/${rePost.rePostID}/${reply.number}/delete">
 												<i class='icon-remove'></i>
 											</a>
 										</div></td>

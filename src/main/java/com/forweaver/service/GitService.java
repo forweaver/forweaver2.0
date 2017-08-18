@@ -8,9 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.forweaver.domain.git.statistics.GitParentStatistics;
-import com.forweaver.domain.vc.VCCommitLog;
+import com.forweaver.domain.vc.VCLog;
 import com.forweaver.domain.vc.VCFileInfo;
-import com.forweaver.domain.vc.VCSimpleCommitLog;
+import com.forweaver.domain.vc.VCSimpleLog;
 import com.forweaver.domain.vc.VCSimpleFileInfo;
 import com.forweaver.util.GitInfo;
 import com.forweaver.util.GitUtil;
@@ -85,27 +85,27 @@ public class GitService {
 		return gitFileInfoList;
 	}
 
-	public List<VCSimpleCommitLog> getGitCommitLogList(String parentDirctoryName,
+	public List<VCSimpleLog> getGitLogList(String parentDirctoryName,
 			String repositoryName,String branchName,int page,int number) {	
 		gitUtil.Init(parentDirctoryName,repositoryName);
-		List<VCSimpleCommitLog> gitCommitLogList = gitUtil.getCommitLogList(branchName,page,number);
-		return gitCommitLogList;
+		List<VCSimpleLog> gitLogList = gitUtil.getLogList(branchName,page,number);
+		return gitLogList;
 	}
 
 
-	public VCCommitLog getGitCommitLog(String parentDirctoryName,
+	public VCLog getGitLog(String parentDirctoryName,
 			String repositoryName,String branchName) {
 		gitUtil.Init(parentDirctoryName,repositoryName);
-		VCCommitLog gitCommitLog = gitUtil.getCommitLog(branchName);
-		return gitCommitLog;
+		VCLog gitLog = gitUtil.getLog(branchName);
+		return gitLog;
 
 	}
 
 
-	public void getProjectZip(String parentDirctoryName,
+	public void getRepositoryZip(String parentDirctoryName,
 			String repositoryName,String commitName,String format,HttpServletResponse response){
 		gitUtil.Init(parentDirctoryName,repositoryName);
-		gitUtil.getProjectZip(commitName,format,response);
+		gitUtil.getRepositoryZip(commitName,format,response);
 	}
 
 
@@ -127,14 +127,14 @@ public class GitService {
 		return gitUtil.getGitInfo(branchName);
 	}
 
-	public String getReadme(String creatorName,String projectName,String commit,List<VCSimpleFileInfo> gitFileInfoList){
+	public String getReadme(String creatorName,String repositoryName,String commit,List<VCSimpleFileInfo> gitFileInfoList){
 		String readme = "";
 		if(gitFileInfoList != null) 
 			for(VCSimpleFileInfo gitSimpleFileInfo:gitFileInfoList)// 파일들을 검색해서 리드미 파일을 찾아냄
 				if(gitSimpleFileInfo.getName().toUpperCase().contains("README.MD"))
 					readme = getFileInfo(
 							creatorName, 
-							projectName, 
+							repositoryName, 
 							commit, 
 							"/"+gitSimpleFileInfo.getName()).getContent();
 		return readme;

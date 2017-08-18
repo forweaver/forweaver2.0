@@ -30,13 +30,7 @@
 			access="isAnonymous()" />
 		<security:intercept-url pattern="/repassword**"
 			access="isAnonymous()" />
-
-		<security:intercept-url pattern="/intro/**"
-			access="isAnonymous() or isAuthenticated()" />
-
-		<security:intercept-url pattern="/contactUs"
-			access="isAuthenticated()" />
-
+			
 		<security:intercept-url pattern="/join" access="isAnonymous()" />
 
 		<security:intercept-url pattern="/del"
@@ -86,42 +80,30 @@
 		<security:intercept-url pattern="/code/**"
 			access="isAnonymous() or isAuthenticated()" />
 
-		<security:intercept-url pattern="/project/add"
+		<security:intercept-url pattern="/repository/add"
 			access="isAuthenticated()" />
 
-		<security:intercept-url pattern="/project/*/*/delete"
+		<security:intercept-url pattern="/repository/*/*/delete"
 			access="isAuthenticated()" />
-		<security:intercept-url pattern="/project/*/*/*/update"
+		<security:intercept-url pattern="/repository/*/*/*/update"
 			access="isAuthenticated()" />
-		<security:intercept-url pattern="/project/*/*/weaver/*/add-weaver"
+		<security:intercept-url pattern="/repository/*/*/weaver/*/add-weaver"
 			access="isAuthenticated()" />
-		<security:intercept-url pattern="/project/*/*/weaver/*/join-ok"
+		<security:intercept-url pattern="/repository/*/*/weaver/*/join-ok"
 			access="isAuthenticated()" />
-		<security:intercept-url pattern="/project/*/*/weaver/*/join-cancel"
+		<security:intercept-url pattern="/repository/*/*/weaver/*/join-cancel"
 			access="isAuthenticated()" />
-		<security:intercept-url pattern="/project/*/*/weaver/*/delete"
+		<security:intercept-url pattern="/repository/*/*/weaver/*/delete"
 			access="isAuthenticated()" />
-		<security:intercept-url pattern="/project/*/*/cherry-pick/*/add"
+		<security:intercept-url pattern="/repository/*/*/join"
 			access="isAuthenticated()" />
-		<security:intercept-url pattern="/project/*/*/cherry-pick/*/delete"
+		<security:intercept-url pattern="/repository/*/*/community/add"
 			access="isAuthenticated()" />
-		<security:intercept-url pattern="/project/*/*/cherry-pick/*/*/accept"
-			access="isAuthenticated()" />
-		<security:intercept-url pattern="/project/*/*/join"
-			access="isAuthenticated()" />
-		<security:intercept-url pattern="/project/*/*/community/add"
-			access="isAuthenticated()" />
-		<security:intercept-url pattern="/project/*/*/fork"
-			access="isAuthenticated()" />
-		<security:intercept-url pattern="/project/**"
-			access="isAnonymous() or isAuthenticated()" />
-
-		<security:intercept-url pattern='/admin/**'
-			access="denyAll" />
+		<security:intercept-url pattern="/repository/**"	access="isAnonymous() or isAuthenticated()" />
 
 		<security:intercept-url pattern="/weaver/**"
 			access="isAuthenticated()" />
-		<security:intercept-url pattern="/*/project/**"
+		<security:intercept-url pattern="/*/repository/**"
 			access="isAuthenticated()" />
 		<security:intercept-url pattern="/*/code/**"
 			access="isAuthenticated()" />

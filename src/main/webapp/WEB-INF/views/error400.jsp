@@ -17,7 +17,7 @@
 					</h1>
 					<br />
 					<p>
-						<b>게시글을 읽을 수 없거나, 프로젝트 및 강의에 가입하지 않으셨습니다!</b>
+						<b>게시글을 읽을 수 없거나, 저장소에 가입하지 않으셨습니다!</b>
 					</p><br />
 					<a onclick="javascript:history.back(-1);" class="btn btn-large btn-info"><i
 						class="icon-home"></i> 이전 화면으로 돌아가기</a>

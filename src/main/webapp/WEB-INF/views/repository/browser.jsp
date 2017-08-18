@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/includes/taglibs.jsp"%>
 <!DOCTYPE html>
 <html><head>
-<title>${project.name}-forWeaver</title>
+<title>${repository.name}-forWeaver</title>
 <%@ include file="/WEB-INF/includes/src.jsp"%>
 <script src="/resources/forweaver/js/fileBrowser.js"></script>
 <script src="/resources/forweaver/js/spin.min.js"></script>
@@ -63,7 +63,7 @@ $(document).ready(function() {
 	hideUploadContent();
 	$('#labelPath').append("/");
 			move = false;
-			<c:forEach items='${project.tags}' var='tag'>
+			<c:forEach items='${repository.tags}' var='tag'>
 			$('#tags-input').tagsinput('add',"${tag}");
 			</c:forEach>
 			move = true;
@@ -76,14 +76,14 @@ $(document).ready(function() {
 	});
 });
 
-var commitlogHref= "/project/${project.name}/commitlog-viewer/commit:";
+var logHref= "/repository/${repository.name}/log-viewer/log:";
 var fileBrowser = Array();
 <c:forEach items="${gitFileInfoList}" var="gitFileInfo">
 fileBrowser.push({
 	"name" : "${fn:substring(gitFileInfo.name,0,20)}",
 	"path" : "${gitFileInfo.path}",
 	"directory" : ${gitFileInfo.isDirectory},
-	"commitLog" :  "${fn:substring(gitFileInfo.simpleCommitLog,0,35)}",
+	"log" :  "${fn:substring(gitFileInfo.simpleLog,0,35)}",
 	"dateInt" :  ${gitFileInfo.commitDateInt},
 	"commiterName" :  "${gitFileInfo.commiterName}",
 	"commiterEmail" :  "${gitFileInfo.commiterEmail}",
@@ -91,7 +91,7 @@ fileBrowser.push({
 	"date": "${gitFileInfo.getCommitDate()}"
 });
 </c:forEach>
-var fileBrowserURL = "/project/${project.name}/browser/commit:";
+var fileBrowserURL = "/repository/${repository.name}/browser/log:";
 showFileBrowser("${filePath}","${selectBranch}",fileBrowser);
 
 </script>
@@ -99,37 +99,25 @@ showFileBrowser("${filePath}","${selectBranch}",fileBrowser);
 		<%@ include file="/WEB-INF/common/nav.jsp"%>
 
 		<div class="page-header page-header-none">
-			<h5>
-				<big><big>	<c:if test="${!project.isForkProject()}">
-							<i class="fa fa-bookmark"></i></c:if>
-							<c:if test="${project.isForkProject()}">
-							<i class="fa fa-code-fork"></i></c:if> 
-							${project.name}</big></big>
-				<small>${project.description}</small>
-				<div style="margin-top:-10px" class="pull-right">
-
-				<a href="/intro/tutorial/default" title="포위버 프로젝트 저장소에 파일을 업로드하는 방법" class="btn btn-danger">
-								<i class="fa fa-question-circle"></i> <b>업로드 방법</b>
-				</a>
-
-				</div>
+			<h5><big><big><i class="fa fa-bookmark"></i> ${repository.name}</big></big>
+				<small>${repository.description}</small>
 			</h5>
 			
 		</div>
 		<div class="row">
 			<div class="span8">
 				<ul class="nav nav-tabs">
-					<li class="active"><a href="/project/${project.name}/">브라우져</a></li>
-					<li><a href="/project/${project.name}/commitlog">커밋</a></li>
-					<li><a href="/project/${project.name}/community">커뮤니티</a></li>
+					<li class="active"><a href="/repository/${repository.name}/">브라우져</a></li>
+					<li><a href="/repository/${repository.name}/log">로그</a></li>
+					<li><a href="/repository/${repository.name}/community">커뮤니티</a></li>
 					
-					<li><a href="/project/${project.name}/weaver">사용자</a></li>
+					<li><a href="/repository/${repository.name}/weaver">사용자</a></li>
 					<sec:authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN">
-					<c:if test="${project.getCreator().equals(currentUser) }">
-					<li><a href="/project/${project.name}/edit">관리</a></li>
+					<c:if test="${repository.getCreator().equals(currentUser) }">
+					<li><a href="/repository/${repository.name}/edit">관리</a></li>
 					</c:if>
 					</sec:authorize>
-					<li><a href="/project/${project.name}/info">정보</a></li>
+					<li><a href="/repository/${repository.name}/info">정보</a></li>
 					
 					
 				</ul>
@@ -137,7 +125,7 @@ showFileBrowser("${filePath}","${selectBranch}",fileBrowser);
 			<div class="span4">
 				<div class="input-block-level input-prepend" title="http 주소로 저장소를 복제할 수 있습니다!&#13;복사하려면 ctrl+c 키를 누르세요.">
 					<span class="add-on"><i class="fa fa-git"></i></span> <input
-						value="http://${pageContext.request.serverName}/g/${project.name}.git" type="text"
+						value="http://${pageContext.request.serverName}/g/${repository.name}.git" type="text"
 						class="input-block-level">
 				</div>
 			</div>
@@ -150,11 +138,11 @@ showFileBrowser("${filePath}","${selectBranch}",fileBrowser);
 				
 					<sec:authorize access="isAuthenticated()">
 					
-					<a id="show-content-button" class="btn btn-primary"  title="프로젝트 .zip파일로 업로드"
+					<a id="show-content-button" class="btn btn-primary"  title="저장소 .zip파일로 업로드"
 						href="javascript:showUploadContent();">파일 업로드</a> 
 						
 					<a
-						id="hide-content-button" class="btn btn-primary" title="프로젝트 업로드 취소"
+						id="hide-content-button" class="btn btn-primary" title="저장소 업로드 취소"
 						href="javascript:hideUploadContent();">업로드 취소</a> 
 					</sec:authorize>
 					<sec:authorize access="isAnonymous()">
@@ -163,13 +151,13 @@ showFileBrowser("${filePath}","${selectBranch}",fileBrowser);
 					</button> 
 					</sec:authorize>
 					<a style="font-size:11px"
-						class="btn btn-primary" title="프로젝트 .zip파일로 다운로드"
-						href="/project/${project.name}/${selectBranch}/${project.getChatRoomName()}-${selectBranch}.zip">
+						class="btn btn-primary" title="저장소 .zip파일로 다운로드"
+						href="/repository/${repository.name}/${selectBranch}/${repository.getRepoName()}-${selectBranch}.zip">
 						ZIP
 					</a>
 					<a style="font-size:11px"
-						class="btn btn-primary" title="프로젝트 .tar파일로 다운로드"
-						href="/project/${project.name}/${selectBranch}/${project.getChatRoomName()}-${selectBranch}.tar">
+						class="btn btn-primary" title="저장소 .tar파일로 다운로드"
+						href="/repository/${repository.name}/${selectBranch}/${repository.getRepoName()}-${selectBranch}.tar">
 						TAR
 					</a>
 
@@ -177,19 +165,19 @@ showFileBrowser("${filePath}","${selectBranch}",fileBrowser);
 
 				<select id="selectBranch" class="span3">
 					<option
-						value="/project/${project.name}/browser/commit:${selectBranch}">${selectBranch}</option>
+						value="/repository/${repository.name}/browser/log:${selectBranch}">${selectBranch}</option>
 					<c:forEach items="${gitBranchList}" var="gitBranchName">
 						<option
-							value="/project/${project.name}/browser/commit:${gitBranchName}">${gitBranchName}</option>
+							value="/repository/${repository.name}/browser/log:${gitBranchName}">${gitBranchName}</option>
 					</c:forEach>
 				</select>
 				<form onsubmit="return checkUpload();" id="upload-form" enctype="multipart/form-data" 
-				action="/project/${project.name}/${selectBranch}/upload" method="post">
+				action="/repository/${repository.name}/${selectBranch}/upload" method="post">
 					<div class="span12">
 					<input id="path" type="hidden" name="path" value="${filePath}"></input>
 						<input maxlength="50" class="title span10" type="text" id = "commit-message" name="message"
-							placeholder="프로젝트의 각종 변경사항을 입력해주세요! (최소 5자 이상 입력!)"></input>
-						<button type="submit" class="post-button btn btn-primary" title="프로젝트 등록"
+							placeholder="저장소의 각종 변경사항을 입력해주세요! (최소 5자 이상 입력!)"></input>
+						<button type="submit" class="post-button btn btn-primary" title="저장소 등록"
 							style="margin-top: -10px; display: inline-block;">
 							<i class="fa fa-check"></i>
 
@@ -220,7 +208,7 @@ showFileBrowser("${filePath}","${selectBranch}",fileBrowser);
 				</table>
 			</div>
 			<c:if test="${readme.length() > 0}">
-				<div class="span12 readme-header"><i class="fa fa-info-circle"></i> 프로젝트 소개</div>
+				<div class="span12 readme-header"><i class="fa fa-info-circle"></i> 저장소 소개</div>
 				<div class="span12 readme"><s:eval expression="T(com.forweaver.util.WebUtil).markDownEncoder(readme)" /></div>
 				
 			</c:if>

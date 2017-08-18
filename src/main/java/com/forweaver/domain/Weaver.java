@@ -24,7 +24,7 @@ import com.mongodb.DBObject;
  * imgSrc  이미지 주소
  * image  이미지 파일
  * joinDate 가입일
- * passes 권한 : 일반 회원의 경우 RULE_USER, 관리자의 경우 RULE_ADMIN 그외 프로젝트의 회원은 1, 관리자는 2
+ * passes 권한 : 일반 회원의 경우 RULE_USER, 관리자의 경우 RULE_ADMIN 그외 저장소의 회원은 1, 관리자는 2
  * isLeave 탈퇴 여부
  * </pre>
  */
@@ -66,8 +66,7 @@ public class Weaver implements UserDetails,Serializable {
 
 
 	public Weaver(String id,String password,String email,String say,Data image){
-		this.id = id;
-		this.id = this.id.toLowerCase();
+		this.id = id.toLowerCase();
 		this.password = password;
 		this.email = email;
 		this.say = say;
@@ -249,7 +248,7 @@ public class Weaver implements UserDetails,Serializable {
 		return false;
 	}
 
-	public List<String> getJoinProjects(){
+	public List<String> getJoinRepositories(){
 		List<String> passNames = new ArrayList<String>();
 		for(Pass pass:this.passes)
 			if(pass.getPermission()==1 && pass.getJoinName().contains("/")
@@ -258,7 +257,7 @@ public class Weaver implements UserDetails,Serializable {
 		return passNames;
 	}
 
-	public List<String> getAdminProjects(){
+	public List<String> getAdminRepositories(){
 		List<String> passNames = new ArrayList<String>();
 		for(Pass pass:this.passes)
 			if(pass.getPermission()==2 && pass.getJoinName().contains("/")
@@ -267,37 +266,10 @@ public class Weaver implements UserDetails,Serializable {
 		return passNames;
 	}
 
-	public List<String> getProjects(){
+	public List<String> getRepositories(){
 		List<String> passNames = new ArrayList<String>();
 		for(Pass pass:this.passes)
 			if(pass.getJoinName().contains("/")
-					&& !pass.getJoinName().startsWith("ROLE"))
-				passNames.add(pass.getJoinName());
-		return passNames;
-	}
-
-	public List<String> getJoinLectures(){
-		List<String> passNames = new ArrayList<String>();
-		for(Pass pass:this.passes)
-			if(pass.getPermission()==1 && !pass.getJoinName().contains("/")
-			&& !pass.getJoinName().startsWith("ROLE"))
-				passNames.add(pass.getJoinName());
-		return passNames;
-	}
-
-	public List<String> getAdminLectures(){
-		List<String> passNames = new ArrayList<String>();
-		for(Pass pass:this.passes)
-			if(pass.getPermission()==2 && !pass.getJoinName().contains("/")
-			&& !pass.getJoinName().startsWith("ROLE"))
-				passNames.add(pass.getJoinName());
-		return passNames;
-	}
-
-	public List<String> getLectures(){
-		List<String> passNames = new ArrayList<String>();
-		for(Pass pass:this.passes)
-			if(!pass.getJoinName().contains("/")
 					&& !pass.getJoinName().startsWith("ROLE"))
 				passNames.add(pass.getJoinName());
 		return passNames;
@@ -311,12 +283,8 @@ public class Weaver implements UserDetails,Serializable {
 		return passNames;
 	}
 
-	public int countProject(){
-		return this.getProjects().size();
-	}
-
-	public int countLecture(){
-		return this.getLectures().size();
+	public int countRepository(){
+		return this.getRepositories().size();
 	}
 
 	public boolean isAdmin(){

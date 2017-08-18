@@ -13,17 +13,23 @@ var passwordCheck = false;
 var emailCheck = false;
 var close = "<button type='button' class='close' data-dismiss='alert'>&times;</button>";
 function checkWeaver(){
-
+		
+		if($("#key").val().length < 1){
+			alert("인증키를 입력해주세요!");
+			return false;
+		}
+		
 		if(!idCheck || !passwordCheck || !emailCheck){
 			alert("회원 정보를 제대로 입력하지 않으셨습니다!");
 			return false;
 		}
-		
+		$("form:first").append($("input[name='tags']"));
 		return idCheck&&passwordCheck&&emailCheck;
 	}
 
 $(document).ready(function() {
 	
+
 	
 	$("#image").change(function(){
         readURL(this);
@@ -185,7 +191,7 @@ $(document).ready(function() {
 								<input maxlength="50"  name="say" placeholder="마지막으로 자신을 나타낼 자기소개를 입력해주세요!"  id="say" style="width:90%;" type="text"/>
 
 							</div>
-							<br>
+							<br>										
 						
 						<div class="join-form-actions-white">
 

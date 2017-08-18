@@ -48,30 +48,30 @@ function showFileBrowser(directoryPath,selectBranch,fileBrowser) {
 			
 			appendHTML += "<td class = 'td-filename'>" +
 			"<a rel='external' href ='"+fileBrowserURL+selectBranch+"/filepath:"+value.path.replace(".jsp",",jsp")+"'>" + value.name + 
-			"</a></td><td class = 'td-commitlog'>";
+			"</a></td><td class = 'td-log'>";
 			
 			//이미지를 추가함
-			appendHTML+="<a rel='external' href ='/"+value.commiterEmail+"'><img class='td-commitlog-img' src='/"
+			appendHTML+="<a rel='external' href ='/"+value.commiterEmail+"'><img class='td-log-img' src='/"
 				+value.commiterEmail+"/img' title='"+value.commiterName+"<"+value.commiterEmail+">'></a>&nbsp;&nbsp;";
 				
-			if(commitlogHref.length == 0){
-				appendHTML = appendHTML + value.commitLog + "</td>" + 
+			if(logHref.length == 0){
+				appendHTML = appendHTML + value.log + "</td>" + 
 				"<td class = 'td-time'>" + value.date + "</td></tr>"; 
 			}else{
-				appendHTML = appendHTML + "<a rel='external' class='none-color' href ="+ commitlogHref+value.commitID+">"+
-				value.commitLog + 
+				appendHTML = appendHTML + "<a rel='external' class='none-color' href ="+ logHref+value.commitID+">"+
+				value.log + 
 				"</a></td>" + 
 				"<td class = 'td-time'>" + 
-				"<a rel='external'  class='none-color' href ="+ commitlogHref+value.commitID+">"+
+				"<a rel='external'  class='none-color' href ="+ logHref+value.commitID+">"+
 				value.date + "</a></td></tr>"; 
 			}
 				
 			$("#fileBrowserTable").append(appendHTML);
 			//화면 크기에 따라 다르게 출력
 			 if ($(window).width() > 500) {
-			     	$( ".td-commitlog" ).show();
+			     	$( ".td-log" ).show();
 			    }else{
-			    	$( ".td-commitlog" ).hide();
+			    	$( ".td-log" ).hide();
 			    }
 		});
 	});

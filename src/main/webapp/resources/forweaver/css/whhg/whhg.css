@@ -1480,9 +1480,9 @@
 .icon-limesurvey:before{content:'\f59d'}
 .icon-fengoffice:before{content:'\f59e'}
 .icon-eyeos:before{content:'\f59f'}
-.icon-dotproject:before{content:'\f5a0'}
+.icon-dotrepository:before{content:'\f5a0'}
 .icon-collabtive:before{content:'\f5a1'}
-.icon-projectpier:before{content:'\f5a2'}
+.icon-repositorypier:before{content:'\f5a2'}
 .icon-taskfreak:before{content:'\f5a3'}
 .icon-eventum:before{content:'\f5a4'}
 .icon-traq:before{content:'\f5a5'}
@@ -1503,7 +1503,7 @@
 .icon-smarty:before{content:'\f5b4'}
 .icon-sidu:before{content:'\f5b5'}
 .icon-simplepie:before{content:'\f5b6'}
-.icon-projectsend:before{content:'\f5b7'}
+.icon-repositorysend:before{content:'\f5b7'}
 .icon-extjs:before{content:'\f5b8'}
 .icon-raphael:before{content:'\f5b9'}
 .icon-sizzle:before{content:'\f5ba'}
@@ -1588,7 +1588,7 @@
 .icon-polaroid:before{content:'\f602'}
 .icon-clouderror:before{content:'\f603'}
 .icon-camcorder:before{content:'\f604'}
-.icon-projector:before{content:'\f605'}
+.icon-repositoryor:before{content:'\f605'}
 .icon-sdvideo:before{content:'\f606'}
 .icon-fx:before{content:'\f607'}
 .icon-gramophone:before{content:'\f608'}
@@ -1936,9 +1936,9 @@
 .icon-currents:before{content:'\f75e'}
 .icon-communitysmall:before{content:'\f75f'}
 .icon-squaregithub:before{content:'\f760'}
-.icon-projectfork:before{content:'\f761'}
-.icon-projectmerge:before{content:'\f762'}
-.icon-projectcompare:before{content:'\f763'}
+.icon-repositoryfork:before{content:'\f761'}
+.icon-repositorymerge:before{content:'\f762'}
+.icon-repositorycompare:before{content:'\f763'}
 .icon-history:before{content:'\f764'}
 .icon-notebook:before{content:'\f765'}
 .icon-issue:before{content:'\f766'}
@@ -2026,8 +2026,8 @@
 .icon-selectionsymbol:before{content:'\f7b8'}
 .icon-infinityalt:before{content:'\f7b9'}
 .icon-pullrequest:before{content:'\f7ba'}
-.icon-projectforkdelete:before{content:'\f7bb'}
-.icon-projectforkprivate:before{content:'\f7bc'}
+.icon-repositoryforkdelete:before{content:'\f7bb'}
+.icon-repositoryforkprivate:before{content:'\f7bc'}
 .icon-commit:before{content:'\f7bd'}
 .icon-htmlfile:before{content:'\f7be'}
 .icon-pushalt:before{content:'\f7bf'}

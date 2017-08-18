@@ -1,4 +1,4 @@
-sprimg framework - http://projects.spring.io/spring-framework/ - 해당 사이트 참조
+sprimg framework - http://repositorys.spring.io/spring-framework/ - 해당 사이트 참조
 ehcache - http://ehcache.org/  - 해당 사이트 참조
 jgit - http://www.jgit.org/ - license 디렉토리에 첨부
 gitective - https://github.com/kevinsawicki/gitective - MIT License
@@ -9,7 +9,7 @@ d3js - http://d3js.org/ - BSD License
 bootstrap - http://getbootstrap.com/ - MIT License
 bootstrap flat ui - http://designmodo.github.io/Flat-UI/ - 해당 사이트 참조
 jasny bootstrap- http://jasny.github.io/bootstrap/ -  Apache License v2.0
-nounproject - http://www.thenounproject.com/ - 해당 폴더에 파일 첨부
+nounrepository - http://www.thenounrepository.com/ - 해당 폴더에 파일 첨부
 syntaxhighlighter - http://alexgorbatchev.com/SyntaxHighlighter/ - 해당 사이트 참조
 webhostinghub-glyphs - https://github.com/whhglyphs/webhostinghub-glyphs/ - 해당 페이지 참조
 log4jwebtracker - http://www.log4jwebtracker.com/ - GNU Lesser GPL General Public License version 3

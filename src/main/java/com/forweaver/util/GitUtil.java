@@ -39,13 +39,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.forweaver.domain.Project;
 import com.forweaver.domain.git.statistics.GitChildStatistics;
 import com.forweaver.domain.git.statistics.GitParentStatistics;
 import com.forweaver.domain.vc.VCBlame;
-import com.forweaver.domain.vc.VCCommitLog;
+import com.forweaver.domain.vc.VCLog;
 import com.forweaver.domain.vc.VCFileInfo;
-import com.forweaver.domain.vc.VCSimpleCommitLog;
+import com.forweaver.domain.vc.VCSimpleLog;
 import com.forweaver.domain.vc.VCSimpleFileInfo;
 
 /** git과 관련된 모든 기능 구현.
@@ -70,12 +69,12 @@ public class GitUtil implements VCUtil{
 		this.gitPath = "/home/git/"; //로컬 깃 저장소 주소
 	}
 
-	/** 프로젝트 초기화 메서드
+	/** 저장소 초기화 메서드
 	 * @param pro
 	 */
-	public void Init(Project pro) {
+	public void Init(com.forweaver.domain.Repository repo) {
 		try {
-			this.path = gitPath + pro.getName() + ".git";
+			this.path = gitPath + repo.getName() + ".git";
 			this.localRepo = new FileRepository(this.path);
 			this.git = new Git(localRepo);
 		} catch (Exception e) {
@@ -176,13 +175,13 @@ public class GitUtil implements VCUtil{
 	}
 
 
-	/** 프로젝트의 파일 정보를 가져옴
+	/** 저장소의 파일 정보를 가져옴
 	 * @param commitID
 	 * @param filePath
 	 * @return
 	 */
 	public VCFileInfo getFileInfo(String commitID, String filePath) {
-		List<VCSimpleCommitLog> commitLogList = new ArrayList<VCSimpleCommitLog>();
+		List<VCSimpleLog> logList = new ArrayList<VCSimpleLog>();
 		RevCommit selectCommit = this.getCommit(commitID);
 		int selectCommitIndex= 0;
 		if (selectCommit == null)
@@ -192,10 +191,10 @@ public class GitUtil implements VCUtil{
 			Iterable<RevCommit> gitLogIterable = git.log().all().addPath(filePath).call();
 
 			for (RevCommit revCommit : gitLogIterable) 
-				commitLogList.add(new VCSimpleCommitLog(revCommit));
+				logList.add(new VCSimpleLog(revCommit));
 
-			for(;selectCommitIndex<commitLogList.size();selectCommitIndex++)
-				if(commitLogList.get(selectCommitIndex).getCommitLogID().equals(selectCommit.getId()))
+			for(;selectCommitIndex<logList.size();selectCommitIndex++)
+				if(logList.get(selectCommitIndex).getLogID().equals(selectCommit.getId()))
 					break;
 
 		} finally {
@@ -203,7 +202,7 @@ public class GitUtil implements VCUtil{
 			return new VCFileInfo(filePath, BlobUtils.getContent(
 					this.localRepo, selectCommit.getId(), filePath),
 					BlobUtils.getRawContent(this.localRepo, selectCommit.getId(), filePath),
-					commitLogList, selectCommitIndex,isDirectory(commitID,filePath));
+					logList, selectCommitIndex,isDirectory(commitID,filePath));
 
 		}
 	}
@@ -220,8 +219,8 @@ public class GitUtil implements VCUtil{
 	 * @param refName
 	 * @return
 	 */
-	public VCSimpleCommitLog getVCCommit(String refName) {
-		return new VCSimpleCommitLog(CommitUtils.getCommit(this.localRepo, refName));
+	public VCSimpleLog getVCCommit(String refName) {
+		return new VCSimpleLog(CommitUtils.getCommit(this.localRepo, refName));
 	}
 
 	/** 커밋 갯수를 가져옴
@@ -247,7 +246,7 @@ public class GitUtil implements VCUtil{
 
 	}
 
-	/** 프로젝트의 파일 정보들을 가져와 파일 브라우져를 보여줄 때 사용.
+	/** 저장소의 파일 정보들을 가져와 파일 브라우져를 보여줄 때 사용.
 	 * @param commitID
 	 * @param filePath
 	 * @return
@@ -274,7 +273,7 @@ public class GitUtil implements VCUtil{
 		return gitFileInfoList;
 	}
 
-	/** 프로젝트의 파일 목록을 커밋 아이디를 가지고 가져옴.
+	/** 저장소의 파일 목록을 커밋 아이디를 가지고 가져옴.
 	 * @param commitID
 	 * @return
 	 */
@@ -300,8 +299,8 @@ public class GitUtil implements VCUtil{
 	 * @param commitID
 	 * @return
 	 */
-	public VCCommitLog getCommitLog(String commitID) {
-		VCCommitLog gitCommitLog = null;
+	public VCLog getLog(String commitID) {
+		VCLog gitLog = null;
 		String diffs = new String();
 		try {
 			RevCommit commit = CommitUtils.getCommit(this.localRepo, commitID);
@@ -314,13 +313,12 @@ public class GitUtil implements VCUtil{
 				df.setRepository(this.localRepo);
 				df.format(preCommit, commit);
 				df.flush();
-				df.release();
 				diffs+=out.toString();
 			} catch (Exception e) {
 				diffs += simpleFileBrowser(commit);
 			}
 
-			gitCommitLog = new VCCommitLog(commit.getId().getName(),
+			gitLog = new VCLog(commit.getId().getName(),
 					commit.getShortMessage(), commit.getFullMessage(), commit
 					.getCommitterIdent().getName(), commit
 					.getCommitterIdent().getEmailAddress(),
@@ -329,7 +327,7 @@ public class GitUtil implements VCUtil{
 			System.err.println(e.getMessage());
 		}
 		finally {
-			return gitCommitLog;
+			return gitLog;
 		}
 	}
 
@@ -357,26 +355,26 @@ public class GitUtil implements VCUtil{
 	}
 
 	// 커밋 로그 목록를 가져옴
-	public List<VCSimpleCommitLog> getCommitLogList(String branchName,
+	public List<VCSimpleLog> getLogList(String branchName,
 			int page, int number) {
-		List<VCSimpleCommitLog> gitCommitLogList = new ArrayList<VCSimpleCommitLog>();
+		List<VCSimpleLog> gitLogList = new ArrayList<VCSimpleLog>();
 		int startNumber = number * (page - 1);
 		try {
 
 			for(RevCommit commit:git.log().add(
 					this.getCommit(branchName)).setSkip(startNumber).setMaxCount(number).call()){
 
-				VCSimpleCommitLog gitCommitLog = new VCSimpleCommitLog(commit
+				VCSimpleLog gitLog = new VCSimpleLog(commit
 						.getId().getName(), commit.getShortMessage(), commit
 						.getCommitterIdent().getName(), commit
 						.getCommitterIdent().getEmailAddress(),
 						commit.getCommitTime());
 
-				gitCommitLogList.add(gitCommitLog);
+				gitLogList.add(gitLog);
 			}
 
 		} finally {
-			return gitCommitLogList;
+			return gitLogList;
 		}
 	}
 
@@ -437,7 +435,7 @@ public class GitUtil implements VCUtil{
 	 * @param format
 	 * @param response
 	 */
-	public void getProjectZip(String commitName,String format, HttpServletResponse response) {
+	public void getRepositoryZip(String commitName,String format, HttpServletResponse response) {
 
 		try {
 			ArchiveCommand.registerFormat("zip", new ZipFormat());
@@ -457,7 +455,7 @@ public class GitUtil implements VCUtil{
 
 	}
 
-	/** GIT이 없이도 프로젝트를 압축하여 업로드하면 자동으로 git에 푸시해주는 기능.
+	/** GIT이 없이도 저장소를 압축하여 업로드하면 자동으로 git에 푸시해주는 기능.
 	 * @param name
 	 * @param email
 	 * @param branchName
@@ -658,7 +656,6 @@ public class GitUtil implements VCUtil{
 					df.setRepository(this.localRepo);
 					df.format(rc.getParent(0), rc);
 					df.flush();
-					df.release();
 					diffs = out.toString();
 				} else {
 					diffs = simpleFileBrowser(rc);
@@ -705,7 +702,7 @@ public class GitUtil implements VCUtil{
 	}
 
 
-	/** 프로젝트 정보를 가져옴
+	/** 저장소 정보를 가져옴
 	 * @param branchName
 	 * @return
 	 */

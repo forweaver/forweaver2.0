@@ -16,7 +16,7 @@ public class VCFileInfo implements Serializable {
 	private String name;
 	private String content;
 	private byte[] data;
-	private List<VCSimpleCommitLog> commitLogList = new ArrayList<VCSimpleCommitLog>();
+	private List<VCSimpleLog> logList = new ArrayList<VCSimpleLog>();
 	private int selectCommitIndex;
 	private boolean isDirectory;
 	private List<VCBlame> gitBlames = new ArrayList<VCBlame>();
@@ -26,11 +26,11 @@ public class VCFileInfo implements Serializable {
 	}
 
 	public VCFileInfo(String name, String content,byte[] data,
-			List<VCSimpleCommitLog> commitLogList,int selectCommitIndex,boolean isDirectory) {
+			List<VCSimpleLog> logList,int selectCommitIndex,boolean isDirectory) {
 		this.name = name;
 		this.content = content;
 		this.data = data;
-		this.commitLogList = commitLogList;
+		this.logList = logList;
 		this.selectCommitIndex = selectCommitIndex;
 		this.isDirectory = isDirectory;
 	}
@@ -47,12 +47,12 @@ public class VCFileInfo implements Serializable {
 		this.content = content;
 	}
 
-	public List<VCSimpleCommitLog> getCommitLogList() {
-		return commitLogList;
+	public List<VCSimpleLog> getLogList() {
+		return logList;
 	}
 
-	public void setCommitLogList(List<VCSimpleCommitLog> commitLogList) {
-		this.commitLogList = commitLogList;
+	public void setLogList(List<VCSimpleLog> logList) {
+		this.logList = logList;
 	}
 
 	public int getSelectCommitIndex() {
@@ -62,16 +62,16 @@ public class VCFileInfo implements Serializable {
 		this.selectCommitIndex = selectCommitIndex;
 	}
 
-	public VCSimpleCommitLog getSelectCommitLog() {
-		if(this.commitLogList.size() <= 0){
+	public VCSimpleLog getSelectLog() {
+		if(this.logList.size() <= 0){
 			return null;
-		}else if(this.commitLogList.size() == 1){
-			return this.commitLogList.get(0);
+		}else if(this.logList.size() == 1){
+			return this.logList.get(0);
 		}else{
-			if(this.getSelectCommitIndex() >= this.commitLogList.size())
-				return this.commitLogList.get(this.commitLogList.size()-1);
+			if(this.getSelectCommitIndex() >= this.logList.size())
+				return this.logList.get(this.logList.size()-1);
 			else
-				return this.commitLogList.get(this.getSelectCommitIndex());
+				return this.logList.get(this.getSelectCommitIndex());
 		}
 	}
 

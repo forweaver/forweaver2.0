@@ -17,7 +17,7 @@ import com.forweaver.util.WebUtil;
  * title 글 제목
  * content 글 내용
  * isLong 단문인지 장문인지 여부
- * kind 글 종류 1이면 공개 2이면 프로젝트 글 3이면 메시지 글
+ * kind 글 종류 1이면 공개 2이면 저장소 글 3이면 메시지 글
  * created 생성일
  * recentRePostDate 최근 답변일
  * isNotice 시스템에서 자동으로 생성하는 알림 글 여부

@@ -4,9 +4,9 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
 import com.forweaver.domain.vc.VCBlame;
-import com.forweaver.domain.vc.VCCommitLog;
+import com.forweaver.domain.vc.VCLog;
 import com.forweaver.domain.vc.VCFileInfo;
-import com.forweaver.domain.vc.VCSimpleCommitLog;
+import com.forweaver.domain.vc.VCSimpleLog;
 import com.forweaver.domain.vc.VCSimpleFileInfo;
 
 /** 실제 버젼 관리 작업을 구현을 정의한 인터페이스
@@ -29,7 +29,7 @@ public interface VCUtil {
 	public boolean isDirectory(String commitID, String filePath);
 
 
-	/** 프로젝트의 파일 정보를 가져옴
+	/** 저장소의 파일 정보를 가져옴
 	 * @param commitID
 	 * @param filePath
 	 * @return
@@ -40,7 +40,7 @@ public interface VCUtil {
 	 * @param refName
 	 * @return
 	 */
-	public VCSimpleCommitLog getVCCommit(String refName);
+	public VCSimpleLog getVCCommit(String refName);
 	
 	/** 브랜치 혹은 태그의 커밋 갯수를 가져옴
 	 * @param refName
@@ -48,14 +48,14 @@ public interface VCUtil {
 	 */
 	public int getCommitListCount(String refName);
 
-	/** 프로젝트의 파일 정보들을 가져와 파일 브라우져를 보여줄 때 사용.
+	/** 저장소의 파일 정보들을 가져와 파일 브라우져를 보여줄 때 사용.
 	 * @param commitID
 	 * @param filePath
 	 * @return
 	 */
 	public List<VCSimpleFileInfo> getGitFileInfoList(String commitID,String filePath);
 
-	/** 프로젝트의 파일 목록을 커밋 아이디를 가지고 가져옴.
+	/** 저장소의 파일 목록을 커밋 아이디를 가지고 가져옴.
 	 * @param commitID
 	 * @return
 	 */
@@ -65,11 +65,11 @@ public interface VCUtil {
 	 * @param commitID
 	 * @return
 	 */
-	public VCCommitLog getCommitLog(String commitID);
+	public VCLog getLog(String commitID);
 
 	
 	// 커밋 로그 목록를 가져옴
-	public List<VCSimpleCommitLog> getCommitLogList(String branchName,int page, int number);
+	public List<VCSimpleLog> getLogList(String branchName,int page, int number);
 
 	/** 저장소에서 브랜치 정보를 가져옴
 	 * @return
@@ -88,7 +88,7 @@ public interface VCUtil {
 	 * @param format
 	 * @param response
 	 */
-	public void getProjectZip(String commitName,String format, HttpServletResponse response);
+	public void getRepositoryZip(String commitName,String format, HttpServletResponse response);
 
 	/** 일주일 24시간별로 커밋의 갯수를 측정하는 코드 빈도수 시각화에 쓰임
 	 * @return

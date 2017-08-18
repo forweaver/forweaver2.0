@@ -2,38 +2,28 @@
 <%@ include file="/WEB-INF/includes/taglibs.jsp"%>
 <!DOCTYPE html>
 <html><head>
-<title>${project.name}~ ${project.description}</title>
+<title>${repository.name}~ ${repository.description}</title>
 <%@ include file="/WEB-INF/includes/src.jsp"%>
 <script src="/resources/forweaver/js/weaverBrowser.js"></script>
 </head>
 <body>
 <script>
 var weaverList = new Array();
-<c:forEach items="${project.adminWeavers}" var="adminWeaver">
+<c:forEach items="${repository.adminWeavers}" var="adminWeaver">
 weaverList.push({
 	"admin": true,
 	"id": "${adminWeaver.id}",
-	<c:if test="${project.isEducation()}">
-	"massage": "${adminWeaver.studentID}",
-	</c:if>
-	<c:if test="${!project.isEducation()}">
 	"massage": "${cov:htmlEscape(adminWeaver.say)}",
-	</c:if>
 	"img": "${adminWeaver.getImgSrc()}"
 });
 </c:forEach>
-<c:forEach items="${project.joinWeavers}" var="joinWeaver">
+<c:forEach items="${repository.joinWeavers}" var="joinWeaver">
 weaverList.push({
 	"admin": false,
 	"id": " ${joinWeaver.id}",
-	<c:if test="${project.isEducation()}">
-	"massage": "${joinWeaver.studentID}",
-	</c:if>
-	<c:if test="${!project.isEducation()}">
 	"massage": "${cov:htmlEscape(joinWeaver.say)}",
-	</c:if>
 	"img": "${joinWeaver.getImgSrc()}",
-	"removeLink": "/project/${project.name}/weaver/${joinWeaver.id}/delete"
+	"removeLink": "/repository/${repository.name}/weaver/${joinWeaver.id}/delete"
 });
 </c:forEach>
 $(document).ready(function() {
@@ -54,11 +44,11 @@ $(document).ready(function() {
 		var weaverName = $('#weaverName').val();
 		
 		if(weaverName.length != 0)
-			window.location = "/project/${project.name}/weaver/"+weaverName+"/add-weaver";
+			window.location = "/repository/${repository.name}/weaver/"+weaverName+"/add-weaver";
 	});
 	
 	move = false;
-			<c:forEach items='${project.tags}' var='tag'>
+			<c:forEach items='${repository.tags}' var='tag'>
 			$('#tags-input').tagsinput('add',"${tag}");
 			</c:forEach>
 			move = true;
@@ -121,28 +111,24 @@ $(document).ready(function() {
 
 		<div class="page-header page-header-none">
 			<h5>
-						<big><big>	<c:if test="${!project.isForkProject()}">
-							<i class="fa fa-bookmark"></i></c:if>
-							<c:if test="${project.isForkProject()}">
-							<i class="fa fa-code-fork"></i></c:if> 
-							${project.name}</big></big>
-				<small>${project.description}</small>
+						<big><big><i class="fa fa-bookmark"></i> ${repository.name}</big></big>
+<small>${repository.description}</small>
 			</h5>
 		</div>
 		<div class="row">
 			<div class="span8">
 				<ul class="nav nav-tabs">
-					<li><a href="/project/${project.name}/">브라우져</a></li>
-					<li><a href="/project/${project.name}/commitlog">커밋</a></li>
-					<li><a href="/project/${project.name}/community">커뮤니티</a></li>
+					<li><a href="/repository/${repository.name}/">브라우져</a></li>
+					<li><a href="/repository/${repository.name}/log">로그</a></li>
+					<li><a href="/repository/${repository.name}/community">커뮤니티</a></li>
 					
-					<li  class="active"><a href="/project/${project.name}/weaver">사용자</a></li>
+					<li  class="active"><a href="/repository/${repository.name}/weaver">사용자</a></li>
 					<sec:authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN">
-					<c:if test="${project.getCreator().equals(currentUser) }">
-					<li><a href="/project/${project.name}/edit">관리</a></li>
+					<c:if test="${repository.getCreator().equals(currentUser) }">
+					<li><a href="/repository/${repository.name}/edit">관리</a></li>
 					</c:if>
 					</sec:authorize>
-					<li><a href="/project/${project.name}/info">정보</a></li>
+					<li><a href="/repository/${repository.name}/info">정보</a></li>
 					
 					
 				</ul>
@@ -150,7 +136,7 @@ $(document).ready(function() {
 			<div class="span4">
 				<div class="input-block-level input-prepend" title="http 주소로 저장소를 복제할 수 있습니다!&#13;복사하려면 ctrl+c 키를 누르세요.">
 					<span class="add-on"><i class="fa fa-git"></i></span> <input
-						value="http://${pageContext.request.serverName}/g/${project.name}.git" type="text"
+						value="http://${pageContext.request.serverName}/g/${repository.name}.git" type="text"
 						class="input-block-level">
 				</div>
 			</div>

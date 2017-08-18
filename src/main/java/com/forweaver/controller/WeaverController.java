@@ -30,7 +30,7 @@ import com.forweaver.domain.Weaver;
 import com.forweaver.service.CodeService;
 import com.forweaver.service.DataService;
 import com.forweaver.service.PostService;
-import com.forweaver.service.ProjectService;
+import com.forweaver.service.RepositoryService;
 import com.forweaver.service.RePostService;
 import com.forweaver.service.TagService;
 import com.forweaver.service.WeaverService;
@@ -44,7 +44,7 @@ public class WeaverController {
 	@Autowired
 	private PostService postService;
 	@Autowired
-	private ProjectService projectService;
+	private RepositoryService repositoryService;
 	@Autowired
 	private CodeService codeService;
 	@Autowired 
@@ -149,7 +149,7 @@ public class WeaverController {
 		return "/weaver/weavers";
 	}
 
-	@RequestMapping({"/{id}","/{id}/code","/{id}/project","/{id}/lecture"})
+	@RequestMapping({"/{id}","/{id}/code","/{id}/repository","/{id}/lecture"})
 	public String home(@PathVariable("id") String id,HttpServletRequest request) {
 		Weaver weaver = weaverService.get(id);
 		if(weaver == null || weaver.isLeave())
@@ -205,8 +205,8 @@ public class WeaverController {
 		return "/weaver/mypage/code";
 	}
 
-	@RequestMapping("/{id}/project/sort:{sort}/page:{page}")
-	public String projectPage(@PathVariable("id") String id,
+	@RequestMapping("/{id}/repository/sort:{sort}/page:{page}")
+	public String repositoryPage(@PathVariable("id") String id,
 			@PathVariable("sort") String sort,
 			@PathVariable("page") String page, Model model) {
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
@@ -218,17 +218,17 @@ public class WeaverController {
 			return "redirect:/";
 
 		model.addAttribute("weaver", weaver);
-		model.addAttribute("projects", projectService.getProjects(currentWeaver,weaver,null,sort, pageNum, size));
-		model.addAttribute("projectCount", projectService.countProjects(weaver, null, sort));
+		model.addAttribute("repositorys", repositoryService.getRepositories(currentWeaver,weaver,null,sort, pageNum, size));
+		model.addAttribute("repositoryCount", repositoryService.countRepositories(weaver, null, sort));
 		model.addAttribute("pageIndex", pageNum);
 		model.addAttribute("number", size);
-		model.addAttribute("pageUrl", "/"+id+"/project/sort:" + sort + "/page:");
-		return "/weaver/mypage/project";
+		model.addAttribute("pageUrl", "/"+id+"/repository/sort:" + sort + "/page:");
+		return "/weaver/mypage/repository";
 	}
 
 	@RequestMapping({"/{id}/tags:{tagNames}",
 		"/{id}/code/tags:{tagNames}",
-		"/{id}/project/tags:{tagNames}"
+		"/{id}/repository/tags:{tagNames}"
 		,"/{id}/lecture/tags:{tagNames}"})
 	public String tags(HttpServletRequest request) {
 		return "redirect:" + request.getRequestURI() + "/sort:age-desc/page:1";
@@ -300,8 +300,8 @@ public class WeaverController {
 		return "/weaver/mypage/code";
 	}
 
-	@RequestMapping("/{id}/project/tags:{tagNames}/sort:{sort}/page:{page}")
-	public String projectTagsWithPage(@PathVariable("tagNames") String tagNames,
+	@RequestMapping("/{id}/repository/tags:{tagNames}/sort:{sort}/page:{page}")
+	public String repositoryTagsWithPage(@PathVariable("tagNames") String tagNames,
 			@PathVariable("id") String id, @PathVariable("page") String page,
 			@PathVariable("sort") String sort, Model model) {
 		List<String> tags = tagService.stringToTagList(tagNames);
@@ -321,16 +321,16 @@ public class WeaverController {
 			return "redirect:/";
 
 		model.addAttribute("weaver", weaver);
-		model.addAttribute("projects", projectService
-				.getProjects(currentWeaver, weaver, tags, sort, pageNum, size));
-		model.addAttribute("projectCount", projectService
-				.countProjects(weaver, tags, sort));
+		model.addAttribute("repositorys", repositoryService
+				.getRepositories(currentWeaver, weaver, tags, sort, pageNum, size));
+		model.addAttribute("repositoryCount", repositoryService
+				.countRepositories(weaver, tags, sort));
 		model.addAttribute("tagNames", tagNames);
 		model.addAttribute("pageIndex", page);
 		model.addAttribute("number", size);
 		model.addAttribute("pageUrl", "/"+id+"/code/tags:" + tagNames+ "/sort:" + sort + "/page:");
 
-		return "/weaver/mypage/project";
+		return "/weaver/mypage/repository";
 	}
 
 	@RequestMapping({"/{id}/tags:{tagNames}/search:{search}",

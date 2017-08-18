@@ -18,13 +18,13 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.forweaver.domain.Data;
 import com.forweaver.domain.Post;
-import com.forweaver.domain.Project;
+import com.forweaver.domain.Repository;
 import com.forweaver.domain.RePost;
 import com.forweaver.domain.Reply;
 import com.forweaver.domain.Weaver;
 import com.forweaver.service.DataService;
 import com.forweaver.service.PostService;
-import com.forweaver.service.ProjectService;
+import com.forweaver.service.RepositoryService;
 import com.forweaver.service.RePostService;
 import com.forweaver.service.TagService;
 import com.forweaver.service.WeaverService;
@@ -37,7 +37,7 @@ public class PostController {
 	@Autowired 
 	private PostService postService;
 	@Autowired 
-	private ProjectService projectService;
+	private RepositoryService repositoryService;
 	@Autowired 
 	private RePostService rePostService;
 	@Autowired 
@@ -215,11 +215,11 @@ public class PostController {
 				
 		if(!post.getWriter().equals(weaver) && !tagService.validateTag(post.getTags(), weaver)){
 			if(post.getKind() == 2){
-				String projectName = tagService.getPrivateTag(post.getTags());
-				projectName = projectName.substring(1);
-				Project project = projectService.get(projectName);
+				String repositoryName = tagService.getPrivateTag(post.getTags());
+				repositoryName = repositoryName.substring(1);
+				Repository repository = repositoryService.get(repositoryName);
 				
-				if(project == null || !project.isPublic())
+				if(repository == null || !repository.isPublic())
 					return "redirect:/community/";
 			}else
 				return "redirect:/community/";

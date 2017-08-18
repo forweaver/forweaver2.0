@@ -106,7 +106,7 @@ public class WeaverDao {
 		mongoTemplate.remove(weaver);
 	}
 
-	/** 프로젝트에 가입한 회원들 가져오기
+	/** 저장소에 가입한 회원들 가져오기
 	 * @param passName
 	 * @return 회원 목록
 	 */
@@ -180,18 +180,18 @@ public class WeaverDao {
 		return mongoTemplate.aggregate(agg, "rePost", DBObject.class).getUniqueMappedResult();
 	}
 	
-	/** 회원의 프로젝트 정보를 aggregation을 활용하여 가져옴
+	/** 회원의 저장소 정보를 aggregation을 활용하여 가져옴
 	 * @param weaver
-	 * @return 회원의 프로젝트 활동 내역
+	 * @return 회원의 저장소 활동 내역
 	 */
-	public DBObject getWeaverInfosInProject(Weaver weaver){
+	public DBObject getWeaverInfosInRepository(Weaver weaver){
 		Criteria criteria = 	Criteria.where("creator.$id").is(weaver.getId());
 		AggregationOperation match = Aggregation.match(criteria);
 		
-		AggregationOperation group = Aggregation. group("creator").push("childProjects").as("childProjects").sum("push").as("projectPush");
+		AggregationOperation group = Aggregation. group("creator").push("childRepositories").as("childRepositories").sum("push").as("repositoryPush");
 		Aggregation agg = newAggregation(match, group);
 
-		return mongoTemplate.aggregate(agg, "project", DBObject.class).getUniqueMappedResult();
+		return mongoTemplate.aggregate(agg, "repository", DBObject.class).getUniqueMappedResult();
 	}
 	
 	/** 회원의 강의 정보를 aggregation을 활용하여 가져옴

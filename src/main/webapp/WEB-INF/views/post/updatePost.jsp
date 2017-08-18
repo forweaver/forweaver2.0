@@ -92,7 +92,7 @@
 		<alert></alert>
 			<h5>
 				<big><big><i class=" fa fa-comments"></i> 소통해보세요!</big></big> 
-				<small>프로젝트 진행사항이나 궁금한 점들을 올려보세요!</small>
+				<small>저장소 진행사항이나 궁금한 점들을 올려보세요!</small>
 			</h5>
 		</div>
 		<div class="row">

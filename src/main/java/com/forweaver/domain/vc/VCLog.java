@@ -7,11 +7,11 @@ import java.util.Date;
 /** 버전 관리의 커밋 로그 정보를 담기 위한 클래스
  *
  */
-public class VCCommitLog implements Serializable {
+public class VCLog implements Serializable {
 
 	static final long serialVersionUID = 23434L;
 	
-	private String commitLogID;
+	private String logID;
 	private String shortMassage; // 커밋 축약 메세지
 	private String fullMassage; // 커밋 메세지 전문
 	private String commiterName;
@@ -20,10 +20,10 @@ public class VCCommitLog implements Serializable {
 	private String note; // git note 내용
 	private Date commitDate;
 	
-	public VCCommitLog(String commitLogID, String shortMassage,String fullMassage,
+	public VCLog(String logID, String shortMassage,String fullMassage,
 			String commiterName, String commiterEmail,String diff,String note,
 			int commitDate) {
-		this.commitLogID = commitLogID;
+		this.logID = logID;
 		this.shortMassage = shortMassage;
 		this.fullMassage = fullMassage;
 		this.commiterName = commiterName;
@@ -35,11 +35,11 @@ public class VCCommitLog implements Serializable {
 	}
 	
 	
-	public String getCommitLogID() {
-		return commitLogID;
+	public String getLogID() {
+		return logID;
 	}
-	public void setCommitLogID(String commitLogID) {
-		this.commitLogID = commitLogID;
+	public void setLogID(String logID) {
+		this.logID = logID;
 	}
 	public String getShortMassage() {
 		return shortMassage;

@@ -143,7 +143,7 @@ public class WeaverService implements UserDetailsService {
 	}
 
 
-	// 프로젝트 삭제시 로그인 된 위버의 pass 삭제
+	// 저장소 삭제시 로그인 된 위버의 pass 삭제
 	public void deletePass(String passName) {
 		for (Weaver weaver : weaverDao.searchPassName(passName)) {
 			weaver.deletePass(passName);
@@ -262,10 +262,10 @@ public class WeaverService implements UserDetailsService {
 			basicDB.put("myRePostCount", tempDB.get("myRePostCount"));
 			basicDB.put("rePostPush", tempDB.get("rePostPush"));
 		}
-		tempDB = weaverDao.getWeaverInfosInProject(weaver);
+		tempDB = weaverDao.getWeaverInfosInRepository(weaver);
 		if(tempDB != null){
-			basicDB.put("projectPush", tempDB.get("projectPush"));
-			basicDB.put("childProjects", tempDB.get("childProjects"));
+			basicDB.put("repositoryPush", tempDB.get("repositoryPush"));
+			basicDB.put("childRepositories", tempDB.get("childRepositories"));
 		}
 		tempDB = weaverDao.getWeaverInfosInLecture(weaver);
 		if(tempDB != null){

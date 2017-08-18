@@ -2,7 +2,7 @@
 
 <sec:authentication property="principal" var="currentUser"/>
 <h1>
-	<a href="/">ForWeaver</a> <small>학생들을 위한 소셜 코딩!</small>
+	<a href="/">ForWeaver</a> <small>모두를 위한 소셜 코딩!</small>
 </h1>
 
 <div id="forweaver-nav"class="navbar navbar-inverse">
@@ -11,7 +11,7 @@
 			<div class="nav-collapse collapse">
 				<ul class="nav">
 					<li><a href="/weaver/"><i class="fa fa-twitter"></i>&nbsp;위버</a></li>
-					<li><a href="/project/"><i class="fa fa-bookmark"></i>&nbsp;프로젝트</a></li>
+					<li><a href="/repository/"><i class="fa fa-bookmark"></i>&nbsp;저장소</a></li>
 					<li><a href="/code/"><i class="fa fa-rocket"></i>&nbsp;코드</a></li>
 					<li><a href="/community/"><i class="fa fa-comments"></i>&nbsp;커뮤니티</a></li>
 				</ul>
@@ -26,7 +26,6 @@
 							data-toggle="dropdown"> 
 							<img style="height:28px;width:28px;" src='<c:out value="${currentUser.getImgSrc()}" escapeXml="false"></c:out>' />&nbsp;&nbsp;${currentUser.username}
 								<b class="caret"></b></a>
-							<input placeholder="여기에 태그를 입력하고 꼭 엔터!"/>	
 							<ul class="dropdown-menu">
 							
 								<li><a href="/"><i class="icon-white icon-home"></i>&nbsp;&nbsp;마이페이지</a></li>

@@ -8,21 +8,21 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
-import com.forweaver.domain.ProjectInvite;
+import com.forweaver.domain.Invite;
 
-/** 프로젝트 및 강의의 초대 관리 DAO
+/** 저장소 및 강의의 초대 관리 DAO
  *
  */
 @Repository
-public class ProjectInviteDao {
+public class InviteDao {
 
 	@Autowired private MongoTemplate mongoTemplate;
 	
 	/** 초대 추가하기
-	 * @param waitJoin
+	 * @param invate
 	 */
-	public void add(ProjectInvite waitJoin) {
-		mongoTemplate.insert(waitJoin);
+	public void add(Invite invate) {
+		mongoTemplate.insert(invate);
 	}
 
 	/** 초대 가져오기
@@ -30,27 +30,27 @@ public class ProjectInviteDao {
 	 * @param waitingWeaver
 	 * @return
 	 */
-	public ProjectInvite get(String joinTeam,String waitingWeaver) { 
+	public Invite get(String joinTeam,String waitingWeaver) { 
 		Query query = new Query(Criteria.where("joinTeam").is(joinTeam).and("waitingWeaver").is(waitingWeaver));
-		return mongoTemplate.findOne(query, ProjectInvite.class);
+		return mongoTemplate.findOne(query, Invite.class);
 	}
 	
 	/** 초대 삭제하기
-	 * @param waitJoin
+	 * @param invate
 	 */
-	public void delete(ProjectInvite waitJoin) {
-		Query query = new Query(Criteria.where("joinTeam").is(waitJoin.getJoinTeam()).and("waitingWeaver").is(waitJoin.getWaitingWeaver()));
-		mongoTemplate.remove(query, ProjectInvite.class);
+	public void delete(Invite invate) {
+		Query query = new Query(Criteria.where("joinTeam").is(invate.getJoinTeam()).and("waitingWeaver").is(invate.getWaitingWeaver()));
+		mongoTemplate.remove(query, Invite.class);
 	}
 	
 	/** 팀 이름으로 삭제.
 	 * @param joinTeam
 	 * @return
 	 */
-	public List<ProjectInvite> delete(String joinTeam) {
+	public List<Invite> delete(String joinTeam) {
 		Query query = new Query(Criteria.where("joinTeam").is(joinTeam));
-		List<ProjectInvite> waitJoins = mongoTemplate.find(query, ProjectInvite.class);
-		mongoTemplate.remove(query, ProjectInvite.class);
-		return waitJoins;
+		List<Invite> invates = mongoTemplate.find(query, Invite.class);
+		mongoTemplate.remove(query, Invite.class);
+		return invates;
 	}
 }

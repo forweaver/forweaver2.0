@@ -9,42 +9,42 @@ import org.eclipse.jgit.revwalk.RevCommit;
 /** 커밋 브라우져에서 볼 수 있도록 리스트에 담길 커밋 로그 클래스
  *
  */
-public class VCSimpleCommitLog implements Serializable {
+public class VCSimpleLog implements Serializable {
 
 	static final long serialVersionUID = 23434L;
 	
-	private String commitLogID;
+	private String logID;
 	private String shortMassage;
 	private String commiterName;
 	private String commiterEmail;
 	private Date commitDate;
 	private int commitDateInt;
 	
-	public VCSimpleCommitLog(String commitLogID, String shortMassage,
+	public VCSimpleLog(String logID, String shortMassage,
 			String commiterName, String commiterEmail,
 			int commitDate) {
-		this.commitLogID = commitLogID;
+		this.logID = logID;
 		this.shortMassage = shortMassage;
 		this.commiterName = commiterName;
 		this.commiterEmail = commiterEmail;
 		this.commitDate = new Date(commitDate*1000L);
 	}
 	
-	public VCSimpleCommitLog(RevCommit revCommit){
+	public VCSimpleLog(RevCommit revCommit){
 		if(revCommit == null)
 			return;
-		this.commitLogID = revCommit.getName();
+		this.logID = revCommit.getName();
 		this.shortMassage = revCommit.getShortMessage();
 		this.commiterName = revCommit.getAuthorIdent().getName();
 		this.commiterEmail =  revCommit.getAuthorIdent().getEmailAddress();
 		this.commitDate = new Date(revCommit.getCommitTime()*1000L);
 	}
 	
-	public String getCommitLogID() {
-		return commitLogID;
+	public String getLogID() {
+		return logID;
 	}
-	public void setCommitLogID(String commitLogID) {
-		this.commitLogID = commitLogID;
+	public void setLogID(String logID) {
+		this.logID = logID;
 	}
 	public String getShortMassage() {
 		return shortMassage;

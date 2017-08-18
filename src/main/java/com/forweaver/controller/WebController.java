@@ -5,12 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import com.forweaver.domain.Weaver;
 import com.forweaver.service.WeaverService;
-import com.forweaver.util.MailUtil;
 
 
 @Controller
@@ -37,6 +34,6 @@ public class WebController {
 		Weaver weaver = weaverService.getCurrentWeaver();
 		if(weaver == null)
 			return "redirect:/login?state=null";
-		return "redirect:/"+weaver.getId()+"/project";
+		return "redirect:/"+weaver.getId()+"/repository";
 	}
 }

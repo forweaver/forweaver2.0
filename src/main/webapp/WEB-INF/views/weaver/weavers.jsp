@@ -85,7 +85,7 @@
 										<p title="코드 업로드 갯수/다운로드 갯수" class="p-button-mini">${weaver.getInfo('codeCount')}/${weaver.getInfo('downCount')}</p> </span></td>	
 								<td rowspan="2" class="td-button"><span class="span-button"><i
 										class="fa fa-bookmark"></i>
-										<p title="프로젝트 갯수/포크 프로젝트 갯수" class="p-button-mini">${weaver.countProject()}/${weaver.getInfo('childProjects','_id')}</p> </span></td>	
+										<p title="저장소 갯수/포크 저장소 갯수" class="p-button-mini">${weaver.countRepository()}/${weaver.getInfo('childRepositories','_id')}</p> </span></td>	
 							</tr>
 							<tr>
 							<td class="post-bottom-tag"><c:forEach items="${weaver.tags}"

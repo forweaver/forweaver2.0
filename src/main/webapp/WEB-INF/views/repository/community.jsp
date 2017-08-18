@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/includes/taglibs.jsp"%>
 <!DOCTYPE html>
 <html><head>
-<title>${project.name} ~ ${project.description}</title>
+<title>${repository.name} ~ ${repository.description}</title>
 <%@ include file="/WEB-INF/includes/src.jsp"%>
 <link rel="stylesheet" type="text/css" href="/resources/forweaver/css/bootstrap-markdown.min.css"/>
 <script src="/resources/forweaver/js/markdown/markdown.js"></script>
@@ -189,12 +189,8 @@ function checkPost(){
 
 		<div class="page-header page-header-none">
 			<h5>
-								<big><big>	<c:if test="${!project.isForkProject()}">
-							<i class="fa fa-bookmark"></i></c:if>
-							<c:if test="${project.isForkProject()}">
-							<i class="fa fa-code-fork"></i></c:if> 
-							${project.name}</big></big>
-				<small>${project.description}</small>
+								<big><big><i class="fa fa-bookmark"></i> ${repository.name}</big></big>
+<small>${repository.description}</small>
 				<div style="margin-top:-10px" class="pull-right">
 
 				<button class="btn btn-warning">
@@ -208,28 +204,28 @@ function checkPost(){
 		
 		<div class="span7">
 				<ul id="myTab" class="nav nav-tabs">
-					<li><a href="/project/${project.name}/">브라우져</a></li>
-					<li><a href="/project/${project.name}/commitlog">커밋</a></li>
-					<li class="active"><a href="/project/${project.name}/community">커뮤니티</a></li>
+					<li><a href="/repository/${repository.name}/">브라우져</a></li>
+					<li><a href="/repository/${repository.name}/log">로그</a></li>
+					<li class="active"><a href="/repository/${repository.name}/community">커뮤니티</a></li>
 					
-					<li><a href="/project/${project.name}/weaver">사용자</a></li>
+					<li><a href="/repository/${repository.name}/weaver">사용자</a></li>
 					<sec:authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN">
-					<c:if test="${project.getCreator().equals(currentUser) }">
-					<li><a href="/project/${project.name}/edit">관리</a></li>
+					<c:if test="${repository.getCreator().equals(currentUser) }">
+					<li><a href="/repository/${repository.name}/edit">관리</a></li>
 					</c:if>
 					</sec:authorize>
-					<li><a href="/project/${project.name}/info">정보</a></li>
+					<li><a href="/repository/${repository.name}/info">정보</a></li>
 					
 					
 				</ul>
 				
 				<ul style="display:none;" class="nav nav-tabs" id="communityTab">
-					<li id = "age-desc"><a href="/project/${project.name}/community<c:if test="${tagNames != null }">/tags:${tagNames}</c:if>/<c:if test="${search != null }">/search:${search}</c:if>/sort:age-desc/page:1">최신순</a></li>
-					<li id = "push-desc"><a href="/project/${project.name}/community<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:push-desc/page:1">추천순</a></li>
-					<li id = "repost-desc"><a href="/project/${project.name}/community<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:repost-desc/page:1">최신 답변순</a></li>
-					<li id = "repost-many"><a href="/project/${project.name}/community<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:repost-many/page:1">많은 답변순</a></li>
-					<li id = "age-asc"><a href="/project/${project.name}/community<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:age-asc/page:1">오래된순</a></li>
-					<li id = "repost-null"><a href="/project/${project.name}/community<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:repost-null/page:1">답변 없는 글</a></li>
+					<li id = "age-desc"><a href="/repository/${repository.name}/community<c:if test="${tagNames != null }">/tags:${tagNames}</c:if>/<c:if test="${search != null }">/search:${search}</c:if>/sort:age-desc/page:1">최신순</a></li>
+					<li id = "push-desc"><a href="/repository/${repository.name}/community<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:push-desc/page:1">추천순</a></li>
+					<li id = "repost-desc"><a href="/repository/${repository.name}/community<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:repost-desc/page:1">최신 답변순</a></li>
+					<li id = "repost-many"><a href="/repository/${repository.name}/community<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:repost-many/page:1">많은 답변순</a></li>
+					<li id = "age-asc"><a href="/repository/${repository.name}/community<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:age-asc/page:1">오래된순</a></li>
+					<li id = "repost-null"><a href="/repository/${repository.name}/community<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:repost-null/page:1">답변 없는 글</a></li>
 				</ul>
 				
 			</div>
@@ -241,7 +237,7 @@ function checkPost(){
 			<div class="span4">
 				<div class="input-block-level input-prepend" title="http 주소로 저장소를 복제할 수 있습니다!&#13;복사하려면 ctrl+c 키를 누르세요.">
 					<span class="add-on"><i class="fa fa-git"></i></span> <input
-						value="http://${pageContext.request.serverName}/g/${project.name}.git" type="text"
+						value="http://${pageContext.request.serverName}/g/${repository.name}.git" type="text"
 						class="input-block-level">
 				</div>
 			</div>
@@ -252,7 +248,7 @@ function checkPost(){
 				</div>
 			
 			<form id="postForm" onkeypress="return event.keyCode != 13;" onsubmit="return checkPost()"
-				action="/project/${project.name}/community/add" enctype="multipart/form-data" METHOD="POST">
+				action="/repository/${repository.name}/community/add" enctype="multipart/form-data" METHOD="POST">
 				
 				<div class="span2">
 					<span> 
