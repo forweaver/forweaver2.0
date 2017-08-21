@@ -123,20 +123,20 @@
 											&nbsp;${fn:substring(cov:htmlEscape(repository.description),0,100-fn:length(repository.name))}
 									</a></td>
 									<td class="td-button" rowspan="2">
-								 <c:if test="${repository.category == 0}">
+								 <c:if test="${repository.authLevel == 0}">
 										<span
-											class="span-button"><i class="fa fa-share-alt"></i><p class="p-button">공개</p>
+											class="span-button"><i class="fa fa-share-alt"></i><p class="p-button">일반</p>
 										</span>
 									</c:if>
-								<c:if test="${repository.category == 1}">
+								<c:if test="${repository.authLevel == 1}">
 										<span
 											class="span-button"><i class="fa fa-lock"></i>
 												<p class="p-button">비공개</p> </span>
 									</c:if>
-								<c:if test="${repository.category == 3}">
+								<c:if test="${repository.authLevel == 2}">
 										<span
-											class="span-button"><i class="fa fa-university"></i>
-												<p class="p-button">과제</p> </span>
+											class="span-button"><i class="fa fa-lock"></i>
+												<p class="p-button">비공개</p> </span>
 									</c:if>		
 									</td>
 									<td class="td-button" rowspan="2"><sec:authorize

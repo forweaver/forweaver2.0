@@ -51,8 +51,13 @@ public class GitFilter implements Filter {
 			((HttpServletResponse) res).sendError(500);
 			return;
 		}
-
-		if(repository.getCategory()<=0){ // 저장소가 공개 저장소일때
+		
+		if(repository.getAuthLevel() == 0) { // 저장소가 공개일 경우
+			filterchain.doFilter(req, res);
+			return;
+		}
+		
+		if(repository.getAuthLevel() == 1){ // 저장소가 일반 저장소일때
 			if(pass == null && requestUrl.endsWith("/git-receive-pack")){ //권한 없는 사람이 올릴려고 할 때
 				((HttpServletResponse) res).sendError(403);
 				return;
@@ -61,7 +66,7 @@ public class GitFilter implements Filter {
 			return;
 		}
 
-		if(repository.getCategory()>0 && pass != null){ // 저장소가 비공개이고 권한이 있을 때
+		if(repository.getAuthLevel()==2 && pass != null){ // 저장소가 비공개이고 권한이 있을 때
 			filterchain.doFilter(req, res);
 			return;
 		}

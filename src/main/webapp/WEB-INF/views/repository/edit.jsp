@@ -24,13 +24,12 @@
 	}
 	
 	function changeValue(value){
-		$('#category').val(value);
+		$('#authLevel').val(value);
 	}
 	
 	
 	$(function() {
-		changeValue(${repository.category});
-		
+		changeValue(${repository.authLevel});		
 		move = false;
 		<c:forEach items='${repository.tags}' var='tag'>
 		$('#tags-input').tagsinput('add',"${tag}");
@@ -80,16 +79,16 @@
 						placeholder="저장소명을 입력해주세요!" type="text" readonly="readonly"/> 
 					
 					
-					<label  onclick="changeValue(0);"  class="radio radio-period"> 공개 
-					<input type="radio" name="group"data-toggle="radio" <c:if test = "${repository.category == 0}">checked="checked"</c:if>>
+					<label  onclick="changeValue(0);"  class="radio radio-period"> 일반 
+					<input type="radio" name="group"data-toggle="radio" <c:if test = "${repository.authLevel == 1}">checked="checked"</c:if>>
 					</label> 
 					
 					<label onclick="changeValue(1);" class="radio radio-period"> 
-					<input type="radio" name="group" data-toggle="radio" <c:if test = "${repository.category == 1 }">checked="checked"</c:if>> 비공개
+					<input type="radio" name="group" data-toggle="radio" <c:if test = "${repository.authLevel == 2 }">checked="checked"</c:if>> 비공개
 					</label> 
 					
 					<label onclick="changeValue(3);" class="radio radio-period"> 
-					<input type="radio" name="group"  data-toggle="radio" <c:if test = "${repository.category == 3}">checked="checked"</c:if>> 과제
+					<input type="radio" name="group"  data-toggle="radio" <c:if test = "${repository.authLevel == 0}">checked="checked"</c:if>> 공개
 					</label> 
 						<input value="${repository.description}" name ="description"class="title span12" type="text" id="repository-description"
 						placeholder="저장소에 대해 설명해주세요!"></input>
@@ -106,7 +105,7 @@
 
 					</span>
 				</div>
-				<input value="0" id ="category" name="category" type="hidden"/> 	
+				<input value="0" id ="authLevel" name="authLevel" type="hidden"/> 	
 			</form>
 			
 			<div class="span12">

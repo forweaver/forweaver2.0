@@ -220,7 +220,7 @@ public class PostService {
 		if(sort.equals("my")) // 자기가 쓴 글과 볼수 있는 글 바탕으로 검색.
 			return postDao.countMyPosts(tags,null, weaver, null, sort);
 
-		if(this.isPublicTags(tags)) // 태그가 공개 태그일 경우.
+		if(this.isPublicTags(tags)) // 태그가 일반 태그일 경우.
 			return postDao.countPostsWhenLogin(tags,weaver.getPrivateAndMassageTags(),null,null, sort);
 
 		if(this.isPrivateTags(tags)) // 태그가 저장소 태그일 경우.
@@ -248,7 +248,7 @@ public class PostService {
 		if(sort.equals("my")) // 자기가 쓴 글과 볼수 있는 글 바탕으로 검색.
 			return postDao.getMyPosts(tags,null, weaver, null, sort, page, size);
 
-		if(this.isPublicTags(tags)) // 태그가 공개 태그일 경우.
+		if(this.isPublicTags(tags)) // 태그가 일반 태그일 경우.
 			return postDao.getPostsWhenLogin(tags,weaver.getPrivateAndMassageTags(),null,null, sort, page, size);
 
 		if(this.isPrivateTags(tags)) // 태그가 저장소 태그일 경우.
@@ -274,7 +274,7 @@ public class PostService {
 			return postDao.countPostsWhenNotLogin(tags, search, null, sort);
 		if(sort.equals("my")) // 자기가 쓴 글과 볼수 있는 글 바탕으로 검색.
 			return postDao.countMyPosts(tags,null, weaver, search, sort);
-		if(this.isPublicTags(tags)) // 태그가 공개 태그일 경우.
+		if(this.isPublicTags(tags)) // 태그가 일반 태그일 경우.
 			return postDao.countPostsWhenLogin(tags,weaver.getPrivateAndMassageTags(),null,search, sort);
 		if(this.isPrivateTags(tags)) // 태그가 저장소 태그일 경우.
 			return postDao.countPostsAsPrivateTags(tags, search, null, sort);
@@ -299,7 +299,7 @@ public class PostService {
 			return postDao.getPostsWhenNotLogin(tags, search, null, sort, page, size);
 		if(sort.equals("my")) // 자기가 쓴 글과 볼수 있는 글 바탕으로 검색.
 			return postDao.getMyPosts(tags,null, weaver, search, sort, page, size);
-		if(this.isPublicTags(tags)) // 태그가 공개 태그일 경우.
+		if(this.isPublicTags(tags)) // 태그가 일반 태그일 경우.
 			return postDao.getPostsWhenLogin(tags,weaver.getPrivateAndMassageTags(),null,search, sort, page, size);
 		if(this.isPrivateTags(tags)) // 태그가 저장소 태그일 경우.
 			return postDao.getPostsAsPrivateTags(tags, search, null, sort, page, size);
@@ -480,7 +480,7 @@ public class PostService {
 		return false;
 	}
 
-	/** 일반 공개 태그인지 확인함.
+	/** 일반 일반 태그인지 확인함.
 	 * @param tags
 	 * @return
 	 */

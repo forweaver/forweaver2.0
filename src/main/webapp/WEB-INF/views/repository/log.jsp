@@ -81,7 +81,7 @@
 
 			<div class="span12 row">
 				<div class="span9">
-					<h4 style="margin: 10px 0px 0px 0px"><i class="fa fa-info-circle"></i>  커밋 목록</h4>
+					<h4 style="margin: 10px 0px 0px 0px"><i class="fa fa-info-circle"></i>  로그 목록</h4>
 				</div>
 				<select id="selectBranch" class="span3">
 					<option value="/repository/${repository.name}/log/log:${selectBranch}">${ selectBranch}</option>

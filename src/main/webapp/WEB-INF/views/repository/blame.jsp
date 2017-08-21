@@ -17,6 +17,7 @@
 	         		'3333',
 	         		'4444'
 	         		]);//쓰레기 값
+	         		
 	<c:forEach items="${gitBlameList}" var="gitBlame">
 	blameArray.push([
 	    '${gitBlame.getUserName()}',
@@ -26,8 +27,6 @@
 		]);
 	</c:forEach>
 	$(function() {
-	
-	
 	
 	move = false;
 			<c:forEach items='${repository.tags}' var='tag'>

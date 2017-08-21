@@ -209,7 +209,7 @@ public class PostDao {
 		Criteria criteria = new Criteria();
 
 		criteria.and("kind").is(2).and("tags")
-		.all(privateAndMassageTags); // 일반 공개글을 불러옴;
+		.all(privateAndMassageTags); // 일반 일반글을 불러옴;
 
 		if (writer != null)
 			criteria.and("writer").is(writer);
@@ -428,7 +428,7 @@ public class PostDao {
 			int page, int size) {
 		Criteria criteria = new Criteria();
 		criteria.orOperator(
-				Criteria.where("kind").is(1).and("writer").is(writer), //다른 사용자의 공개글.
+				Criteria.where("kind").is(1).and("writer").is(writer), //다른 사용자의 일반글.
 				Criteria.where("tags").in(loginWeaverprivateAndMassageTags) //로그인한 회원의 태그를 기반으로 다른 사용자의 글을 검색.
 				.and("writer").is(writer));
 

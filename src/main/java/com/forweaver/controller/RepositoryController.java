@@ -153,10 +153,14 @@ public class RepositoryController {
 	public String add(@RequestParam Map<String, String> params,Model model) {
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 		List<String> tagList = tagService.stringToTagList(params.get("tags"));
-		int categoryInt = 0;
-		if(params.get("category") != null)
-			categoryInt = Integer.parseInt(params.get("category"));
+		int authLevel = 0;
+		if(params.get("authLevel") != null)
+			authLevel = Integer.parseInt(params.get("authLevel"));
 
+		int type = 1;
+		if(params.get("type") != null)
+			type = Integer.parseInt(params.get("type"));
+		
 		if(!Pattern.matches("^[a-z]{1}[a-z0-9_]{4,14}$", params.get("name")) || 
 				params.get("name").length() <5 || 
 				params.get("description").length() <5 || 
@@ -167,14 +171,16 @@ public class RepositoryController {
 			return "/alert";
 		}
 
+		System.out.println(type);
 		Repository repository = new Repository(params.get("name"), 
-				categoryInt, 
+				authLevel,
+				type,
 				params.get("description"), 
 				currentWeaver,
 				tagList);
 
-		repositoryService.add(repository,currentWeaver);
-		return "redirect:/repository/"+repository.getName();
+		//repositoryService.add(repository,currentWeaver);
+		return "redirect:/repository/";//+repository.getName();
 	}
 
 
@@ -558,10 +564,10 @@ public class RepositoryController {
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 		Repository repository = repositoryService.get(creatorName+"/"+repositoryName);
 		List<String> tagList = tagService.stringToTagList(params.get("tags"));
-		int categoryInt = 0;
+		int authLevel = 0;
 
-		if(params.get("category") != null)
-			categoryInt = Integer.parseInt(params.get("category"));
+		if(params.get("authLevel") != null)
+			authLevel = Integer.parseInt(params.get("authLevel"));
 
 		if(!repository.getCreator().equals(currentWeaver) || params.get("description") == null || !tagService.isPublicTags(tagList)){
 			model.addAttribute("say", "잘못 입력하셨습니다!!!");
@@ -570,7 +576,7 @@ public class RepositoryController {
 		}
 
 		repository.setDescription(params.get("description"));
-		repository.setCategory(categoryInt);
+		repository.setAuthLevel(authLevel);
 
 		repository.setTags(tagList);
 

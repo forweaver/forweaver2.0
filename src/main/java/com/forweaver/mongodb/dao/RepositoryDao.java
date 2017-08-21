@@ -49,7 +49,7 @@ public class RepositoryDao {
 	public void update(com.forweaver.domain.Repository repository) {
 		Query query = new Query(Criteria.where("_id").is(repository.getName()));
 		Update update = new Update();
-		update.set("category", repository.getCategory());
+		update.set("authLevel", repository.getAuthLevel());
 		update.set("description", repository.getDescription());
 		update.set("tags", repository.getTags());
 		update.set("push", repository.getPush());
@@ -169,11 +169,11 @@ public class RepositoryDao {
 	 */
 	public void filter(Criteria criteria,String sort){
 		if (sort.equals("public")) {
-			criteria.and("category").is(0);
+			criteria.and("authLevel").is(0);
 		}else if (sort.equals("homework")) {
-			criteria.and("category").is(3);
+			criteria.and("authLevel").is(3);
 		}else if (sort.equals("private")) {
-			criteria.and("category").is(1);
+			criteria.and("authLevel").is(1);
 		}
 	}
 	

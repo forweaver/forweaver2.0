@@ -36,10 +36,19 @@
 	
 	
 	function changeValue(value){
-		$('#category').val(value);
+		$('#authLevel').val(value);
 	}
 		$(document).ready(function() {
 			
+			$("select").selectpicker({
+				style : 'btn-primary',
+				menuStyle : 'dropdown-inverse'
+			});
+			
+			
+			$("#selectType").change(function(){
+				$('#type').val($("#selectType option:selected").val());				
+			});
 
 			$( "#"+getSort(document.location.href) ).addClass( "active" );
 			
@@ -94,30 +103,37 @@
 					<sec:authorize access="isAuthenticated()">			
 			<form onsubmit="return checkRepository()" action="/repository/add" method="post">
 
-				<div id="repository-div" class="span11">
+				<div id="repository-div" class="span12">
+				<div style="margin-left:0px" class="span8">
 					<input maxlength="15" id ="repository-name" class="title span4"
 						placeholder="저장소명 (영문-소문자 숫자 언더바 조합 최소 5자)" name="name" type="text" /> 
 					
+					<label  onclick="changeValue(0);"  class="radio radio-period">일반 <input type="radio" name="group"data-toggle="radio" checked="checked"></label> 
+					<label onclick="changeValue(1);" class="radio radio-period"> <input type="radio" name="group" data-toggle="radio"> 비공개</label> 
+					<label onclick="changeValue(3);" class="radio radio-period"> <input type="radio"name="group"  data-toggle="radio"> 공개</label> 
+					</div>
 					
-					<label  onclick="changeValue(0);"  class="radio radio-period"> 공개 <input type="radio"
-						name="group"data-toggle="radio" checked="checked">
-					</label> <label onclick="changeValue(1);" class="radio radio-period"> <input type="radio"
-						name="group" data-toggle="radio"> 비공개
-					</label> <label onclick="changeValue(3);" class="radio radio-period"> <input type="radio"
-						name="group"  data-toggle="radio"> 과제
-					</label> 
-						<input maxlength="50" name ="description"class="title span12" type="text" id="repository-description"
-						placeholder="저장소에 대해 설명해주세요! (최대 50자까지)"></input>
-				</div>
-
-				<div class="span1">
-					<span> 
-						<button id='repository-ok' title='저장소 올리기' class="post-button btn btn-primary">
+					
+					
+					<div class="span3 pull-right">
+					<select id="selectType" class="span2">
+							<option value="1">git</option>
+							<option value="2">svn</option>
+							<option value="3">ftp</option>
+					</select>
+						<button style="margin-left:10px;"id='repository-ok' title='저장소 올리기' class="post-button btn btn-primary">
 							<i class="fa fa-check"></i>
 						</button>
-					</span>
 				</div>
-				<input value="0" id ="category" name="category" type="hidden"/> 	
+						
+					  <input maxlength="50" name ="description"class="title span12" type="text" id="repository-description"
+						placeholder="저장소에 대해 설명해주세요! (최대 50자까지)"></input>
+				</div>
+				
+
+				
+				<input value="0" id ="authLevel" name="authLevel" type="hidden"/> 	
+				<input value="1" id ="type" name="type" type="hidden"/> 	
 				<input name="tags" type="hidden" id="tag-hidden"/>
 			</form>
 			</sec:authorize>		
@@ -126,7 +142,7 @@
 					<li id="age-desc"><a
 						href="/repository<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:age-desc/page:1">최신순</a></li>
 					<li id="public"><a
-							href="/repository<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:public/page:1">공개</a></li>
+							href="/repository<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:public/page:1">일반</a></li>
 					
 					<li id="private"><a
 						href="/repository<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:private/page:1">비공개</a></li>	
@@ -147,33 +163,29 @@
 									href="/${repository.creatorName}"> <img src="${repository.getImgSrc()}"></a></td>
 								<td colspan="2" class="post-top-title"><a
 									class="a-post-title" href="/repository/${repository.name}/">
-										 <i class="fa fa-bookmark"></i>
+										 <i class="fa fa-git"></i>
 									 &nbsp;${repository.name} ~
 										&nbsp;${fn:substring(cov:htmlEscape(repository.description),0,100-fn:length(repository.name))}
 								</a></td>
 								<td class="td-button" rowspan="2">
-								 <c:if test="${repository.category == 0}">
-										<span
-											class="span-button"><i class="fa fa-share-alt"></i><p class="p-button">공개</p>
+								 <c:if test="${repository.authLevel == 0}">
+										<span class="span-button">
+											<i class="fa fa-share-alt"></i> <p class="p-button">일반</p>
 										</span>
 									</c:if>
-								<c:if test="${repository.category == 1}">
-										<span
-											class="span-button"><i class="fa fa-lock"></i>
-												<p class="p-button">비공개</p> </span>
-									</c:if>
-								<c:if test="${repository.category == -1}">
-										<a href="/repository/${repository.name}"> <span
-											class="span-button"><i class="fa fa-code-fork"></i>
-												<p class="p-button">파생</p> </span>
+								<c:if test="${repository.authLevel == 1}">
+										<span class="span-button">
+											<i class="fa fa-lock"></i> <p class="p-button">비공개</p> 
+										</span>
+								</c:if>
+								<c:if test="${repository.authLevel == 3}">
+										<a href="/repository/${repository.name}"> 
+										<span class="span-button"><i class="fa fa-share-alt-square"></i>
+											<p class="p-button">공개</p> 
+										</span>
 										</a>
 									</c:if>	
-								<c:if test="${repository.category == 3}">
-										<span
-											class="span-button"><i class="fa fa-university"></i>
-												<p class="p-button">과제</p> </span>
-									</c:if>		
-									</td>
+								</td>
 								<td class="td-button" rowspan="2"><sec:authorize
 										access="isAnonymous()">
 										<a href="/login?state=null"> <span

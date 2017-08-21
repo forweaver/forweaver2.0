@@ -55,7 +55,7 @@ public class RepositoryIntercepter extends HandlerInterceptorAdapter {
 			return false;
 		}
 		
-		if(repository.getCategory() > 0){
+		if(repository.getAuthLevel() > 0){
 			if(weaver == null){
 				response.sendError(400);
 				return false;

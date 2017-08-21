@@ -150,7 +150,7 @@ public class RepositoryService{
 	 * @return
 	 */
 	public boolean push(Repository repository, Weaver weaver,String ip) {
-		if(repository == null || repository.getCategory() > 0 || 
+		if(repository == null || repository.getAuthLevel() > 0 || 
 				(weaver == null &&  repository.isJoinWeaver(weaver)))
 			return false;
 

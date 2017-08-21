@@ -12,16 +12,15 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 /**<pre> 저장소 정보를 담은 클래스. 
- * name 저장소 이름 이게 기본 키
- * category  저장소 종류 값이 0이면 공개 저장소, 1이면 비공개 저장소, -1이면 파생 저장소, 3이면 과제 저장소
+ * name 저장소 이름 이게 기본 키.
+ * authLevel  저장소 공개 범위 값이 0이면 일반 저장소, 1이면 비공개 저장소, 3이면 공개 저장소.
+ * type  저장소 종류 값이 1이면 git, 2 svn, 3 ftp.
  * description  저장소 소개
- * openingDate 저장소 시작일
- * endDate  저장소 종료일
  * creator 저장소 개설자 정보
  * push 저장소 추천수
  * isJoin 저장소 가입 여부 0일떄 미가입 ,1일때 그냥 가입 ,2일때 관리자
  * tags 저장소 태그 모음
- * activeDate 활성화된 날짜
+ * date 활성화된 날짜
  * adminWeavers 관리자들
  * joinWeavers 가입자들
  * </pre>
@@ -32,8 +31,9 @@ public class Repository implements Serializable {
 	static final long serialVersionUID = 423123232123124234L;
 	@Id
 	private String name;
-	private int category;
+	private int authLevel;
 	private String description;
+	private int type;
 	private Date date;
 	@DBRef
 	private Weaver creator;
@@ -53,12 +53,13 @@ public class Repository implements Serializable {
 		
 	}
 	
-	public Repository(String name, int category, String description, // 기본 생성자
+	public Repository(String name, int authLevel, int type, String description, // 기본 생성자
 			Weaver weaver,List<String> tagList) {
 		super();
 		this.name = weaver.getId()+"/"+name;
 		this.name = this.name.toLowerCase();
-		this.category = category;
+		this.authLevel = authLevel;
+		this.type = type;
 		this.description = description;
 		this.creator = weaver;
 		this.adminWeavers.add(weaver);
@@ -75,12 +76,12 @@ public class Repository implements Serializable {
 		this.name = name;
 	}
 
-	public int getCategory() {
-		return category;
+	public int getAuthLevel() {
+		return authLevel;
 	}
 
-	public void setCategory(int category) {
-		this.category = category;
+	public void setAuthLevel(int authLevel) {
+		this.authLevel = authLevel;
 	}
 
 	public String getDescription() {
@@ -208,7 +209,7 @@ public class Repository implements Serializable {
 	}
 	
 	public boolean isPublic(){
-		if(this.category == 0 || this.category ==-1)
+		if(this.authLevel == 0 || this.authLevel ==-1)
 			return true;
 		return false;
 	}
@@ -234,5 +235,14 @@ public class Repository implements Serializable {
 	public String getRepoName() {
 		return this.name.substring(this.name.indexOf("/"),this.name.length());
 	}
+
+	public int getType() {
+		return type;
+	}
+
+	public void setType(int type) {
+		this.type = type;
+	}
+	
 	
 }

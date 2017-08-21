@@ -20,7 +20,7 @@ public class RePost implements Serializable {
 	private Date created;
 	private int push;
 	private Date recentReplyDate;
-	private int kind; // 1이 일반 공개글의 답변, 2가 비밀 글 답변 , 3이 메세지글 답변
+	private int kind; // 1이 일반 일반글의 답변, 2가 비밀 글 답변 , 3이 메세지글 답변
 	
 	@DBRef
 	private Post originalPost;
