@@ -6,7 +6,6 @@
 <link rel="stylesheet" type="text/css" href="/resources/forweaver/css/forweaver.css"/>
 <link rel="stylesheet" type="text/css" href="/resources/forweaver/css/fileBrowser.css"/>
 <link rel="stylesheet" type="text/css" href="/resources/forweaver/css/font-awesome.min.css"/>
-<link rel="stylesheet" type="text/css" href="/resources/forweaver/css/whhg/whhg.css"/>
 <link rel="stylesheet" type="text/css" href="/resources/forweaver/css/bootstrap-tagsinput.css"/>
 <link rel='apple-touch-icon' href="/resources/forweaver/img/apple-touch-icon.png"/>
 <link rel="SHORTCUT ICON" type="image/x-icon" href="/resources/forweaver/img/favicon.ico"/>
