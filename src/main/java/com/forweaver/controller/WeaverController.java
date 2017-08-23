@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.compress.utils.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -447,27 +448,23 @@ public class WeaverController {
 	public void img(@PathVariable("id") String id, HttpServletResponse res)
 			throws IOException {
 		Weaver weaver = weaverService.get(id);
-		if (weaver == null || weaver.isLeave()) { // 사이트에 존재하지 않은 회원의 경우
-			if(id.contains("@") && id.contains("."))
-				res.sendRedirect("http://www.gravatar.com/avatar/"
-						+ WebUtil.convertMD5(id) + ".jpg");
-			else
-				res.sendRedirect("http://www.gravatar.com/avatar/a.jpg");
+		byte[] imgData = null;
+		
+		if (weaver.getImage().getContent().length  == 0)
+			imgData = WebUtil.downloadFile("http://www.gravatar.com/avatar/" + WebUtil.convertMD5(weaver.getEmail()) + ".jpg");
+		else
+			imgData = weaver.getImage().getContent();
+		
+		if(imgData == null) {
+			res.sendRedirect("/resources/forweaver/img/null.png");
 			return;
-		}else if (weaver.getImage().getContent().length  == 0) { // 존재하는 회원의 경우
-			res.sendRedirect("http://www.gravatar.com/avatar/"
-					+ WebUtil.convertMD5(weaver.getEmail()) + ".jpg");
-		} else {
-			byte[] imgData = weaver.getImage().getContent();
-			res.setHeader("Content-Disposition", "attachment; filename = icon.jpg");
-			res.setContentType(weaver.getImage().getType());
-			OutputStream o = res.getOutputStream();
-			o.write(imgData);
-			o.flush();
-			o.close();
-			return;
-		} 
-
+		}
+		res.setHeader("Content-Disposition", "attachment; filename = icon.jpg");
+		res.setContentType(weaver.getImage().getType());
+		OutputStream o = res.getOutputStream();
+		o.write(imgData);
+		o.flush();
+		o.close();
 	}
 
 	@RequestMapping(value = "/check", method = RequestMethod.POST)
