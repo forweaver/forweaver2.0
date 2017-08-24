@@ -68,10 +68,10 @@
 								<td class="td-post-writer-img" rowspan="2"><a
 									href="/${weaver.getId()}"> <img
 										src="/${weaver.getId()}/img"></a></td>
-								<td colspan="2" class="post-top-title">
-										<i class="fa fa-quote-left"></i> ${weaver.say} <i
-											class="fa fa-quote-right"></i><small> -
-											${weaver.getId()}</small>
+								<td rowspan="2"  colspan="2" class="post-top-title">
+										<big><i class="fa fa-quote-left"></i> ${weaver.say} <i
+											class="fa fa-quote-right"></i></big>  -  
+											${weaver.getId()}
 								</td>
 								
 								<td rowspan="2" class="td-button"><span class="span-button"><i
@@ -85,21 +85,9 @@
 										<p title="코드 업로드 갯수/다운로드 갯수" class="p-button-mini">${weaver.getInfo('codeCount')}/${weaver.getInfo('downCount')}</p> </span></td>	
 								<td rowspan="2" class="td-button"><span class="span-button"><i
 										class="fa fa-bookmark"></i>
-										<p title="저장소 갯수/포크 저장소 갯수" class="p-button-mini">${weaver.countRepository()}/${weaver.getInfo('childRepositories','_id')}</p> </span></td>	
+										<p title="저장소 갯수/저장소 추천수" class="p-button-mini">${weaver.countRepository()}/${weaver.getInfo('repositoryPush','_id')}</p> </span></td>	
 							</tr>
 							<tr>
-							<td class="post-bottom-tag"><c:forEach items="${weaver.tags}"
-										var="tag">
-										<span title="태그를 클릭해보세요. 태그가 추가됩니다!"
-											class="tag-name
-										<c:if test="${tag.startsWith('@')}">
-										tag-private
-										</c:if>
-										<c:if test="${tag.startsWith('$')}">
-										tag-massage
-										</c:if>
-										">${tag}</span>
-									</c:forEach></td>
 							</tr>
 						</c:forEach>
 					</tbody>

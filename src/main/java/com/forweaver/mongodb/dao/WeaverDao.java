@@ -188,7 +188,7 @@ public class WeaverDao {
 		Criteria criteria = 	Criteria.where("creator.$id").is(weaver.getId());
 		AggregationOperation match = Aggregation.match(criteria);
 		
-		AggregationOperation group = Aggregation. group("creator").push("childRepositories").as("childRepositories").sum("push").as("repositoryPush");
+		AggregationOperation group = Aggregation.group("creator").sum("push").as("repositoryPush");
 		Aggregation agg = newAggregation(match, group);
 
 		return mongoTemplate.aggregate(agg, "repository", DBObject.class).getUniqueMappedResult();

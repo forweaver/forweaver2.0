@@ -265,7 +265,6 @@ public class WeaverService implements UserDetailsService {
 		tempDB = weaverDao.getWeaverInfosInRepository(weaver);
 		if(tempDB != null){
 			basicDB.put("repositoryPush", tempDB.get("repositoryPush"));
-			basicDB.put("childRepositories", tempDB.get("childRepositories"));
 		}
 		tempDB = weaverDao.getWeaverInfosInLecture(weaver);
 		if(tempDB != null){
