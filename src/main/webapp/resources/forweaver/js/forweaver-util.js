@@ -308,9 +308,9 @@ function fileUploadChange(fileUploader,textarea){
 			  "<div class='input-group'>"+
 			    "<div class='form-control' data-trigger='fileinput' title='업로드할 파일을 선택하세요!'><i class='icon-file '></i> <span class='fileinput-filename'></span></div>"+
 			    "<span class='input-group-addon btn btn-primary btn-file'><span class='fileinput-new'>"+
-			    "<i class='fa fa-arrow-circle-o-up icon-white'></i></span><span class='fileinput-exists'><i class='icon-repeat icon-white'></i></span>"+
+			    "<i class='fa fa-arrow-circle-o-up icon-white'></i></span><span class='fileinput-exists'><i class='fa fa-repeat '></i></span>"+
 				"<input onchange ='fileUploadChange(this,\""+textarea+"\");' type='file' multiple='true' id='file"+fileCount+"' name='files["+(fileCount-1)+"]'></span>"+
-			   "<a id='remove-file' href='#' class='input-group-addon btn btn-primary fileinput-exists' data-dismiss='fileinput'><i class='icon-remove icon-white'></i></a>"+
+			   "<a id='remove-file' href='#' class='input-group-addon btn btn-primary fileinput-exists' data-dismiss='fileinput'><i class='fa fa-remove'></i></a>"+
 			  "</div>"+
 			"</div>");
 		}

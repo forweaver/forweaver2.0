@@ -28,13 +28,13 @@
 								<b class="caret"></b></a>
 							<ul class="dropdown-menu">
 							
-								<li><a href="/"><i class="icon-white icon-home"></i>&nbsp;&nbsp;마이페이지</a></li>
-								<li><a href='/edit' ><i class="icon-cog"></i>&nbsp;&nbsp;정보수정</a></li>
+								<li><a href="/"><i class="fa fa-home"></i>&nbsp;&nbsp;마이페이지</a></li>
+								<li><a href='/edit' ><i class="fa fa-cog"></i>&nbsp;&nbsp;정보수정</a></li>
 								<li><a href="/community/tags:$${currentUser.username}"><i
-										class="icon-envelope"></i>&nbsp;&nbsp;메세지함</a></li>
+										class="fa fa-envelope"></i>&nbsp;&nbsp;메세지함</a></li>
 								<li class="divider"></li>
 								<li><a href="<c:url value="/j_spring_security_logout" />">
-										<i class="icon-off"></i>&nbsp;&nbsp;로그아웃
+										<i class="fa fa-power-off"></i>&nbsp;&nbsp;로그아웃
 								</a></li>
 							</ul></li>
 
@@ -45,7 +45,7 @@
 				<!--/.nav-collapse -->
 			</div>
 			<div class="span11">
-				<span id = "tag-addon" style="cursor:pointer;" class="span1 tag-addon"><i class="icon-white icon-tag"></i></span>
+				<span id = "tag-addon" style="margin-top:-5px;margin-right:-5px"class="span1 tag-addon"><i class="fa fa-hashtag"></i></span>
 				<div title="태그를 입력하시고 나서 꼭 엔터키나 스페이스키를 누르시면 추가가 됩니다."  class="span10 tag-span">
 					<input placeholder="여기에 태그를 입력하고 꼭 엔터!" class="tagarea tagarea-full" id="tags-input" />
 					<input name="tags" type="hidden" id="tag-hidden"/>

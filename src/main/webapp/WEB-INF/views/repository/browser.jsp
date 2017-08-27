@@ -194,11 +194,11 @@ showFileBrowser("${filePath}","${selectBranch}",fileBrowser);
 								<span class='input-group-addon btn btn-primary btn-file'><span
 									class='fileinput-new'>ZIP파일 혹은 소스파일</span>
 									<span class='fileinput-exists'><i
-										class='icon-repeat icon-white'></i></span> <input type='file'
+										class='fa fa-repeat '></i></span> <input type='file'
 									id='file' multiple='true' name='zip'></span> 
 									<a href='#'
 									class='input-group-addon btn btn-primary fileinput-exists' title="업로드 취소"
-									data-dismiss='fileinput'><i class='icon-remove icon-white'></i></a>
+									data-dismiss='fileinput'><i class='fa fa-remove'></i></a>
 									
 							</div>
 						</div>

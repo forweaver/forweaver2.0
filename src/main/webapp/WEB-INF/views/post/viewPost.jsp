@@ -67,9 +67,9 @@
 					  "<div class='input-group'>"+
 					    "<div class='form-control' data-trigger='fileinput' title='업로드할 파일을 선택하세요!'><i class='icon-file '></i> <span class='fileinput-filename'></span></div>"+
 					    "<span class='input-group-addon btn btn-primary btn-file'><span class='fileinput-new'>"+
-					    "<i class='fa fa-arrow-circle-o-up icon-white'></i></span><span class='fileinput-exists'><i class='icon-repeat icon-white'></i></span>"+
+					    "<i class='fa fa-arrow-circle-o-up icon-white'></i></span><span class='fileinput-exists'><i class='fa fa-repeat '></i></span>"+
 						"<input onchange ='fileUploadChange(this,\"#repost-content\");' type='file' id='file1' multiple='true' name='files[0]'></span>"+
-					   "<a href='#' class='input-group-addon btn btn-primary fileinput-exists' data-dismiss='fileinput'><i class='icon-remove icon-white'></i></a>"+
+					   "<a href='#' class='input-group-addon btn btn-primary fileinput-exists' data-dismiss='fileinput'><i class='fa fa-remove'></i></a>"+
 					  "</div>"+
 					"</div>");
 			
@@ -144,7 +144,7 @@
 										end="${post.datas.size()-1}">
 										<a href='/data/${post.datas.get(index).getId()}/${post.datas.get(index).getName()}'><span
 											class="function-button function-file" title='파일 다운로드'><i
-												class='icon-file icon-white'></i>
+												class='fa fa-file'></i>
 												${post.datas.get(index).getName()}</span></a>
 									</c:forEach></td>
 							</tr>
@@ -240,7 +240,7 @@
 											end="${rePost.datas.size()-1}">
 											<a href='/data/${rePost.datas.get(index).getId()}'><span
 												class="function-button function-file"><i
-													class='icon-file icon-white'></i>
+													class='fa fa-file'></i>
 													${rePost.datas.get(index).getName()}</span></a>
 										</c:forEach></td>
 								</tr>

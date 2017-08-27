@@ -40,9 +40,9 @@ function fileUploadChange(fileUploader){
 			  "<div class='input-group'>"+
 			    "<div class='form-control' data-trigger='fileinput'><i class='icon-file '></i> <span class='fileinput-filename'></span></div>"+
 			    "<span class='input-group-addon btn btn-primary btn-file'><span class='fileinput-new'>"+
-			    "<i class='fa fa-arrow-circle-o-up icon-white'></i></span><span class='fileinput-exists'><i class='icon-repeat icon-white'></i></span>"+
+			    "<i class='fa fa-arrow-circle-o-up icon-white'></i></span><span class='fileinput-exists'><i class='fa fa-repeat '></i></span>"+
 				"<input onchange ='fileUploadChange(this);' type='file' multiple='true' id='file"+fileCount+"' name='files["+(fileCount-1)+"]'></span>"+
-			   "<a id='remove-file' href='#' class='input-group-addon btn btn-primary fileinput-exists' data-dismiss='fileinput'><i class='icon-remove icon-white'></i></a>"+
+			   "<a id='remove-file' href='#' class='input-group-addon btn btn-primary fileinput-exists' data-dismiss='fileinput'><i class='fa fa-remove'></i></a>"+
 			  "</div>"+
 			"</div>");
 		}
@@ -94,9 +94,9 @@ function fileUploadChange(fileUploader){
 				  "<div class='input-group'>"+
 				    "<div class='form-control' data-trigger='fileinput'><i class='icon-file '></i> <span class='fileinput-filename'></span></div>"+
 				    "<span class='input-group-addon btn btn-primary btn-file'><span class='fileinput-new'>"+
-				    "<i class='fa fa-arrow-circle-o-up icon-white'></i></span><span class='fileinput-exists'><i class='icon-repeat icon-white'></i></span>"+
+				    "<i class='fa fa-arrow-circle-o-up icon-white'></i></span><span class='fileinput-exists'><i class='fa fa-repeat '></i></span>"+
 					"<input onchange ='fileUploadChange(this);' type='file' id='file1' multiple='true' name='files[0]'></span>"+
-				   "<a href='#' class='input-group-addon btn btn-primary fileinput-exists' data-dismiss='fileinput'><i class='icon-remove icon-white'></i></a>"+
+				   "<a href='#' class='input-group-addon btn btn-primary fileinput-exists' data-dismiss='fileinput'><i class='fa fa-remove'></i></a>"+
 				  "</div>"+
 				"</div>");
 		
@@ -245,7 +245,7 @@ function fileUploadChange(fileUploader){
 											end="${rePost.datas.size()-1}">
 											<a href='/data/${rePost.datas.get(index).getId()}'><span
 												class="function-button function-file"><i
-													class='icon-file icon-white'></i>
+													class='fa fa-file'></i>
 													${rePost.datas.get(index).getName()}</span></a>
 										</c:forEach></td>
 								</tr>

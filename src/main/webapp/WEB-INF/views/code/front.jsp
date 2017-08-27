@@ -262,10 +262,10 @@
 							<span class='input-group-addon btn btn-primary btn-file'><span
 								class='fileinput-new'>ZIP파일 혹은 소스파일</span> <span
 								class='fileinput-exists'><i
-									class='icon-repeat icon-white'></i></span><input type='file' id='file'
+									class='fa fa-repeat '></i></span><input type='file' id='file'
 								multiple='true' name='file'></span> <a href='#'
 								class='input-group-addon btn btn-primary fileinput-exists'
-								data-dismiss='fileinput'><i class='icon-remove icon-white'></i></a>
+								data-dismiss='fileinput'><i class='fa fa-remove'></i></a>
 						</div>
 					</div>
 					<div class='fileinput fileinput-new' data-provides='fileinput'>
@@ -278,12 +278,12 @@
 								class='fileinput-new'><i
 									class='fa fa-file-photo-o'></i> 결과 화면</span> <span
 								class='fileinput-exists'><i
-									class='icon-repeat icon-white'></i></span><input 
+									class='fa fa-repeat '></i></span><input 
 									onchange ='fileUploadChange(this);'
 									type='file' id='output'
 								multiple='true' name='output'></span> <a href='#'
 								class='input-group-addon btn btn-primary fileinput-exists'
-								data-dismiss='fileinput'><i class='icon-remove icon-white'></i></a>
+								data-dismiss='fileinput'><i class='fa fa-remove'></i></a>
 						</div>
 					</div>
 				</div>

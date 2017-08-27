@@ -66,9 +66,9 @@ $(document).ready(function() {
 					    <div class='form-control' data-trigger='fileinput' style="width: 210px;" ><i class='icon-file '></i> <span class='fileinput-filename'></span></div>
 					    <span class='input-group-addon btn btn-primary btn-file'><span class='fileinput-new'>
 					    <i class='fa fa-arrow-circle-o-up icon-white'></i></span>
-					    <span class='fileinput-exists'><i class='icon-repeat icon-white'></i></span>
+					    <span class='fileinput-exists'><i class='fa fa-repeat '></i></span>
 						<input onchange ='fileUploadChange(this);' type='file' id='image' multiple='true' name='image'></span>
-					   <a href='#' class='input-group-addon btn btn-primary fileinput-exists' data-dismiss='fileinput'><i class='icon-remove icon-white'></i></a>
+					   <a href='#' class='input-group-addon btn btn-primary fileinput-exists' data-dismiss='fileinput'><i class='fa fa-remove'></i></a>
 					  </div>
 					</div>
 						</div>

@@ -7,7 +7,6 @@ import com.forweaver.domain.Repository;
 import com.forweaver.domain.Invite;
 import com.forweaver.domain.Weaver;
 import com.forweaver.mongodb.dao.InviteDao;
-import com.forweaver.mongodb.dao.PostDao;
 
 /** 초대장 관리 서비스
  *
