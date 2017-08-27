@@ -3,7 +3,6 @@ package com.forweaver.mongodb.dao;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.newAggregation;
 
 import java.util.List;
-import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -15,7 +14,6 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
-import com.forweaver.domain.Post;
 import com.forweaver.domain.Weaver;
 import com.mongodb.DBObject;
 
@@ -122,8 +120,7 @@ public class WeaverDao {
 		Query query = new Query(Criteria.where("_id").is(weaver.getId()));
 		Update update = new Update();
 		update.set("password", weaver.getPassword());
-		update.set("image", weaver.getImage());
-		update.set("data", weaver.getImgSrc());
+		update.set("data", weaver.getData());
 		update.set("say", weaver.getSay());
 		update.set("isLeave", weaver.isLeave());
 		mongoTemplate.updateFirst(query, update, Weaver.class);     
@@ -138,19 +135,7 @@ public class WeaverDao {
 		update.set("passes", weaver.getPasses());
 		mongoTemplate.updateFirst(query, update, Weaver.class);     
 	}
-	/*
-	public void updateInfo(Weaver weaver,String field,long value) {
-		Query query = new Query(Criteria.where("_id").is(weaver.getId()));
-		Update update = new Update();
-		update.inc(field, value);
-		mongoTemplate.updateFirst(query, update, Weaver.class);   //갯수 추가 및 삭제.
-		
-		weaver = mongoTemplate.findOne(query,Weaver.class); // 점수 재합산
-		weaver.getWeaverInfo().updateScore();
-		update = new Update();
-		update.set("weaverInfo", weaver.getWeaverInfo());
-		mongoTemplate.updateFirst(query, update, Weaver.class);     
-	}*/
+
 	
 	/** 회원의 게시글 정보를 aggregation을 활용하여 가져옴
 	 * @param weaver

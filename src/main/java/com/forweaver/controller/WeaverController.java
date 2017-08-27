@@ -41,6 +41,8 @@ import com.forweaver.util.WebUtil;
 public class WeaverController {
 
 	@Autowired
+	private DataService dataService;
+	@Autowired
 	private WeaverService weaverService;
 	@Autowired
 	private PostService postService;
@@ -77,8 +79,6 @@ public class WeaverController {
 			@RequestParam("image") MultipartFile image,
 			HttpServletRequest request,Model model) {
 
-
-
 		if(!Pattern.matches("^[a-z]{1}[a-z0-9_]{4,14}$", id) || password.length()<4 ||
 				say.length()>50 || 
 				!Pattern.matches("[\\w\\~\\-\\.]+@[\\w\\~\\-]+(\\.[\\w\\~\\-]+)+",email)){
@@ -92,9 +92,8 @@ public class WeaverController {
 			model.addAttribute("url", "/join");
 			return "/alert";
 		}
-
-		Weaver weaver = new Weaver(id, password, email,say, new Data(image));
-		weaverService.add(weaver);
+		Weaver weaver = new Weaver(id, password, email,say);
+		weaverService.add(weaver,image);
 		weaverService.autoLoginWeaver(weaver, request);
 		return "redirect:/";
 	}
@@ -423,20 +422,10 @@ public class WeaverController {
 	public String editWeaver(
 			@RequestParam("password") String password,
 			@RequestParam("newpassword") String newpassword,
-			@RequestParam("tags") String tags,
-			@RequestParam("studentID") String studentID,
 			@RequestParam("say") String say,
 			@RequestParam("image") MultipartFile image,Model model) {
 		Weaver weaver = weaverService.getCurrentWeaver();
-		List<String> tagList = tagService.stringToTagList(tags);
-		System.out.println(tags);
-		if(!tagService.isPublicTags(tagList)){
-			model.addAttribute("say", "태그를 잘못 입력하셨습니다!");
-			model.addAttribute("url", "/edit");
-			return "/alert";
-		}
-
-		weaverService.update(weaver,password,newpassword,tagList,studentID,say,image);
+		weaverService.update(weaver, password, newpassword, say, image);
 
 		model.addAttribute("say", "정보를 수정하였습니다!");
 		model.addAttribute("url", "/edit");
@@ -450,17 +439,22 @@ public class WeaverController {
 		Weaver weaver = weaverService.get(id);
 		byte[] imgData = null;
 		
-		if (weaver.getImage().getContent().length  == 0)
-			imgData = WebUtil.downloadFile("http://www.gravatar.com/avatar/" + WebUtil.convertMD5(weaver.getEmail()) + ".jpg");
-		else
-			imgData = weaver.getImage().getContent();
+		if(weaver.getData() != null) {
+			res.setHeader("Content-Disposition", "attachment; filename = "+weaver.getData().getName());
+			res.setContentType(weaver.getData().getType());
+			imgData = weaver.getData().getContent();
+		}
 		
+		if (imgData == null) {
+			imgData = WebUtil.downloadFile("http://www.gravatar.com/avatar/" + WebUtil.convertMD5(weaver.getEmail()) + ".jpg");
+			res.setHeader("Content-Disposition", "attachment; filename = icon.jpg");
+			res.setContentType("image/jpeg");
+		}
 		if(imgData == null) {
 			res.sendRedirect("/resources/forweaver/img/null.png");
 			return;
 		}
-		res.setHeader("Content-Disposition", "attachment; filename = icon.jpg");
-		res.setContentType(weaver.getImage().getType());
+		
 		OutputStream o = res.getOutputStream();
 		o.write(imgData);
 		o.flush();

@@ -11,10 +11,6 @@
 		overflowToDisk="false" diskPersistent="false" timeToLiveSeconds="86400"
 		memoryStoreEvictionPolicy="LFU" />
 
-	<cache name="chat" eternal="false" maxElementsInMemory="5000"
-		overflowToDisk="false" diskPersistent="false" timeToIdleSeconds="14400"
-		memoryStoreEvictionPolicy="LFU" />
-
 	<cache name="tmp" eternal="false" maxElementsInMemory="5000"
 		overflowToDisk="false" diskPersistent="false" timeToLiveSeconds="7200"
 		memoryStoreEvictionPolicy="LFU">

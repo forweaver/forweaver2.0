@@ -1,6 +1,7 @@
 package com.forweaver.service;
 
 import java.io.File;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -12,6 +13,7 @@ import net.sf.ehcache.Element;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -31,7 +33,7 @@ import com.forweaver.domain.Data;
 import com.forweaver.domain.Pass;
 import com.forweaver.domain.RePassword;
 import com.forweaver.domain.Weaver;
-
+import com.forweaver.mongodb.dao.DataDao;
 import com.forweaver.mongodb.dao.WeaverDao;
 import com.forweaver.util.GitUtil;
 import com.forweaver.util.MailUtil;
@@ -44,6 +46,8 @@ public class WeaverService implements UserDetailsService {
 	protected Log log = LogFactory.getLog(WeaverService.class);
 	@Autowired 
 	private WeaverDao weaverDao;
+	@Autowired 
+	private DataDao dataDao;
 	@Autowired 
 	private PasswordEncoder passwordEncoder;
 	@Autowired @Qualifier("sessionRegistry")
@@ -92,7 +96,7 @@ public class WeaverService implements UserDetailsService {
 		return details.getRemoteAddress();
 	}
 
-	public void add(Weaver weaver) { // 회원 추가 서비스
+	public void add(Weaver weaver,MultipartFile data) { // 회원 추가 서비스
 		Pass pass;
 		if(weaverDao.existsWeaver())
 			pass = new Pass("ROLE_USER"); 
@@ -100,15 +104,21 @@ public class WeaverService implements UserDetailsService {
 			pass = new Pass("ROLE_ADMIN"); // 최초 회원 가입시 운영자 지위
 		weaver.addPass(pass);
 		weaver.setPassword(passwordEncoder.encodePassword(weaver.getPassword(), null));
-		weaverDao.insert(weaver);
+		
+		if(data != null && data.getSize()>0)
+			weaver.setData(dataDao.insert(new Data(new ObjectId(new Date()).toString(), data, weaver)));
+		weaverDao.insert(weaver);	
+		
 		File file = new File(gitUtil.getGitPath() + weaver.getId());
 		file.mkdir();
 	}
 
-	public void update(Weaver weaver,String password,String newpassword,List<String> tags,String studentID,String say,MultipartFile image) { // 회원 수정
+	public void update(Weaver weaver,String password,String newpassword,String say,MultipartFile data) { // 회원 수정
 		// TODO Auto-generated method stub
-		if(image != null && image.getSize() > 0)
-			weaver.setImage(new Data(image));
+		if(data != null && data.getSize() > 0) {
+			dataDao.delete(weaver.getData());
+			weaver.setData(dataDao.insert(new Data(new ObjectId(new Date()).toString(), data, weaver)));
+		}
 
 		if(this.validPassword(weaver,password) && newpassword != null && newpassword.length() > 3)
 			weaver.setPassword(passwordEncoder.encodePassword(newpassword, null));
@@ -250,7 +260,6 @@ public class WeaverService implements UserDetailsService {
 	public void getWeaverInfos(Weaver weaver){
 		BasicDBObject basicDB = new BasicDBObject();
 		DBObject tempDB = weaverDao.getWeaverInfosInPost(weaver);
-		System.out.println(weaver.getId());
 		tempDB = weaverDao.getWeaverInfosInPost(weaver);
 		if(tempDB != null){
 			basicDB.put("postCount", tempDB.get("postCount"));

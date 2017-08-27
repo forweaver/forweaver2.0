@@ -8,7 +8,9 @@ import java.util.List;
 
 import org.hibernate.validator.constraints.Length;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Reference;
 import org.springframework.data.annotation.Transient;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -39,10 +41,11 @@ public class Weaver implements UserDetails,Serializable {
 	private String password;
 	private String email;
 	private String say;
-	private Data image;
 	private Date joinDate;
 	private boolean isLeave;
 	private List<Pass> passes = new ArrayList<Pass>();
+	@DBRef
+	private Data data;
 
 	@Transient
 	private DBObject weaverInfo;
@@ -56,21 +59,11 @@ public class Weaver implements UserDetails,Serializable {
 		this.email = email;
 	}
 
-	public Weaver(String id,String email,Data image){
-		this.id = id;
-		this.id = this.id.toLowerCase();
-		this.email = email;
-		this.image = image;
-	}
-
-
-
-	public Weaver(String id,String password,String email,String say,Data image){
+	public Weaver(String id,String password,String email,String say){
 		this.id = id.toLowerCase();
 		this.password = password;
 		this.email = email;
 		this.say = say;
-		this.image = image;
 		this.joinDate = new Date();
 	}
 
@@ -155,16 +148,6 @@ public class Weaver implements UserDetails,Serializable {
 		return true;
 	}
 
-
-	public Data getImage() {
-		return image;
-	}
-
-
-	public void setImage(Data image) {
-		this.image = image;
-	}
-
 	public String getImgSrc() {
 		return "/"+this.id+"/img/";
 	}
@@ -229,16 +212,6 @@ public class Weaver implements UserDetails,Serializable {
 		}
 		return false;
 	}
-
-	/*public WeaverInfo getWeaverInfo() {
-		return weaverInfo;
-	}
-
-
-	public void setWeaverInfo(WeaverInfo weaverInfo) {
-		this.weaverInfo = weaverInfo;
-	}*/
-
 
 	public boolean isJoinWeaver(String joinName){
 		for(Pass pass : this.passes){
@@ -330,6 +303,17 @@ public class Weaver implements UserDetails,Serializable {
 		// TODO Auto-generated method stub
 		return this.id;
 	}
-	
 
+
+	public Data getData() {
+		return data;
+	}
+
+
+	public void setData(Data data) {
+		this.data = data;
+	}
+	
+	
+	
 }

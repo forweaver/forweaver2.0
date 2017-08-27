@@ -1,12 +1,14 @@
 package com.forweaver.domain;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Id;
 
 import org.apache.commons.codec.binary.Base64;
-import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,50 +30,39 @@ public class Data implements Serializable {
 	private String id;
 	@DBRef
 	private Weaver weaver;
+	@Transient
 	private byte[] content;
 	private String name;
 	private String type;
 	private Date date;
+	private String filePath;
+	
+	//임시로 기본 파일 패스를 정함
+	@Transient
+	public static String path = "/home/file/";
 	
 	public Data(){
 		
 	}
 	
 	public Data(String id ,MultipartFile data,Weaver weaver){
-		this.date = new Date();
 		this.id = id;
+		this.date = new Date();
 		this.weaver = weaver;
 		this.name= "";
 		try{
 			this.content= data.getBytes();
-			this.name = data.getOriginalFilename();
-			this.name = this.name.replace(" ", "_");
-			this.name = this.name.replace("#", "_");
-			this.name = this.name.replace("?", "_");	
-			this.name = this.name.trim();
-			this.type = data.getContentType();
-		}catch(Exception e){
-			
-		}
-	}
-	
-	public Data(MultipartFile data){
-		this.date = new Date();
-		this.id = new ObjectId(this.date).toString();
-		this.name= "";
-		try{
-			this.content= data.getBytes();
-			this.name = data.getOriginalFilename();
-			this.name = this.name.replace(" ", "_");
-			this.name = this.name.replace("#", "_");
-			this.name = this.name.replace("?", "_");	
-			this.name = this.name.trim();
-			this.type = data.getContentType();
-		}catch(Exception e){
-			
-		}
-	}
-	
+		}catch(IOException e){
+			this.content= null;
+		}		
+		this.name = data.getOriginalFilename();
+		this.name = this.name.replace(" ", "_");
+		this.name = this.name.replace("#", "_");
+		this.name = this.name.replace("?", "_");	
+		this.name = this.name.trim();
+		this.type = data.getContentType();
+		this.filePath = path+weaver.getId()+File.separator+this.id+File.separator+this.name;		
+	}	
 	
 	public String getId() {
 		return id.toString();
@@ -121,6 +112,12 @@ public class Data implements Serializable {
 		this.date = date;
 	}
 	
-	
+	public String getFilePath() {
+		return filePath;
+	}
+
+	public void setFilePath(String filePath) {
+		this.filePath = filePath;
+	}
 	
 }
