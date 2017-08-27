@@ -11,24 +11,7 @@
 
 editorMode = true;
 
-function checkWeaver(){
-	if($("#tags-input").val().length < 1){
-		alert("태그를 하나 이상 입력해주세요!");
-		return false;
-	}
-
-	$("form:first").append($("input[name='tags']"));
-	return true;
-}
-
 $(document).ready(function() {
-	
-	move = false;
-	<c:forEach items='${weaver.tags}' var='tag'>
-	$('#tags-input').tagsinput('add',"${tag}");
-	</c:forEach>
-	move = true;
-
 	
 	$("#image").change(function(){
         readURL(this);
@@ -48,7 +31,7 @@ $(document).ready(function() {
 					<li id="age-desc"><a href="/del">탈퇴</a></li>
 				</ul>
 	</div>
-				<form onsubmit="return checkWeaver()"  enctype="multipart/form-data" class="form-horizontal" action="/edit" method="POST">
+				<form enctype="multipart/form-data" class="form-horizontal" action="/edit" method="POST">
 						<div class="span6">
 						
 						<div title ="비밀번호를 변경하시려면 여기에 먼저 기존 비밀번호를 입력하세요!" class="control-group">
