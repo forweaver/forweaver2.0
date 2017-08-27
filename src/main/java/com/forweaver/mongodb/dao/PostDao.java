@@ -27,11 +27,6 @@ public class PostDao {
 	 * @return
 	 */
 	public int insert(Post post) {
-		if (!mongoTemplate.collectionExists(Post.class)) {
-			post.setPostID(1);
-			mongoTemplate.insert(post);
-			return 1;
-		}
 		Post lastPost = getLast();
 		if(lastPost == null)
 			post.setPostID(1);
@@ -228,7 +223,7 @@ public class PostDao {
 	}
 
 	/** 메세지 태그를 이용하여 글을 검색하고 셈
-	 * @param massageTags
+	 * @param userTags
 	 * @param search
 	 * @param writer
 	 * @param my
@@ -261,7 +256,7 @@ public class PostDao {
 		return mongoTemplate.count(new Query(criteria), Post.class);
 	}
 	/** 메세지 태그를 이용하여 글을 검색
-	 * @param massageTags
+	 * @param userTags
 	 * @param search
 	 * @param writer
 	 * @param my

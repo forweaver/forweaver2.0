@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import com.forweaver.domain.Data;
 import com.forweaver.domain.Post;
@@ -31,13 +30,11 @@ import com.forweaver.domain.Invite;
 import com.forweaver.domain.Weaver;
 import com.forweaver.domain.vc.VCLog;
 import com.forweaver.domain.vc.VCFileInfo;
-import com.forweaver.domain.vc.VCSimpleLog;
 import com.forweaver.domain.vc.VCSimpleFileInfo;
 import com.forweaver.service.DataService;
 import com.forweaver.service.GitService;
 import com.forweaver.service.PostService;
 import com.forweaver.service.RepositoryService;
-import com.forweaver.service.RePostService;
 import com.forweaver.service.TagService;
 import com.forweaver.service.InviteService;
 import com.forweaver.service.WeaverService;
@@ -170,8 +167,6 @@ public class RepositoryController {
 			model.addAttribute("url", "/repository/");
 			return "/alert";
 		}
-
-		System.out.println(type);
 		Repository repository = new Repository(params.get("name"), 
 				authLevel,
 				type,
@@ -179,7 +174,7 @@ public class RepositoryController {
 				currentWeaver,
 				tagList);
 
-		//repositoryService.add(repository,currentWeaver);
+		repositoryService.add(repository,currentWeaver);
 		return "redirect:/repository/";//+repository.getName();
 	}
 

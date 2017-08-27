@@ -158,7 +158,7 @@ public class RePostService {
 		if(datas != null && datas.size() >0)
 			for(Data data:datas){
 				dataDao.insert(data);
-				rePost.addData(dataDao.getLast());
+				rePost.addData(data);
 			}
 
 		if(removeDataList != null)

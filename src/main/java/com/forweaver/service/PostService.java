@@ -1,6 +1,5 @@
 package com.forweaver.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import net.sf.ehcache.Cache;
@@ -18,7 +17,6 @@ import com.forweaver.domain.Weaver;
 import com.forweaver.mongodb.dao.DataDao;
 import com.forweaver.mongodb.dao.PostDao;
 import com.forweaver.mongodb.dao.RePostDao;
-import com.forweaver.mongodb.dao.WeaverDao;
 
 @Service
 public class PostService {
@@ -26,7 +24,6 @@ public class PostService {
 	@Autowired private PostDao postDao;
 	@Autowired private RePostDao rePostDao;
 	@Autowired private DataDao dataDao;
-	@Autowired private WeaverDao weaverDao;
 	@Autowired private CacheManager cacheManager;
 
 	/** 글을 생성함.
@@ -92,8 +89,7 @@ public class PostService {
 		//만약 자료를 올렸다면.
 		if(datas != null && datas.size() >0)
 			for(Data data:datas){
-				dataDao.insert(data);
-				post.addData(dataDao.getLast());
+				post.addData(dataDao.insert(data));
 			}
 
 		if(removeDataList != null)
