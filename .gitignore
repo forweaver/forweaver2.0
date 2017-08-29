@@ -10,6 +10,7 @@
 .project
 .metadata
 bin/**
+log/**
 tmp/**
 tmp/**/*
 *.tmp

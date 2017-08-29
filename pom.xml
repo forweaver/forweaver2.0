@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>forweaver</groupId>
 	<artifactId>forweaver</artifactId>
-	<version>0.5.17-SNAPSHOT</version>
+	<version>2.0.17-SNAPSHOT</version>
 	<packaging>war</packaging>
 	<build>
 		<finalName>forweaver</finalName>
@@ -32,7 +32,7 @@
 		<org.springframework.security-version>3.2.5.RELEASE</org.springframework.security-version>
 		<org.aspectj-version>1.6.11</org.aspectj-version>
 		<org.slf4j-version>1.6.6</org.slf4j-version>
-		<org.eclipse.jgit-version>4.2.0.201601211800-r</org.eclipse.jgit-version>
+		<org.eclipse.jgit-version>4.8.0.201706111038-r</org.eclipse.jgit-version>
 		<tomcat.version>7.0.52</tomcat.version>
 	</properties>
 	<dependencies>
@@ -273,40 +273,43 @@
 			<version>0.13</version>
 		</dependency>
 		<dependency>
-			<groupId>org.gitective</groupId>
+			<groupId>io.fabric8</groupId>
 			<artifactId>gitective-core</artifactId>
-			<version>0.9.11</version>
+			<version>0.9.22</version>
+		</dependency>
+
+		<!-- SVN -->
+		<dependency>
+			<groupId>org.tmatesoft.svnkit</groupId>
+			<artifactId>svnkit</artifactId>
+			<version>1.8.14</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.trilead</groupId>
+			<artifactId>trilead-ssh2</artifactId>
+			<version>1.0.0-build215</version>
 		</dependency>
 		
-		<!-- SVN -->
-	<dependency>
-		<groupId>org.tmatesoft.svnkit</groupId>
-		<artifactId>svnkit</artifactId>
-		<version>1.8.14</version>
-	</dependency>
+		<dependency>
+			<groupId>org.tmatesoft.svnkit</groupId>
+			<artifactId>svnkit-dav</artifactId>
+			<version>1.8.14</version>
+			<type>war</type>
+		</dependency>
 
-	<dependency>
-		<groupId>com.trilead</groupId>
-		<artifactId>trilead-ssh2</artifactId>
-		<version>1.0.0-build215</version>
-	</dependency>
-<!-- 
-	<dependency>
-		<groupId>org.tmatesoft.svnkit</groupId>
-		<artifactId>svnkit-dav</artifactId>
-		<version>1.8.14</version>
-		<type>war</type>
-	</dependency> -->
+		<dependency>
+			<groupId>org.apache.ftpserver</groupId>
+			<artifactId>ftpserver</artifactId>
+			<version>1.1.1</version>
+			<type>pom</type>
+		</dependency>
 	</dependencies>
 
 	<repositories>
 		<repository>
 			<id>jgit-repository</id>
 			<url>https://repo.eclipse.org/content/groups/releases/</url>
-		</repository>
-		<repository>
-			<id>goesang/gitective-mvn-repo</id>
-			<url>https://raw.github.com/goesang/gitective/mvn-repo/</url>
 		</repository>
 		<repository>
 			<id>spring-milestone</id>
