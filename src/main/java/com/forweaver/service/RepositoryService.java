@@ -7,6 +7,8 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.session.SessionRegistry;
@@ -29,6 +31,9 @@ import com.forweaver.util.GitUtil;
 @Service
 public class RepositoryService{
 
+	private static final Logger logger =
+			LoggerFactory.getLogger(RepositoryService.class);
+	
 	@Autowired private WeaverDao weaverDao;
 	@Autowired private RepositoryDao repositoryDao;
 	@Autowired private CacheManager cacheManager;

@@ -3,6 +3,8 @@ package com.forweaver.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.forweaver.domain.Pass;
@@ -14,6 +16,9 @@ import com.forweaver.domain.Weaver;
 @Service
 public class TagService {
 
+	private static final Logger logger =
+			LoggerFactory.getLogger(TagService.class);
+	
 	/** 실수로 자신의 메시지 태그를 붙이면 지움.
 	 * @param tagList
 	 * @param weaver

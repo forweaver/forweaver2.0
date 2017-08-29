@@ -1,5 +1,7 @@
 package com.forweaver.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,9 @@ import com.forweaver.mongodb.dao.InviteDao;
 @Service
 public class InviteService {
 
+	private static final Logger logger =
+			LoggerFactory.getLogger(InviteService.class);
+	
 	@Autowired private InviteDao invateDao;
 
 	/** 저장소 서비스와 관련하여 초대장을 생성 가능한지 검증함.

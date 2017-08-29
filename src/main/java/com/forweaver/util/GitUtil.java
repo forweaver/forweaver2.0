@@ -35,6 +35,8 @@ import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.util.FS;
 import org.gitective.core.BlobUtils;
 import org.gitective.core.CommitUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -53,6 +55,9 @@ import com.forweaver.domain.vc.VCSimpleFileInfo;
 @Component
 public class GitUtil implements VCUtil{
 
+	private static final Logger logger =
+			LoggerFactory.getLogger(GitUtil.class);
+	
 	private String gitPath;
 	private String path;
 	private Repository localRepo;

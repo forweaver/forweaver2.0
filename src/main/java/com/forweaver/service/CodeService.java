@@ -12,6 +12,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,6 +34,9 @@ import com.forweaver.util.WebUtil;
 @Service
 public class CodeService {
 
+	private static final Logger logger =
+			LoggerFactory.getLogger(CodeService.class);
+	
 	@Autowired CodeDao codeDao;
 	@Autowired DataDao dataDao;
 	@Autowired RePostDao rePostDao;

@@ -6,10 +6,13 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import com.forweaver.domain.Weaver;
+import com.forweaver.mongodb.dao.DataDao;
 import com.forweaver.service.TagService;
 import com.forweaver.service.WeaverService;
 
@@ -17,6 +20,10 @@ import com.forweaver.service.WeaverService;
  *
  */
 public class CommunityIntercepter extends HandlerInterceptorAdapter {
+	
+	private static final Logger logger =
+			LoggerFactory.getLogger(CommunityIntercepter.class);
+	
 	@Autowired WeaverService weaverService;
 	@Autowired TagService tagService;
 

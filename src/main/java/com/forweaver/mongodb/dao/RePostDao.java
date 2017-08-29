@@ -2,6 +2,8 @@ package com.forweaver.mongodb.dao;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -14,6 +16,7 @@ import com.forweaver.domain.Code;
 import com.forweaver.domain.Post;
 import com.forweaver.domain.RePost;
 import com.forweaver.domain.Weaver;
+import com.forweaver.service.CodeService;
 
 /** 답변 관리를 위한 DAO
  *
@@ -21,7 +24,11 @@ import com.forweaver.domain.Weaver;
 @Repository
 public class RePostDao {
 	
-	@Autowired private MongoTemplate mongoTemplate;
+	private static final Logger logger =
+			LoggerFactory.getLogger(RePostDao.class);
+	
+	@Autowired 
+	private MongoTemplate mongoTemplate;
 
 	/** 답변 추가하기
 	 * @param rePost

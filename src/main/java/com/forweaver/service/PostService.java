@@ -6,6 +6,8 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +23,9 @@ import com.forweaver.mongodb.dao.RePostDao;
 @Service
 public class PostService {
 
+	private static final Logger logger =
+			LoggerFactory.getLogger(PostService.class);
+	
 	@Autowired private PostDao postDao;
 	@Autowired private RePostDao rePostDao;
 	@Autowired private DataDao dataDao;

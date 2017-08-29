@@ -1,13 +1,20 @@
 package com.forweaver.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.stereotype.Component;
 
 /**<pre>메일을 보내기 위한 빈.
  * 참고 - http://www.mkyong.com/spring/spring-sending-e-mail-via-gmail-smtp-server-with-mailsender/</pre> 
  *b17100d39d057e62
  */
 public class MailUtil {
+	
+	private static final Logger logger =
+			LoggerFactory.getLogger(MailUtil.class);
+	
 	private MailSender mailSender;
     private String from; 
     

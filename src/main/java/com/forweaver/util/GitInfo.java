@@ -23,7 +23,6 @@ import org.gitective.core.RepositoryUtils;
 import org.gitective.core.filter.commit.AllCommitFilter;
 import org.gitective.core.filter.commit.AllDiffEditFilter;
 import org.gitective.core.filter.commit.AllDiffFilter;
-import org.gitective.core.filter.commit.AndCommitFilter;
 import org.gitective.core.filter.commit.AuthorSetFilter;
 import org.gitective.core.filter.commit.CommitCountFilter;
 import org.gitective.core.filter.commit.CommitFileImpactFilter;
@@ -32,16 +31,18 @@ import org.gitective.core.filter.commit.CommitLineImpactFilter;
 import org.gitective.core.filter.commit.CommitListFilter;
 import org.gitective.core.filter.commit.CommitterSetFilter;
 import org.gitective.core.filter.commit.DiffFileCountFilter;
-import org.gitective.core.filter.commit.DiffFileSizeFilter;
 import org.gitective.core.filter.commit.DiffLineCountFilter;
 import org.gitective.core.filter.commit.DuplicateBlobFilter;
 import org.gitective.core.filter.commit.DuplicateContainer;
 import org.gitective.core.filter.commit.LastCommitFilter;
-import org.gitective.core.filter.commit.ParentCountFilter;
 import org.gitective.core.stat.AuthorHistogramFilter;
 import org.gitective.core.stat.CommitHistogram;
 import org.gitective.core.stat.CommitterHistogramFilter;
 import org.gitective.core.stat.UserCommitActivity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.forweaver.service.CodeService;
 
 
 
@@ -52,6 +53,9 @@ import org.gitective.core.stat.UserCommitActivity;
 public class GitInfo {
 	public static class LineStats implements Comparable<LineStats> {
 
+		private static final Logger logger =
+				LoggerFactory.getLogger(GitInfo.class);
+		
 		int add;
 
 		int edit;

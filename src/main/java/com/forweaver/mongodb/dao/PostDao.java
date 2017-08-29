@@ -2,6 +2,8 @@ package com.forweaver.mongodb.dao;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Repository;
 
 import com.forweaver.domain.Post;
 import com.forweaver.domain.Weaver;
+import com.forweaver.service.CodeService;
 
 /** 커뮤니티 글과 관련된 DAO
  * 
@@ -20,6 +23,9 @@ import com.forweaver.domain.Weaver;
 @Repository
 public class PostDao {
 
+	private static final Logger logger =
+			LoggerFactory.getLogger(PostDao.class);
+	
 	@Autowired private MongoTemplate mongoTemplate;
 
 	/** 글 추가하기

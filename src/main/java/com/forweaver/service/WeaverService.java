@@ -11,9 +11,9 @@ import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.bson.types.ObjectId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -43,7 +43,9 @@ import com.mongodb.DBObject;
 @Service("userDetailsService")
 public class WeaverService implements UserDetailsService {
 
-	protected Log log = LogFactory.getLog(WeaverService.class);
+	private static final Logger logger =
+			LoggerFactory.getLogger(WeaverService.class);
+
 	@Autowired 
 	private WeaverDao weaverDao;
 	@Autowired 
@@ -66,7 +68,6 @@ public class WeaverService implements UserDetailsService {
 		if(weaver == null || weaver.isLeave())
 			return null;
 
-		log.info("================ "+weaver.getId()+"  login   ================");
 		return weaver;
 	}
 

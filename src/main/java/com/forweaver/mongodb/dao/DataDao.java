@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Repository;
 
 import com.forweaver.domain.Data;
 import com.forweaver.domain.Weaver;
+import com.forweaver.service.CodeService;
 import com.mongodb.MongoException;
 
 /** 자료 관리를 위한 DAO
@@ -23,6 +26,9 @@ import com.mongodb.MongoException;
 @Repository
 public class DataDao {
 
+	private static final Logger logger =
+			LoggerFactory.getLogger(DataDao.class);
+	
 	@Autowired private MongoTemplate mongoTemplate;
 
 	/** 자료 추가함.

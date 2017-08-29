@@ -4,6 +4,8 @@ import static org.springframework.data.mongodb.core.aggregation.Aggregation.newA
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -15,6 +17,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
 import com.forweaver.domain.Weaver;
+import com.forweaver.service.CodeService;
 import com.mongodb.DBObject;
 
 /** 회원(Weaver) 관리를 위한 DAO
@@ -22,6 +25,9 @@ import com.mongodb.DBObject;
  */
 @Repository
 public class WeaverDao {
+	
+	private static final Logger logger =
+			LoggerFactory.getLogger(WeaverDao.class);
 	
 	@Autowired 
 	private MongoTemplate mongoTemplate;

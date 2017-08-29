@@ -30,6 +30,8 @@ import com.github.rjeschke.txtmark.Processor;
 public class WebUtil {
 
 
+
+
 	/** 압축파일을 열었을 때 모든 파일들이 한 디렉토리에 담겨있는지 검사함.
 	 * @param file
 	 * @return
@@ -37,8 +39,8 @@ public class WebUtil {
 	public static boolean isOneDirectory(String zipFile){
 		boolean oneDirectory = true;
 		try{
-			//압축파일을 품.  
-			ZipInputStream zis = 
+			//압축파일을 품.
+			ZipInputStream zis =
 					new ZipInputStream(new FileInputStream(zipFile));
 			ZipEntry ze = zis.getNextEntry();
 			while(ze!=null){
@@ -72,7 +74,7 @@ public class WebUtil {
 	 * @param str
 	 * @return
 	 */
-	public static boolean isCodeName(String str){     
+	public static boolean isCodeName(String str){
 		str = str.toLowerCase();
 		if(str.endsWith(".c") || str.endsWith(".h")|| str.endsWith(".ino")
 				|| str.endsWith(".java")|| str.endsWith(".py")|| str.endsWith(".cpp") || str.endsWith(".hpp")
@@ -92,16 +94,16 @@ public class WebUtil {
 		return false;
 	}
 
-	public static boolean isAllowedFileName(String fileName){     
+	public static boolean isAllowedFileName(String fileName){
 		fileName = fileName.toLowerCase();
 
 		if (fileName.contains(".git/") 	|| fileName.contains("debug/") 	||
-				fileName.contains("classes/") || fileName.contains("gen-external-apklibs/") ||  
-				fileName.contains("release/") || fileName.endsWith(".exe") || 
-				fileName.endsWith(".ipch") || fileName.endsWith(".sdf") || 
-				fileName.endsWith(".bak") || fileName.endsWith(".log") || 
-				fileName.endsWith(".pyc") || fileName.endsWith(".pyd") || 
-				fileName.endsWith(".opensdf") || fileName.endsWith(".ilk") || 	
+				fileName.contains("classes/") || fileName.contains("gen-external-apklibs/") ||
+				fileName.contains("release/") || fileName.endsWith(".exe") ||
+				fileName.endsWith(".ipch") || fileName.endsWith(".sdf") ||
+				fileName.endsWith(".bak") || fileName.endsWith(".log") ||
+				fileName.endsWith(".pyc") || fileName.endsWith(".pyd") ||
+				fileName.endsWith(".opensdf") || fileName.endsWith(".ilk") ||
 				fileName.endsWith(".pyo") || fileName.endsWith(".lib") ||
 				fileName.endsWith(".class") || fileName.endsWith(".dex") ||
 				fileName.endsWith(".bak") || fileName.endsWith(".tlb") ||
@@ -114,7 +116,7 @@ public class WebUtil {
 
 
 
-	public static boolean isImageName(String filename){ 
+	public static boolean isImageName(String filename){
 		filename = filename.toUpperCase();
 
 		if(filename.endsWith(".ANI") || filename.endsWith(".BMP") || filename.endsWith(".CAL")
@@ -151,7 +153,7 @@ public class WebUtil {
 	 * @param size
 	 * @return 페이지 사이즈
 	 */
-	public static int getPageSize(String pageUrl,int size){  
+	public static int getPageSize(String pageUrl,int size){
 		if(size <1)
 			size = 15;
 
@@ -210,7 +212,7 @@ public class WebUtil {
 		str = str.replaceAll("(\\A|\\s)((http|https|ftp|mailto):\\S+)(\\s|\\z)","$1<$2>$4"); // 자동 링크 추가
 		try{
 			str = Processor.process(str, true).replaceAll("\n", "</p><p>");
-		}catch(Exception e){}	
+		}catch(Exception e){}
 		if(str.contains("&lt;iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/")){// 유투브 기본 동영상 태그는 허용함.
 			str = str.replaceAll("&lt;iframe width", "<iframe width");
 			str = str.replaceAll("allowfullscreen>&lt;/iframe>", "allowfullscreen></iframe>");
@@ -256,7 +258,7 @@ public class WebUtil {
 				}
 				if(!returnList.contains(path)){
 					returnList.add(path);
-				}		
+				}
 			}
 		}
 		return returnList;
@@ -279,14 +281,14 @@ public class WebUtil {
 		byte[] buffer = new byte[1024];
 
 		try{
-			ZipInputStream zis = 
+			ZipInputStream zis =
 					new ZipInputStream(new FileInputStream(zipFile),Charset.forName("EUC-KR"));
 			ZipEntry ze = zis.getNextEntry();
 
 			while(ze!=null){
 
 				String fileName = ze.getName();
-				if (!ze.isDirectory() && isAllowedFileName(fileName)) { 
+				if (!ze.isDirectory() && isAllowedFileName(fileName)) {
 					String path = "";
 
 					if(skipDirectory)
@@ -298,14 +300,14 @@ public class WebUtil {
 
 					new File(newFile.getParent()).mkdirs();
 
-					FileOutputStream fos = new FileOutputStream(newFile);             
+					FileOutputStream fos = new FileOutputStream(newFile);
 
 					int len;
 					while ((len = zis.read(buffer)) > 0) {
 						fos.write(buffer, 0, len);
 					}
 
-					fos.close();   
+					fos.close();
 				}
 				ze = zis.getNextEntry();
 			}
@@ -316,7 +318,7 @@ public class WebUtil {
 		}catch(IOException ex){
 			System.out.println(ex.getLocalizedMessage());
 		}
-	}    
+	}
 
 
 	/** 문자열 path를 가지고 파일을 다운 받아 바이트 배열로 바꿔주는 메서드.
@@ -331,7 +333,7 @@ public class WebUtil {
 			URLConnection conn = url.openConnection();
 			conn.setConnectTimeout(1000);
 			conn.setReadTimeout(1000);
-			conn.connect(); 
+			conn.connect();
 
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			IOUtils.copy(conn.getInputStream(), baos);
@@ -345,10 +347,10 @@ public class WebUtil {
 	}
 
 	public static byte[] concatenateByteArrays(byte[] a, byte[] b) {
-		byte[] result = new byte[a.length + b.length]; 
-		System.arraycopy(a, 0, result, 0, a.length); 
-		System.arraycopy(b, 0, result, a.length, b.length); 
+		byte[] result = new byte[a.length + b.length];
+		System.arraycopy(a, 0, result, 0, a.length);
+		System.arraycopy(b, 0, result, a.length, b.length);
 		return result;
-	} 
+	}
 
 }

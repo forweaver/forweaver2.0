@@ -12,12 +12,15 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.forweaver.domain.Pass;
 import com.forweaver.domain.Repository;
 import com.forweaver.domain.Weaver;
+import com.forweaver.intercepter.RepositoryIntercepter;
 import com.forweaver.service.RepositoryService;
 import com.forweaver.service.WeaverService;
 import com.forweaver.util.GitUtil;
@@ -28,6 +31,9 @@ import com.forweaver.util.GitUtil;
  */
 @Component("GitFilter")
 public class GitFilter implements Filter {
+	private static final Logger logger =
+			LoggerFactory.getLogger(GitFilter.class);
+	
 	@Autowired private WeaverService weaverService;
 	@Autowired private RepositoryService repositoryService;
 	@Autowired private GitUtil gitUtil;

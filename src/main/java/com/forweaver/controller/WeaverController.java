@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.compress.utils.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -40,8 +42,9 @@ import com.forweaver.util.WebUtil;
 @Controller
 public class WeaverController {
 
-	@Autowired
-	private DataService dataService;
+	private static final Logger logger =
+			LoggerFactory.getLogger(WeaverController.class);
+	
 	@Autowired
 	private WeaverService weaverService;
 	@Autowired
