@@ -48,8 +48,9 @@ public class RepositoryService{
 	 * @param currentWeaver
 	 */
 	public void add(Repository repository,Weaver currentWeaver){
+		System.out.println("- project type: " + repository.getType());
 		// TODO Auto-generated method stub
-		if(currentWeaver == null)
+		/*if(currentWeaver == null)
 			return;
 
 		gitUtil.Init(repository);
@@ -60,7 +61,7 @@ public class RepositoryService{
 		repositoryDao.insert(repository);
 		Pass pass = new Pass(repository.getName(),2);
 		currentWeaver.addPass(pass);
-		weaverDao.updatePass(currentWeaver);
+		weaverDao.updatePass(currentWeaver);*/
 	}
 
 	/** 회원 추가함.

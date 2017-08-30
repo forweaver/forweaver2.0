@@ -103,8 +103,6 @@ public class RepositoryController {
 		return "/repository/repositories";
 	}
 
-
-
 	@RequestMapping("/tags:{tagNames}")
 	public String repositorysWithTags(HttpServletRequest request){
 		return "redirect:"+request.getRequestURI() +"/sort:age-desc/page:1";
@@ -153,6 +151,8 @@ public class RepositoryController {
 
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
 	public String add(@RequestParam Map<String, String> params,Model model) {
+		System.out.println("********************** Project add *********************");
+		
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 		List<String> tagList = tagService.stringToTagList(params.get("tags"));
 		int authLevel = 0;
@@ -180,6 +180,8 @@ public class RepositoryController {
 				tagList);
 
 		repositoryService.add(repository,currentWeaver);
+		System.out.println("********************************************************");
+		
 		return "redirect:/repository/";//+repository.getName();
 	}
 
@@ -205,7 +207,6 @@ public class RepositoryController {
 
 		return "redirect:/repository/";
 	}
-
 
 	@RequestMapping(value = {"/{creatorName}/{repositoryName}/data/log:{log}/**"})
 	public void data(HttpServletRequest request,@PathVariable("repositoryName") String repositoryName,
