@@ -37,6 +37,19 @@ public class VCSimpleFileInfo implements Serializable {
 		this.commiterName =commiterName;
 		this.commiterEmail = commiterEmail;
 	}
+	public VCSimpleFileInfo(String name, String path,
+			boolean isDirectory, String commitID, String simpleLog,
+			Date commitDate,String commiterName,
+			String commiterEmail) {
+		this.name = name;
+		this.path = path;
+		this.isDirectory = isDirectory;
+		this.commitID = commitID;
+		this.simpleLog = simpleLog;
+		this.commitDate = commitDate;
+		this.commiterName =commiterName;
+		this.commiterEmail = commiterEmail;
+	}
 	public String getName() {
 		return name;
 	}

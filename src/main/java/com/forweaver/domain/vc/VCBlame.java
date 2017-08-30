@@ -24,6 +24,16 @@ public class VCBlame  implements Serializable {
 		this.userEmail = rc.getAuthorIdent().getEmailAddress();
 		this.commitTime = new SimpleDateFormat("yy-MM-dd").format(rc.getAuthorIdent().getWhen());
 	}
+	
+	//SVN Test//
+	public VCBlame(String commitID, String userName, String userEmail, String commitTime) {
+		super();
+		this.commitID = commitID;
+		this.userName = userName;
+		this.userEmail = userEmail;
+		this.commitTime = commitTime;
+	} 
+	////////////
 	public String getCommitID() {
 		return commitID;
 	}

@@ -84,7 +84,7 @@
      <servlet-class>org.eclipse.jgit.http.server.GitServlet</servlet-class>
      <init-param>
        <param-name>base-path</param-name>
-       <param-value>/home/git/</param-value>
+       <param-value>/Users/macbook/project/git/</param-value>
      </init-param>
      <init-param>
        <param-name>export-all</param-name>
@@ -102,7 +102,7 @@
 		<servlet-class>org.tmatesoft.svn.core.internal.server.dav.DAVServlet</servlet-class>
 		<init-param>
 			<param-name>SVNParentPath</param-name>
-			<param-value>/home/svn/</param-value><!-- 이게 실제 svn 주소 -->
+			<param-value>/Users/macbook/project/svn/</param-value><!-- 이게 실제 svn 주소 -->
 		</init-param>
 	</servlet>
 	<servlet-mapping>
