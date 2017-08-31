@@ -5,6 +5,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
+import com.forweaver.domain.Weaver;
 import com.forweaver.domain.git.statistics.GitParentStatistics;
 import com.forweaver.domain.vc.VCFileInfo;
 import com.forweaver.domain.vc.VCLog;
@@ -19,19 +21,13 @@ public class SVNService implements VCService{
 	@Autowired
 	WeaverService weaverService;
 	
-	public VCFileInfo getFileInfo(String parentDirctoryName, String repositoryName, String commitID, String filePath) {
-		/*System.out.println("*****************************");
-		System.out.println("parentDirctoryName: " + parentDirctoryName);
-		System.out.println("repositoryName: " + repositoryName);
-		System.out.println("commitID: " + commitID);
-		System.out.println("filePath: " + filePath);
 	
+	public VCFileInfo getFileInfo(String parentDirctoryName, String repositoryName, String commitID, String filePath) {
 		//사용자 정보 출력(세션)//
 		Weaver weaver = weaverService.getCurrentWeaver();
-		System.out.println("==================");
-		System.out.println("* Session id: " + weaver.getUsername());
-		System.out.println("* Session password: " + weaver.getPassword());
-		System.out.println("==================");*/
+		
+		System.out.println("==> Session id: " + weaver.getUsername());
+		System.out.println("==> Session password: " + weaver.getPassword());
 		
 		//프로젝트 초기화//
 		svnUtil.RepoInt(parentDirctoryName, repositoryName);

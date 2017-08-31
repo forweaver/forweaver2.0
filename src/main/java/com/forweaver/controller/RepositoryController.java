@@ -37,6 +37,7 @@ import com.forweaver.service.DataService;
 import com.forweaver.service.GitService;
 import com.forweaver.service.PostService;
 import com.forweaver.service.RepositoryService;
+import com.forweaver.service.SVNService;
 import com.forweaver.service.TagService;
 import com.forweaver.service.InviteService;
 import com.forweaver.service.WeaverService;
@@ -63,6 +64,8 @@ public class RepositoryController {
 	private TagService tagService;
 	@Autowired 
 	private DataService dataService;
+	@Autowired
+	private SVNService svnService;
 
 	@RequestMapping("/")
 	public String repositorys() {
@@ -151,7 +154,7 @@ public class RepositoryController {
 
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
 	public String add(@RequestParam Map<String, String> params,Model model) {
-		System.out.println("********************** Project add *********************");
+		System.out.println("********************** Repository add *********************");
 		
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 		List<String> tagList = tagService.stringToTagList(params.get("tags"));
@@ -259,6 +262,8 @@ public class RepositoryController {
 	public String fileBrowser(HttpServletRequest request,@PathVariable("repositoryName") String repositoryName,
 			@PathVariable("creatorName") String creatorName,
 			@PathVariable("log") String log,Model model) throws UnsupportedEncodingException  {
+		System.out.println("********************** Repository browser *********************");
+		
 		Repository repository = repositoryService.get(creatorName+"/"+repositoryName);
 		String uri = URLDecoder.decode(request.getRequestURI(),"UTF-8");
 		String filePath = uri.substring(uri.indexOf("filepath:")+9);
@@ -266,44 +271,70 @@ public class RepositoryController {
 		
 		log = uri.substring(uri.indexOf("/log:")+5);
 		log = log.substring(0, log.indexOf("/"));
+		
+		System.out.println("repo type: " + repository.getType());
 
-		VCFileInfo gitFileInfo = gitService.getFileInfo(creatorName, repositoryName, log, filePath);
+		VCFileInfo FileInfo = null;
+		
+		//1 - Git case, //
+		if(repository.getType() == 1){
+			FileInfo = gitService.getFileInfo(creatorName, repositoryName, log, filePath);
+		} else if(repository.getType() == 2){
+			System.out.println("==> filepath: " + filePath);
+			FileInfo = svnService.getFileInfo(creatorName, repositoryName, log, filePath);
+		}
 
+		if(FileInfo ==null || FileInfo.isDirectory()){ // 만약에 주소의 파일이 디렉토리라면
+			if(repository.getType() == 1){
+				List<VCSimpleFileInfo> gitFileInfoList = 
+						gitService.getGitSimpleFileInfoList(creatorName, repositoryName,log,filePath);
 
-		if(gitFileInfo ==null || gitFileInfo.isDirectory()){ // 만약에 주소의 파일이 디렉토리라면
-			List<VCSimpleFileInfo> gitFileInfoList = 
-					gitService.getGitSimpleFileInfoList(creatorName, repositoryName,log,filePath);
+				List<String> gitBranchList = gitService.getBranchList(creatorName, repositoryName);
+				gitBranchList.remove(log);
 
-			List<String> gitBranchList = gitService.getBranchList(creatorName, repositoryName);
-			gitBranchList.remove(log);
+				model.addAttribute("repository", repository);
+				model.addAttribute("gitFileInfoList", gitFileInfoList);
 
-			model.addAttribute("repository", repository);
-			model.addAttribute("gitFileInfoList", gitFileInfoList);
+				model.addAttribute("gitBranchList", gitBranchList);
+				model.addAttribute("selectBranch",log);
+				model.addAttribute("readme",gitService.getReadme(creatorName, repositoryName,log,gitFileInfoList));
+				model.addAttribute("filePath",filePath);
+				model.addAttribute("log",log);
+			} else if(repository.getType() == 2){
+				log = "-1";
+		
+				List<VCSimpleFileInfo> svnFileInfoList = 
+						svnService.getVCSimpleFileInfoList(creatorName, repositoryName,log,filePath);
 
-			model.addAttribute("gitBranchList", gitBranchList);
-			model.addAttribute("selectBranch",log);
-			model.addAttribute("readme",gitService.getReadme(creatorName, repositoryName,log,gitFileInfoList));
-			model.addAttribute("filePath",filePath);
-			model.addAttribute("log",log);
+				model.addAttribute("repository", repository);
+				model.addAttribute("gitFileInfoList", svnFileInfoList);
 
+				model.addAttribute("gitBranchList", null);
+				model.addAttribute("selectBranch",log);
+				model.addAttribute("readme",svnService.getReadme(creatorName, repositoryName,log,svnFileInfoList));
+				model.addAttribute("filePath",filePath);
+				model.addAttribute("log",log);
+			}
+
+			System.out.println("***************************************************************");
 			return "/repository/browser";
 		}else{ // 파일이라면
 			model.addAttribute("repository", repository);
-			model.addAttribute("fileName", gitFileInfo.getName());
-			if(!WebUtil.isCodeName(gitFileInfo.getName()))
-				gitFileInfo.setContent("이 파일은 화면에 표시할 수 없습니다!");
-			if(gitFileInfo.getContent() != null)
-				model.addAttribute("fileContent", new String(gitFileInfo.getContent().getBytes(Charset.forName("EUC-KR")),Charset.forName("CP949")));
-			model.addAttribute("gitLogList", gitFileInfo.getLogList());
-			model.addAttribute("selectCommitIndex", gitFileInfo.getSelectCommitIndex());
-			model.addAttribute("gitLog",gitFileInfo.getSelectLog());
+			model.addAttribute("fileName", FileInfo.getName());
+			if(!WebUtil.isCodeName(FileInfo.getName()))
+				FileInfo.setContent("이 파일은 화면에 표시할 수 없습니다!");
+			if(FileInfo.getContent() != null)
+				model.addAttribute("fileContent", new String(FileInfo.getContent().getBytes(Charset.forName("EUC-KR")),Charset.forName("CP949")));
+			model.addAttribute("gitLogList", FileInfo.getLogList());
+			model.addAttribute("selectCommitIndex", FileInfo.getSelectCommitIndex());
+			model.addAttribute("gitLog",FileInfo.getSelectLog());
 			model.addAttribute("filePath",filePath);
 			model.addAttribute("isCodeName",WebUtil.isCodeName(filePath));
 			model.addAttribute("isImageName",WebUtil.isImageName(filePath));
+			
+			System.out.println("***************************************************************");
 			return "/repository/fileViewer";
 		}
-
-
 	}
 
 	@RequestMapping("/{creatorName}/{repositoryName}/edit/log:{log}/**")

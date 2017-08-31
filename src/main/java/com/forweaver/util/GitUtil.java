@@ -71,7 +71,7 @@ public class GitUtil implements VCUtil{
 		this.gitPath = gitPath;
 	}
 	public GitUtil(){
-		this.gitPath = "/home/git/"; //로컬 깃 저장소 주소
+		this.gitPath = "/Users/macbook/project/git/"; //로컬 깃 저장소 주소
 	}
 
 	/** 저장소 초기화 메서드

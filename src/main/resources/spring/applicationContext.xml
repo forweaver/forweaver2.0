@@ -22,5 +22,9 @@
 		class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
 		<property name="configLocation" value="classpath:ehcache.xml"></property>
 	</bean>
+	
+	<bean id="svnutil" class="com.forweaver.util.SVNUtil"></bean>
+	<bean id="svnservice" class="com.forweaver.service.SVNService"></bean>
+	<bean id="annotationhandler" class="com.forweaver.util.AnnotationHandler"></bean>
 </beans>
 

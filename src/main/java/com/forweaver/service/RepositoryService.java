@@ -24,6 +24,7 @@ import com.forweaver.mongodb.dao.PostDao;
 import com.forweaver.mongodb.dao.RepositoryDao;
 import com.forweaver.mongodb.dao.WeaverDao;
 import com.forweaver.util.GitUtil;
+import com.forweaver.util.SVNUtil;
 
 /** 저장소 관리 서비스
  *
@@ -40,6 +41,7 @@ public class RepositoryService{
 	@Autowired private InviteDao invateDao;
 	@Autowired private PostDao postDao;
 	@Autowired private GitUtil gitUtil;
+	@Autowired private SVNUtil svnUtil;
 
 	@Autowired @Qualifier("sessionRegistry")
 	private SessionRegistry sessionRegistry;
@@ -48,20 +50,45 @@ public class RepositoryService{
 	 * @param currentWeaver
 	 */
 	public void add(Repository repository,Weaver currentWeaver){
-		System.out.println("- project type: " + repository.getType());
+		//System.out.println("- project type: " + repository.getType());
 		// TODO Auto-generated method stub
-		/*if(currentWeaver == null)
-			return;
+		if(repository.getType() == 1){
+			System.out.println("git project init");
+			if(currentWeaver == null)
+				return;
 
-		gitUtil.Init(repository);
+			gitUtil.Init(repository);
+			
+			if(!gitUtil.createRepository())
+				return;
+		} else if(repository.getType() == 2){
+			System.out.println("svn project init");
+			System.out.println("<<weaver info>>");
+			System.out.println("id: " + currentWeaver.getId());
+			System.out.println("password: " + currentWeaver.getPassword());
+			System.out.println("username: " + currentWeaver.getUsername());
+			System.out.println("email: " + currentWeaver.getEmail());
+			
+			System.out.println("<<Repository info>>");
+			System.out.println("Category: " + repository.getType());
+			System.out.println("Category name: " + repository.getCreatorName());
+			System.out.println("Category email: " + repository.getCreatorEmail());
+			System.out.println("Category description : " + repository.getDescription());
+			System.out.println("Category projectname: " + repository.getName());
+			
+			if(currentWeaver == null)
+				return;
+			
+			svnUtil.Init(repository);
+				
+			if(!svnUtil.createRepository())
+				return;
+		}
 		
-		if(!gitUtil.createRepository())
-			return;
-
 		repositoryDao.insert(repository);
 		Pass pass = new Pass(repository.getName(),2);
 		currentWeaver.addPass(pass);
-		weaverDao.updatePass(currentWeaver);*/
+		weaverDao.updatePass(currentWeaver);
 	}
 
 	/** 회원 추가함.

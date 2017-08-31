@@ -103,7 +103,7 @@ public class SVNUtil implements VCUtil{
 			e.printStackTrace();
 		}
 		
-		return false;
+		return true;
 	}
 
 	public boolean deleteRepository() {
@@ -122,10 +122,6 @@ public class SVNUtil implements VCUtil{
 	 * @return
 	 */
 	public boolean isDirectory(String commitID, String filePath) {
-		System.out.println("--<Directory Check>--");
-		System.out.println("==> filepath: " + filePath);
-		System.out.println("==> commitID: " + commitID);
-		
 		//해당 filepath만 검증//
 		SVNDirEntry dirEntry=null;
 		
@@ -134,11 +130,9 @@ public class SVNUtil implements VCUtil{
 		    
 		    if(dirEntry.getKind().toString().equals("dir")){
             	System.out.println("[true directory]");
-            	System.out.println("---------------------");
             	return true;
             } else{
             	System.out.println("[false directory]");
-            	System.out.println("---------------------");
             	return false;
             }
 		} catch (  SVNException e) {
@@ -155,9 +149,6 @@ public class SVNUtil implements VCUtil{
 	 */
 	@SuppressWarnings("finally")
 	public VCFileInfo getFileInfo(String commitID, String filePath) {
-		System.out.println("--<File Info>--");
-		System.out.println("==> filepath: " + filePath);
-		System.out.println("==> commit: " + commitID);
 		
 		//파일내용, 커밋로그 2개를 call//
 		List<VCSimpleLog> commitLogList = new ArrayList<VCSimpleLog>();
@@ -368,8 +359,6 @@ public class SVNUtil implements VCUtil{
 	
 		SVNRepository repository = this.repository;
 		
-		System.out.println("==> fileinfo list path: " + filePath);
-		
 		try {
 			svnFileInfoList = listEntries(repository, filePath, commitID); //파일내의 정보를 불러온다.//
 		} catch (SVNException e) {
@@ -383,9 +372,6 @@ public class SVNUtil implements VCUtil{
 	//파일 리스트 정보를 가져온다.//
 	private List<VCSimpleFileInfo> listEntries(SVNRepository repository, String path, String commitID) throws SVNException {
 		List<VCSimpleFileInfo> svnFileInfoList = new ArrayList<VCSimpleFileInfo>();
-		
-		System.out.println("--<listEntries>--");
-		System.out.println("path: " + path);
 		
         try
         {
@@ -408,7 +394,6 @@ public class SVNUtil implements VCUtil{
                 svnFileInfoList.add(svnFileInfo);
             }
         	
-        	System.out.println("------------------");
         	return svnFileInfoList;
         } catch(SVNException e){
         	e.printStackTrace();
