@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>forweaver</groupId>
 	<artifactId>forweaver</artifactId>
-	<version>2.0.17-SNAPSHOT</version>
+	<version>2.0.0-SNAPSHOT</version>
 	<packaging>war</packaging>
 	<build>
 		<finalName>forweaver</finalName>
@@ -95,12 +95,6 @@
 			<artifactId>spring-security-config</artifactId>
 			<version>${org.springframework.security-version}</version>
 		</dependency>
-		<!-- mobile -->
-		<dependency>
-			<groupId>org.springframework.mobile</groupId>
-			<artifactId>spring-mobile-device</artifactId>
-			<version>1.1.4.RELEASE</version>
-		</dependency>
 
 		<!-- Database connection pooling -->
 		<dependency>
@@ -153,7 +147,7 @@
 			<artifactId>logback-classic</artifactId>
 			<version>1.1.2</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
@@ -255,9 +249,9 @@
 
 		<!-- SVN -->
 		<dependency>
-			<groupId>org.tmatesoft.svnkit</groupId>
+			<groupId>sonia.svnkit</groupId>
 			<artifactId>svnkit</artifactId>
-			<version>1.8.14</version>
+			<version>1.8.5-scm4</version>
 		</dependency>
 
 		<dependency>
@@ -266,8 +260,11 @@
 			<version>1.0.0-build215</version>
 		</dependency>
 
-		<!-- <dependency> <groupId>org.tmatesoft.svnkit</groupId> <artifactId>svnkit-dav</artifactId> 
-			<version>1.8.14</version> <type>war</type> </dependency> -->
+		<dependency>
+			<groupId>sonia.svnkit</groupId>
+			<artifactId>svnkit-dav</artifactId>
+			<version>1.8.5-scm4</version>
+		</dependency>
 		<dependency>
 			<groupId>org.apache.ftpserver</groupId>
 			<artifactId>ftpserver</artifactId>
@@ -290,6 +287,10 @@
 			<id>sonatype-ossrh</id>
 			<name>Sonatype Open Source Software Repository Hosting</name>
 			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+		</repository>
+				<repository>
+			<id>svn-repository</id>
+			<url>https://maven.scm-manager.org/nexus/content/repositories/releases/</url>
 		</repository>
 		<repository>
 			<id>mvn2</id>
