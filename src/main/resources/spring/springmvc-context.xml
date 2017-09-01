@@ -41,17 +41,12 @@
 		<property name="maxUploadSize" value="104857600000" />
 	</bean>
 
-	<bean id="liteDeviceDelegatingViewResolver"
-		class="org.springframework.mobile.device.view.LiteDeviceDelegatingViewResolver">
-		<constructor-arg>
-			<bean id="viewResolver"
-				class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-				<property name="prefix" value="/WEB-INF/views/" />
-				<property name="suffix" value=".jsp" />
-			</bean>
-		</constructor-arg>
-		<property name="enableFallback" value="true" />
-	</bean>
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+       <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+        <property name="prefix" value="/WEB-INF/views/" />
+        <property name="suffix" value=".jsp" />
+     </bean>
+ 
 
 
 	<bean
