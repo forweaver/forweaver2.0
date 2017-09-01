@@ -2,7 +2,7 @@
 
 <sec:authentication property="principal" var="currentUser"/>
 <h1>
-	<a href="/">ForWeaver</a> <small>모두를 위한 소셜 코딩!!</small>
+	<a href="/">ForWeaver</a> <small>모두를 위한 소셜 코딩!</small>
 </h1>
 
 <div id="forweaver-nav"class="navbar navbar-inverse">
