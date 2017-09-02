@@ -14,7 +14,10 @@ import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.tmatesoft.svn.core.SVNCommitInfo;
 import org.tmatesoft.svn.core.SVNDepth;
 import org.tmatesoft.svn.core.SVNDirEntry;
@@ -33,14 +36,18 @@ import org.tmatesoft.svn.core.wc.SVNDiffClient;
 import org.tmatesoft.svn.core.wc.SVNLogClient;
 import org.tmatesoft.svn.core.wc.SVNRevision;
 
+import com.forweaver.controller.RepositoryController;
 import com.forweaver.domain.Repository;
 import com.forweaver.domain.vc.VCBlame;
 import com.forweaver.domain.vc.VCFileInfo;
 import com.forweaver.domain.vc.VCLog;
 import com.forweaver.domain.vc.VCSimpleFileInfo;
 import com.forweaver.domain.vc.VCSimpleLog;
-
+@Component
 public class SVNUtil implements VCUtil{
+	private static final Logger logger =
+			LoggerFactory.getLogger(SVNUtil.class);
+	
 	private String svnPath;
 	private String svnreporootPath;
 	private String path;
@@ -72,9 +79,9 @@ public class SVNUtil implements VCUtil{
 	public void Init(Repository pro) {
 		try {
 			this.path = svnPath + pro.getName();
-			System.out.println("path: " + this.path);
+			logger.debug("path: " + this.path);
 		} catch (Exception e) {
-			System.err.println(e.getMessage());
+			logger.error(e.getMessage());
 		}
 	}
 	
@@ -87,9 +94,10 @@ public class SVNUtil implements VCUtil{
 	public void RepoInt(String parentDirctoryName, String repositoryName) {
 		try {
 			SVNRepository repository = SVNRepositoryFactory.create( SVNURL.parseURIEncoded(this.svnreporootPath+"/"+parentDirctoryName+"/"+repositoryName));
+			
 			this.repository = repository;
 		} catch (Exception e) {
-			System.err.println(e.getMessage());
+			logger.error(e.getMessage());
 		}
 	}
 
@@ -97,7 +105,7 @@ public class SVNUtil implements VCUtil{
 		try {
 			SVNURL tgtURL = SVNRepositoryFactory.createLocalRepository( new File( this.path ), true , false );
 			
-			System.out.println("repo URL: " + tgtURL);
+			logger.debug("repo URL: " + tgtURL);
 		} catch (SVNException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -110,7 +118,7 @@ public class SVNUtil implements VCUtil{
 		try {
 			FileUtils.deleteDirectory(new File(this.path)); //파일제거//
 		}catch(Exception e) {
-			System.err.println(e.getMessage());
+			logger.error(e.getMessage());
 			return false;
 		}
 		return true;
@@ -129,10 +137,10 @@ public class SVNUtil implements VCUtil{
 		    dirEntry=this.repository.info(filePath,Long.parseLong(commitID));
 		    
 		    if(dirEntry.getKind().toString().equals("dir")){
-            	System.out.println("[true directory]");
+		    	logger.debug("[true directory]");
             	return true;
             } else{
-            	System.out.println("[false directory]");
+            	logger.debug("[false directory]");
             	return false;
             }
 		} catch (  SVNException e) {
@@ -198,8 +206,8 @@ public class SVNUtil implements VCUtil{
 	 * @return
 	 */
 	public String doPrintFileStringcontent(String filename){
-		System.out.println("--<file content>--");
-		System.out.println("==> filename: " + filename);
+		logger.debug("--<file content>--");
+		logger.debug("==> filename: " + filename);
 		
 		String filecontent = "";
 		
@@ -231,28 +239,28 @@ public class SVNUtil implements VCUtil{
 				}
 
 				if (isTextType) {
-					System.out.println("==> "+filename +" File contents:");
+					logger.debug("==> "+filename +" File contents:");
 					
 					filecontent = baos.toString();
 	
-					System.out.println(filecontent);
-					System.out.println("------------------");
+					logger.debug(filecontent);
+					logger.debug("------------------");
 					return filecontent;
 				} else {
-					System.out.println(filename + " Not a text file.");
-					System.out.println("------------------");
+					logger.debug(filename + " Not a text file.");
+					logger.debug("------------------");
 					return filecontent;
 				}
 			} else if (nodeKind == SVNNodeKind.DIR) {
-				System.out.println(filename + " is Directory");
-				System.out.println("------------------");
+				logger.debug(filename + " is Directory");
+				logger.debug("------------------");
 				return filecontent;
 			}
 			
 			
 		} catch (SVNException e) {
 			e.printStackTrace();
-			System.out.println("------------------");
+			logger.debug("------------------");
 			return filecontent;
 		}
 		
@@ -265,8 +273,8 @@ public class SVNUtil implements VCUtil{
 	 * @return
 	 */
 	public byte[] doPrintFileBytecontent(String filename){
-		System.out.println("--<file content>--");
-		System.out.println("==> filename: " + filename);
+		logger.debug("--<file content>--");
+		logger.debug("==> filename: " + filename);
 		
 		byte[] content = null;
 		
@@ -298,27 +306,27 @@ public class SVNUtil implements VCUtil{
 				}
 
 				if (isTextType) {
-					System.out.println("==> "+filename +" File contents:");
+					logger.debug("==> "+filename +" File contents:");
 					content = baos.toByteArray();
 	
-					System.out.println(content);
+					logger.debug(""+content);
 					
 					return content;
 				} else {
-					System.out.println(filename + " Not a text file.");
-					System.out.println("------------------");
+					logger.debug(filename + " Not a text file.");
+					logger.debug("------------------");
 					return content;
 				}
 			} else if (nodeKind == SVNNodeKind.DIR) {
-				System.out.println(filename + " is Directory");
-				System.out.println("------------------");
+				logger.debug(filename + " is Directory");
+				logger.debug("------------------");
 				return content;
 			}
 			
 			
 		} catch (SVNException e) {
 			e.printStackTrace();
-			System.out.println("------------------");
+			logger.debug("------------------");
 			return content;
 		}
 		
@@ -348,7 +356,7 @@ public class SVNUtil implements VCUtil{
 			e.printStackTrace();
 		}
 		
-		System.out.println("==> log count: " + logcount);
+		logger.debug("==> log count: " + logcount);
 		
 		return logcount;
 	}
@@ -373,6 +381,9 @@ public class SVNUtil implements VCUtil{
 	private List<VCSimpleFileInfo> listEntries(SVNRepository repository, String path, String commitID) throws SVNException {
 		List<VCSimpleFileInfo> svnFileInfoList = new ArrayList<VCSimpleFileInfo>();
 		
+		logger.debug("==> filepath: " + path);
+		logger.debug("==> commitID: " + commitID);
+	
         try
         {
         	Collection entries = repository.getDir(path, -1, null, (Collection) null);
@@ -441,8 +452,8 @@ public class SVNUtil implements VCUtil{
 			//diff정보를 가져온다.(선택된 커밋과 하나 이전 커밋과의 비교)//
 			diffStr = doDiff(selectCommitIndex-1, selectCommitIndex);
 	
-			System.out.println("==> Diff result:");
-			System.out.println(diffStr);
+			logger.debug("==> Diff result:");
+			logger.debug(diffStr);
 			
 			//로그객체를 생성//
 			svnCommitLog = new VCLog(revesion,
@@ -598,15 +609,15 @@ public class SVNUtil implements VCUtil{
 	}
 
 	public List<VCBlame> getBlame(String filePath, String commitID) {
-		System.out.println("===== Blame set...");
-		System.out.println("filePath: " + filePath);
-		System.out.println("commitID: " + commitID);
+		logger.debug("===== Blame set...");
+		logger.debug("filePath: " + filePath);
+		logger.debug("commitID: " + commitID);
 		
 		long startRevesion = 0;
 		long endRevesion = Long.parseLong(commitID);
 		
-		System.out.println("start Revesion: " + startRevesion);
-		System.out.println("end Revesion: " + endRevesion);
+		logger.debug("start Revesion: " + startRevesion);
+		logger.debug("end Revesion: " + endRevesion);
 		
 		List<VCBlame> gitBlames = new ArrayList<VCBlame>();
 		List<Map<String, Object>>blameinfolist = new ArrayList<Map<String, Object>>();
@@ -626,13 +637,13 @@ public class SVNUtil implements VCUtil{
 			
 			SVNURL svnURL = repository.getRepositoryRoot(false).appendPath(filePath, false);
 			
-			System.out.println("repo address: " + repository.getRepositoryRoot(false).getPath());
+			logger.debug("repo address: " + repository.getRepositoryRoot(false).getPath());
 			
 			logClient.doAnnotate(svnURL, SVNRevision.UNDEFINED, SVNRevision.create(startRevesion), SVNRevision.create(endRevesion), annotationhandler);
 		  
 			blameinfolist = annotationhandler.getResult();
 			
-			System.out.println("blame info size: " + blameinfolist.size());
+			logger.debug("blame info size: " + blameinfolist.size());
 			
 			for(int i=0; i<blameinfolist.size(); i++){
 				gitBlames.add(new VCBlame(
@@ -661,11 +672,11 @@ public class SVNUtil implements VCUtil{
 	 * @param zip
 	 */
 	public void updateFile(String name,String email,String branchName,String message,String path,String code){
-		System.out.println("-> name: " + name);
-		System.out.println("-> email: " + email);
-		System.out.println("-> message: " + message);
-		System.out.println("-> path: " + path);
-		System.out.println("-> code: " + code);
+		logger.debug("-> name: " + name);
+		logger.debug("-> email: " + email);
+		logger.debug("-> message: " + message);
+		logger.debug("-> path: " + path);
+		logger.debug("-> code: " + code);
 		
 		//SVN modify commit//
 		SVNRepository repository = null;
@@ -677,22 +688,22 @@ public class SVNUtil implements VCUtil{
 			byte[] updatecontents = code.getBytes();
 			
 			SVNNodeKind nodeKind = repository.checkPath("", -1);
-			System.out.println("-> status: " + nodeKind);
+			logger.debug("-> status: " + nodeKind);
 			
 			long latestRevision = repository.getLatestRevision();
-	        System.out.println("Repository latest revision (before committing): " + latestRevision);
+			logger.debug("Repository latest revision (before committing): " + latestRevision);
 	        
 	        ISVNEditor editor = repository.getCommitEditor(message, null);
 	        
-	        System.out.println("midify path: " + path);
+	        logger.debug("midify path: " + path);
 	        SVNCommitInfo commitInfo = modifyFile(editor, path, path, oldcontents, updatecontents);
-	        System.out.println("The file was changed: " + commitInfo);
+	        logger.debug("The file was changed: " + commitInfo);
 	        
 	        //수정되었는지 확인//
 	        if(commitInfo != null){
-	        	System.out.println("==> edit result: success...");
+	        	logger.debug("==> edit result: success...");
 	        } else if(commitInfo == null){
-	        	System.out.println("==> edit result: fail...");
+	        	logger.debug("==> edit result: fail...");
 	        }
 		} catch(SVNException e){
 			e.printStackTrace();

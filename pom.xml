@@ -251,7 +251,7 @@
 		<dependency>
 			<groupId>sonia.svnkit</groupId>
 			<artifactId>svnkit</artifactId>
-			<version>1.8.5-scm4</version>
+			<version>1.8.14-scm1</version>
 		</dependency>
 
 		<dependency>

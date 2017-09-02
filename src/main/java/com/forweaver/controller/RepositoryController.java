@@ -39,6 +39,7 @@ import com.forweaver.service.PostService;
 import com.forweaver.service.RepositoryService;
 import com.forweaver.service.SVNService;
 import com.forweaver.service.TagService;
+import com.forweaver.service.VCService;
 import com.forweaver.service.InviteService;
 import com.forweaver.service.WeaverService;
 import com.forweaver.util.WebUtil;
@@ -154,7 +155,7 @@ public class RepositoryController {
 
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
 	public String add(@RequestParam Map<String, String> params,Model model) {
-		System.out.println("********************** Repository add *********************");
+		logger.debug("********************** < /add > *********************");
 		
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 		List<String> tagList = tagService.stringToTagList(params.get("tags"));
@@ -183,7 +184,7 @@ public class RepositoryController {
 				tagList);
 
 		repositoryService.add(repository,currentWeaver);
-		System.out.println("********************************************************");
+		logger.debug("********************************************************");
 		
 		return "redirect:/repository/";//+repository.getName();
 	}
@@ -262,17 +263,18 @@ public class RepositoryController {
 	public String fileBrowser(HttpServletRequest request,@PathVariable("repositoryName") String repositoryName,
 			@PathVariable("creatorName") String creatorName,
 			@PathVariable("log") String log,Model model) throws UnsupportedEncodingException  {
-		System.out.println("********************** Repository browser *********************");
+		logger.debug("********************** < /{creatorName}/{repositoryName}/browser/log:{log}/** > *********************");
 		
 		Repository repository = repositoryService.get(creatorName+"/"+repositoryName);
 		String uri = URLDecoder.decode(request.getRequestURI(),"UTF-8");
 		String filePath = uri.substring(uri.indexOf("filepath:")+9);
 		filePath = filePath.replace(",jsp", ".jsp");
-		
+	
 		log = uri.substring(uri.indexOf("/log:")+5);
 		log = log.substring(0, log.indexOf("/"));
 		
-		System.out.println("repo type: " + repository.getType());
+		logger.debug("& filepath: " + filePath);
+		logger.debug("& log: " + log);
 
 		VCFileInfo FileInfo = null;
 		
@@ -280,10 +282,12 @@ public class RepositoryController {
 		if(repository.getType() == 1){
 			FileInfo = gitService.getFileInfo(creatorName, repositoryName, log, filePath);
 		} else if(repository.getType() == 2){
-			System.out.println("==> filepath: " + filePath);
 			FileInfo = svnService.getFileInfo(creatorName, repositoryName, log, filePath);
 		}
 
+		logger.debug("& filename: " + FileInfo.getName());
+		logger.debug("& isDirectory: " + FileInfo.isDirectory());
+		
 		if(FileInfo ==null || FileInfo.isDirectory()){ // 만약에 주소의 파일이 디렉토리라면
 			if(repository.getType() == 1){
 				List<VCSimpleFileInfo> gitFileInfoList = 
@@ -301,22 +305,30 @@ public class RepositoryController {
 				model.addAttribute("filePath",filePath);
 				model.addAttribute("log",log);
 			} else if(repository.getType() == 2){
+				logger.debug("------------------------------> svn case");
 				log = "-1";
-		
+				
+				logger.debug("==> Directory Info");
+				logger.debug("==> repositoryName: " + repositoryName);
+				logger.debug("==> filePath: " + filePath);
+				
 				List<VCSimpleFileInfo> svnFileInfoList = 
 						svnService.getVCSimpleFileInfoList(creatorName, repositoryName,log,filePath);
 
+				for (int i = 0; i < svnFileInfoList.size(); i++) {
+					logger.debug("directory info log: " + svnFileInfoList.get(i).getName());
+				}
+				
 				model.addAttribute("repository", repository);
 				model.addAttribute("gitFileInfoList", svnFileInfoList);
-
 				model.addAttribute("gitBranchList", null);
-				model.addAttribute("selectBranch",log);
-				model.addAttribute("readme",svnService.getReadme(creatorName, repositoryName,log,svnFileInfoList));
+				model.addAttribute("selectBranch",null);
+				model.addAttribute("readme","test READEME");
 				model.addAttribute("filePath",filePath);
 				model.addAttribute("log",log);
 			}
 
-			System.out.println("***************************************************************");
+			logger.debug("***************************************************************");
 			return "/repository/browser";
 		}else{ // 파일이라면
 			model.addAttribute("repository", repository);
@@ -332,7 +344,7 @@ public class RepositoryController {
 			model.addAttribute("isCodeName",WebUtil.isCodeName(filePath));
 			model.addAttribute("isImageName",WebUtil.isImageName(filePath));
 			
-			System.out.println("***************************************************************");
+			logger.debug("***************************************************************");
 			return "/repository/fileViewer";
 		}
 	}
@@ -388,29 +400,45 @@ public class RepositoryController {
 	public String blame(HttpServletRequest request, @PathVariable("repositoryName") String repositoryName,
 			@PathVariable("creatorName") String creatorName,
 			@PathVariable("log") String log,Model model) throws UnsupportedEncodingException{
+		logger.debug("*************************< /{creatorName}/{repositoryName}/blame/log:{log}/** > ***************************");
+		
 		Repository repository = repositoryService.get(creatorName+"/"+repositoryName);
 		String uri = URLDecoder.decode(request.getRequestURI(),"UTF-8");
 		String filePath = uri.substring(uri.indexOf("filepath:")+9);
 		filePath = filePath.replace(",jsp", ".jsp");
 
 		if(!WebUtil.isCodeName(filePath)) //소스코드만 추적 가능함.
+		{
+			logger.debug("***********************************************************************************************************");
 			return "redirect:/repository/"+creatorName+"/"+repositoryName+"/browser/log:"+log+"/filepath:"+filePath;
+		}
 
 		log = uri.substring(uri.indexOf("/log:")+5);
 		log = log.substring(0, log.indexOf("/"));		
-		VCFileInfo gitFileInfo = gitService.getFileInfoWithBlame(creatorName, repositoryName, log, filePath);
+		VCFileInfo FileInfo = null;
+		
+		if(repository.getType() ==1){
+			FileInfo = gitService.getFileInfoWithBlame(creatorName, repositoryName, log, filePath);
+		} else if(repository.getType() == 2){
+			FileInfo = svnService.getFileInfoWithBlame(creatorName, repositoryName, log, filePath);
+		}
 
-		if(gitFileInfo==null || gitFileInfo.isDirectory()) // 디렉토리의 경우 blame 기능을 이용할 수 없어 저장소 메인으로 돌려보냄.
+		if(FileInfo==null || FileInfo.isDirectory()) // 디렉토리의 경우 blame 기능을 이용할 수 없어 저장소 메인으로 돌려보냄.
+		{
+			logger.debug("***********************************************************************************************************");
 			return "redirect:/repository/"+creatorName+"/"+repositoryName;
+		}
 
 		model.addAttribute("repository", repository);
-		model.addAttribute("fileName", gitFileInfo.getName());
-		if(gitFileInfo.getContent() != null)
-			model.addAttribute("fileContent", gitFileInfo.getContent());
-		model.addAttribute("gitLogList", gitFileInfo.getLogList());
-		model.addAttribute("gitBlameList", gitFileInfo.getBlames());
-		model.addAttribute("selectCommitIndex", gitFileInfo.getSelectCommitIndex());
-		model.addAttribute("gitLog", gitFileInfo.getSelectLog());
+		model.addAttribute("fileName", FileInfo.getName());
+		if(FileInfo.getContent() != null)
+			model.addAttribute("fileContent", FileInfo.getContent());
+		model.addAttribute("gitLogList", FileInfo.getLogList());
+		model.addAttribute("gitBlameList", FileInfo.getBlames());
+		model.addAttribute("selectCommitIndex", FileInfo.getSelectCommitIndex());
+		model.addAttribute("gitLog", FileInfo.getSelectLog());
+		
+		logger.debug("***********************************************************************************************************");
 		return "/repository/blame";
 	}
 
@@ -516,19 +544,31 @@ public class RepositoryController {
 	@RequestMapping("/{creatorName}/{repositoryName}/log")
 	public String log(@PathVariable("repositoryName") String repositoryName,
 			@PathVariable("creatorName") String creatorName,Model model) {
+		logger.debug("*********************< /{creatorName}/{repositoryName}/log >**********************");
+		
 		Repository repository = repositoryService.get(creatorName+"/"+repositoryName);
+		
+		logger.debug("==> repository type: " + repository.getType());
 
-		List<String> gitBranchList = gitService.getBranchList(creatorName, repositoryName);
+		if(repository.getType() == 1){
+			List<String> gitBranchList = gitService.getBranchList(creatorName, repositoryName);
 
-		model.addAttribute("gitBranchList", gitBranchList.subList(1, gitBranchList.size()));
-		model.addAttribute("selectBranch",gitBranchList.get(0));
-		model.addAttribute("repository", repository);
-		model.addAttribute("pageIndex",1);
-		model.addAttribute("gitCommitListCount", 
-				gitService.getCommitListCount(creatorName, repositoryName,gitBranchList.get(0)));
-		model.addAttribute("gitCommitList", 
-				gitService.getGitLogList(creatorName, repositoryName,gitBranchList.get(0),1,15));
-
+			model.addAttribute("gitBranchList", gitBranchList.subList(1, gitBranchList.size()));
+			model.addAttribute("selectBranch",gitBranchList.get(0));
+			model.addAttribute("repository", repository);
+			model.addAttribute("pageIndex",1);
+			model.addAttribute("gitCommitListCount", 
+					gitService.getCommitListCount(creatorName, repositoryName,gitBranchList.get(0)));
+			model.addAttribute("gitCommitList", 
+					gitService.getGitLogList(creatorName, repositoryName,gitBranchList.get(0),1,15));
+		} else if(repository.getType() == 2){
+			model.addAttribute("repository", repository);
+			model.addAttribute("pageIndex", 1);
+			model.addAttribute("gitCommitListCount", svnService.getCommitListCount(creatorName, repositoryName, "-1"));
+			model.addAttribute("gitCommitList", svnService.getVCCommitLogList(creatorName, repositoryName, "-1", 1, 15));
+		}
+		
+		logger.debug("*******************************************************");
 		return "/repository/log";
 	}
 	/*
@@ -647,14 +687,33 @@ public class RepositoryController {
 			@PathVariable("creatorName") String creatorName,
 			@PathVariable("log") String log,
 			HttpServletRequest request,Model model) {
+		logger.debug("**********************< /{creatorName}/{repositoryName}/log-viewer/log:{log} >************************");
+		
 		Repository repository = repositoryService.get(creatorName+"/"+repositoryName);
 		String uri = request.getRequestURI();
 		log = uri.substring(uri.indexOf("/log:")+5);
-		VCLog gitLog = gitService.getGitLog(creatorName, repositoryName, log);
-		if(gitLog == null)
-			return "redirect:/repository/"+ creatorName+"/"+repositoryName+"/log";
+		
+		logger.debug("==> repository type: " + repository.getType());
+		logger.debug("==> uri: " + uri);
+		logger.debug("==> log: " + log);
+		
+		VCLog repoLog = null;
+		
+		if(repository.getType() == 1){
+			repoLog = gitService.getGitLog(creatorName, repositoryName, log);
+			if(repoLog == null)
+				return "redirect:/repository/"+ creatorName+"/"+repositoryName+"/log";
+		} else if(repository.getType() == 2){
+			repoLog = svnService.getVCCommitLog(creatorName, repositoryName, log);
+			if(repoLog == null)
+				return "redirect:/repository/"+ creatorName+"/"+repositoryName+"/log";
+		}
+		
 		model.addAttribute("repository", repository);
-		model.addAttribute("gitLog",gitLog);
+		model.addAttribute("gitLog",repoLog);
+		
+		logger.debug("************************************************************");
+		
 		return "/repository/logViewer";
 	}
 

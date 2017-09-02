@@ -4,7 +4,10 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.forweaver.domain.Weaver;
 import com.forweaver.domain.git.statistics.GitParentStatistics;
@@ -15,7 +18,11 @@ import com.forweaver.domain.vc.VCSimpleLog;
 import com.forweaver.util.GitInfo;
 import com.forweaver.util.SVNUtil;
 
+@Service
 public class SVNService implements VCService{
+	private static final Logger logger =
+			LoggerFactory.getLogger(SVNUtil.class);
+	
 	@Autowired
 	SVNUtil svnUtil;
 	@Autowired
@@ -26,8 +33,8 @@ public class SVNService implements VCService{
 		//사용자 정보 출력(세션)//
 		Weaver weaver = weaverService.getCurrentWeaver();
 		
-		System.out.println("==> Session id: " + weaver.getUsername());
-		System.out.println("==> Session password: " + weaver.getPassword());
+		logger.debug("==> Session id: " + weaver.getUsername());
+		logger.debug("==> Session password: " + weaver.getPassword());
 		
 		//프로젝트 초기화//
 		svnUtil.RepoInt(parentDirctoryName, repositoryName);
@@ -40,23 +47,23 @@ public class SVNService implements VCService{
 		commitID = "-1";
 		//svnUtil.isDirectory(commitID, filePath);
 		//저장소 리스트를 출력//
-		VCFileInfo gitFileInfo = svnUtil.getFileInfo(commitID, filePath);
+		VCFileInfo svnFileInfo = svnUtil.getFileInfo(commitID, filePath);
 			
-		return gitFileInfo;
+		return svnFileInfo;
 	}
 
 	public VCFileInfo getFileInfoWithBlame(String parentDirctoryName, String repositoryName, String commitID,
 			String filePath) {
-		System.out.println("projectDirectoryName: " + parentDirctoryName);
-		System.out.println("repositoryName: " + repositoryName);
-		System.out.println("commitID: " + commitID);
-		System.out.println("filePath: " + filePath);
+		logger.debug("projectDirectoryName: " + parentDirctoryName);
+		logger.debug("repositoryName: " + repositoryName);
+		logger.debug("commitID: " + commitID);
+		logger.debug("filePath: " + filePath);
 		
 		svnUtil.RepoInt(parentDirctoryName,repositoryName);
 
 		VCFileInfo svnFileInfo = svnUtil.getFileInfo(commitID, filePath);
 		if(!svnFileInfo.isDirectory()){
-			System.out.println("blame set");
+			logger.debug("blame set");
 			svnFileInfo.setBlames(svnUtil.getBlame(filePath, commitID));
 		}
 		return svnFileInfo;
