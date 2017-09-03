@@ -216,6 +216,8 @@ public class RepositoryController {
 	public void data(HttpServletRequest request,@PathVariable("repositoryName") String repositoryName,
 			@PathVariable("creatorName") String creatorName,
 			@PathVariable("log") String log,HttpServletResponse res) throws IOException {
+		logger.debug("**********< /{creatorName}/{repositoryName}/data/log:{log}/** >***************");
+		
 		String uri = URLDecoder.decode(request.getRequestURI(),"UTF-8");
 		String filePath = uri.substring(uri.indexOf("filepath:")+9);
 		filePath = filePath.replace(",jsp", ".jsp");
@@ -226,6 +228,7 @@ public class RepositoryController {
 		VCFileInfo gitFileInfo = gitService.getFileInfo(creatorName, repositoryName, log, filePath);
 
 		if (gitFileInfo == null) {
+			logger.debug("******************************************************************************");
 			return;
 		} else {
 			byte[] imgData = gitFileInfo.getData();
@@ -239,6 +242,8 @@ public class RepositoryController {
 			o.write(imgData);
 			o.flush();
 			o.close();
+			
+			logger.debug("******************************************************************************");
 			return;
 		} 
 
@@ -397,14 +402,20 @@ public class RepositoryController {
 			@RequestParam("message") String message,
 			@RequestParam("path") String path,
 			@RequestParam("code") String code,Model model)  {
+		logger.debug("*****************< /{creatorName}/{repositoryName}/file-edit >*******************");
+		
 		Repository repository = repositoryService.get(creatorName+"/"+repositoryName);
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
-
+		
 		if(!repositoryService.updateFile(repository, currentWeaver,log, message,path, code)){
 			model.addAttribute("say", "업로드 실패! 저장소에 가입되어 있는지 혹은 최신 커밋의 파일인지 확인해보세요!");
 			model.addAttribute("url", "/repository/"+creatorName+"/"+repositoryName+"/edit/log:"+log+"/filepath:/"+path);
+			
+			logger.debug("*********************************************************************************");
 			return "/alert";
 		}
+		
+		logger.debug("*********************************************************************************");
 		return "redirect:/repository/"+creatorName+"/"+repositoryName+"/browser/log:"+log+"/filepath:/"+path;
 	}
 

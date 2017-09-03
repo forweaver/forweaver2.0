@@ -53,7 +53,7 @@ public class RepositoryService{
 		//System.out.println("- project type: " + repository.getType());
 		// TODO Auto-generated method stub
 		if(repository.getType() == 1){
-			System.out.println("git project init");
+			logger.debug("git project init");
 			if(currentWeaver == null)
 				return;
 
@@ -62,19 +62,19 @@ public class RepositoryService{
 			if(!gitUtil.createRepository())
 				return;
 		} else if(repository.getType() == 2){
-			System.out.println("svn project init");
-			System.out.println("<<weaver info>>");
-			System.out.println("id: " + currentWeaver.getId());
-			System.out.println("password: " + currentWeaver.getPassword());
-			System.out.println("username: " + currentWeaver.getUsername());
-			System.out.println("email: " + currentWeaver.getEmail());
+			logger.debug("svn project init");
+			logger.debug("<<weaver info>>");
+			logger.debug("id: " + currentWeaver.getId());
+			logger.debug("password: " + currentWeaver.getPassword());
+			logger.debug("username: " + currentWeaver.getUsername());
+			logger.debug("email: " + currentWeaver.getEmail());
 			
-			System.out.println("<<Repository info>>");
-			System.out.println("Category: " + repository.getType());
-			System.out.println("Category name: " + repository.getCreatorName());
-			System.out.println("Category email: " + repository.getCreatorEmail());
-			System.out.println("Category description : " + repository.getDescription());
-			System.out.println("Category projectname: " + repository.getName());
+			logger.debug("<<Repository info>>");
+			logger.debug("Category: " + repository.getType());
+			logger.debug("Category name: " + repository.getCreatorName());
+			logger.debug("Category email: " + repository.getCreatorEmail());
+			logger.debug("Category description : " + repository.getDescription());
+			logger.debug("Category projectname: " + repository.getName());
 			
 			if(currentWeaver == null)
 				return;
@@ -126,7 +126,6 @@ public class RepositoryService{
 		if(weaver == null || repository == null)
 			return false;
 		if(weaver.isAdmin() || weaver.equals(repository.getCreator())){
-
 
 			gitUtil.Init(repository);
 			if(!gitUtil.deleteRepository())
@@ -297,12 +296,23 @@ public class RepositoryService{
 	 * @param zip
 	 */
 	public boolean updateFile(Repository repository,Weaver weaver,String branchName,String message,String path,String code){
+		logger.debug("==> repository type: " + repository.getType());
+		logger.debug("==> commit: " + branchName);
+		logger.debug("==> message: " + message);
+		logger.debug("==> path: " + path);
+		logger.debug("==> code: " + code);
+		
 		if(message==null || message.length() < 5 ||weaver  == null || 
 				weaver.getPass(repository.getName()) == null)
 			return false;
 
-		gitUtil.Init(repository);
-		gitUtil.updateFile(weaver.getId(), weaver.getEmail(), branchName, message, path, code);
+		if(repository.getType() == 1){
+			gitUtil.Init(repository);
+			gitUtil.updateFile(weaver.getId(), weaver.getEmail(), branchName, message, path, code);
+		} else if(repository.getType() == 2){
+			svnUtil.Init(repository);
+			svnUtil.updateFile(weaver.getId(), weaver.getEmail(), branchName, message, path, code);
+		}
 
 		return true;
 	}

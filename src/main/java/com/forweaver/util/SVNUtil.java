@@ -137,10 +137,10 @@ public class SVNUtil implements VCUtil{
 		    dirEntry=this.repository.info(filePath,Long.parseLong(commitID));
 		    
 		    if(dirEntry.getKind().toString().equals("dir")){
-		    	logger.debug("[true directory]");
+		    	logger.debug("==> [true directory]");
             	return true;
             } else{
-            	logger.debug("[false directory]");
+            	logger.debug("==> [false directory]");
             	return false;
             }
 		} catch (  SVNException e) {
