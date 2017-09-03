@@ -353,28 +353,40 @@ public class RepositoryController {
 	public String fileEdit(HttpServletRequest request,@PathVariable("repositoryName") String repositoryName,
 			@PathVariable("creatorName") String creatorName,
 			@PathVariable("log") String log,Model model) throws UnsupportedEncodingException  {
+		logger.debug("********************< /{creatorName}/{repositoryName}/edit/log:{log}/** >********************");
+		
 		Repository repository = repositoryService.get(creatorName+"/"+repositoryName);
 		String uri = URLDecoder.decode(request.getRequestURI(),"UTF-8");
 		String filePath = uri.substring(uri.indexOf("filepath:")+9);
 		filePath = filePath.replace(",jsp", ".jsp");
 
 		if(!WebUtil.isCodeName(filePath)) //소스코드만 수정 가능함.
+		{
+			logger.debug("*********************************************************************************************");
 			return "redirect:/repository/"+creatorName+"/"+repositoryName+"/browser/log:"+log+"/filepath:"+filePath;
+		}
 
 		log = uri.substring(uri.indexOf("/log:")+5);
 		log = log.substring(0, log.indexOf("/"));
 
-		VCFileInfo gitFileInfo = gitService.getFileInfo(creatorName, repositoryName, log, filePath);
+		VCFileInfo FileInfo = null;
+		
+		if(repository.getType() == 1){
+			FileInfo = gitService.getFileInfo(creatorName, repositoryName, log, filePath);
+		} else if(repository.getType() == 2){
+			FileInfo = svnService.getFileInfo(creatorName, repositoryName, log, filePath);
+		}
 		model.addAttribute("repository", repository);
-		model.addAttribute("fileName", gitFileInfo.getName());
-		if(gitFileInfo.getContent() != null)
-			model.addAttribute("fileContent", new String(gitFileInfo.getContent().getBytes(Charset.forName("EUC-KR")),Charset.forName("CP949")));
-		model.addAttribute("gitLogList", gitFileInfo.getLogList());
-		model.addAttribute("selectCommitIndex", gitFileInfo.getSelectCommitIndex());
-		model.addAttribute("gitLog",gitFileInfo.getSelectLog());
+		model.addAttribute("fileName", FileInfo.getName());
+		if(FileInfo.getContent() != null)
+			model.addAttribute("fileContent", new String(FileInfo.getContent().getBytes(Charset.forName("EUC-KR")),Charset.forName("CP949")));
+		model.addAttribute("gitLogList", FileInfo.getLogList());
+		model.addAttribute("selectCommitIndex", FileInfo.getSelectCommitIndex());
+		model.addAttribute("gitLog",FileInfo.getSelectLog());
 		model.addAttribute("filePath",filePath);
 		model.addAttribute("log",log);
 
+		logger.debug("*********************************************************************************************");
 		return "/repository/fileEdit";
 	}
 
