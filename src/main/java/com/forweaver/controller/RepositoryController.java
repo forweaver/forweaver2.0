@@ -218,6 +218,7 @@ public class RepositoryController {
 			@PathVariable("log") String log,HttpServletResponse res) throws IOException {
 		logger.debug("**********< /{creatorName}/{repositoryName}/data/log:{log}/** >***************");
 		
+		Repository repository = repositoryService.get(creatorName+"/"+repositoryName);
 		String uri = URLDecoder.decode(request.getRequestURI(),"UTF-8");
 		String filePath = uri.substring(uri.indexOf("filepath:")+9);
 		filePath = filePath.replace(",jsp", ".jsp");
@@ -225,19 +226,25 @@ public class RepositoryController {
 		log = uri.substring(uri.indexOf("/log:")+5);
 		log = log.substring(0, log.indexOf("/"));
 
-		VCFileInfo gitFileInfo = gitService.getFileInfo(creatorName, repositoryName, log, filePath);
+		VCFileInfo FileInfo = null;
+		
+		if(repository.getType() == 1){
+			FileInfo = gitService.getFileInfo(creatorName, repositoryName, log, filePath);
+		} else if(repository.getType() == 2){
+			FileInfo = svnService.getFileInfo(creatorName, repositoryName, log, filePath);
+		}
 
-		if (gitFileInfo == null) {
+		if (FileInfo == null) {
 			logger.debug("******************************************************************************");
 			return;
 		} else {
-			byte[] imgData = gitFileInfo.getData();
+			byte[] imgData = FileInfo.getData();
 
 			res.reset();
 			res.setContentType("application/octet-stream");
-			String filename = new String(gitFileInfo.getName().getBytes("UTF-8"), "8859_1");
+			String filename = new String(FileInfo.getName().getBytes("UTF-8"), "8859_1");
 			res.setHeader("Content-Disposition", "attachment; filename = " + filename);
-			res.setContentType(WebUtil.getFileExtension(gitFileInfo.getName()));
+			res.setContentType(WebUtil.getFileExtension(FileInfo.getName()));
 			OutputStream o = res.getOutputStream();
 			o.write(imgData);
 			o.flush();
@@ -326,8 +333,8 @@ public class RepositoryController {
 				
 				model.addAttribute("repository", repository);
 				model.addAttribute("gitFileInfoList", svnFileInfoList);
-				model.addAttribute("gitBranchList", null);
-				model.addAttribute("selectBranch",null);
+				model.addAttribute("gitBranchList", "");
+				model.addAttribute("selectBranch","");
 				model.addAttribute("readme","test READEME");
 				model.addAttribute("filePath",filePath);
 				model.addAttribute("log",log);

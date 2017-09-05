@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,7 @@ import org.tmatesoft.svn.core.SVNNodeKind;
 import org.tmatesoft.svn.core.SVNProperties;
 import org.tmatesoft.svn.core.SVNProperty;
 import org.tmatesoft.svn.core.SVNURL;
+import org.tmatesoft.svn.core.auth.ISVNAuthenticationManager;
 import org.tmatesoft.svn.core.io.ISVNEditor;
 import org.tmatesoft.svn.core.io.SVNRepository;
 import org.tmatesoft.svn.core.io.SVNRepositoryFactory;
@@ -35,6 +37,8 @@ import org.tmatesoft.svn.core.wc.SVNClientManager;
 import org.tmatesoft.svn.core.wc.SVNDiffClient;
 import org.tmatesoft.svn.core.wc.SVNLogClient;
 import org.tmatesoft.svn.core.wc.SVNRevision;
+import org.tmatesoft.svn.core.wc.SVNWCClient;
+import org.tmatesoft.svn.core.wc.SVNWCUtil;
 
 import com.forweaver.controller.RepositoryController;
 import com.forweaver.domain.Repository;
@@ -131,6 +135,7 @@ public class SVNUtil implements VCUtil{
 	 */
 	public boolean isDirectory(String commitID, String filePath) {
 		//해당 filepath만 검증//
+		logger.debug("==> isDirectory filePath: " + filePath);
 		SVNDirEntry dirEntry=null;
 		
 		try {
@@ -753,5 +758,92 @@ public class SVNUtil implements VCUtil{
 	public void getRepositoryZip(String commitName, String format, HttpServletResponse response) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	public Map<String, Object> dolock(String repourl, String lockfilepath, String userid, String userpassword){
+		Map<String, Object>resultlock = new HashMap<String, Object>();
+		
+		System.out.println("repourl: " + repourl + " / filepath: " + lockfilepath);
+		
+		SVNRepository repository = null;
+		
+		try {
+			repository = SVNRepositoryFactory.create(SVNURL.parseURIEncoded(lockfilepath));
+			
+			ISVNAuthenticationManager authManager = SVNWCUtil.createDefaultAuthenticationManager(userid, userpassword);
+			repository.setAuthenticationManager(authManager);
+			//File Lock//
+			SVNClientManager clientManager = SVNClientManager.newInstance();
+			SVNWCClient wcclient = clientManager.getWCClient();
+			
+			SVNURL svnURLs[] = new SVNURL[1];
+			SVNURL svnURL = SVNURL.parseURIEncoded(lockfilepath);
+			
+			svnURLs[0] = svnURL;
+			
+			//wcclient.doLock(lockfilelist, true, "file lock");
+			wcclient.doLock(svnURLs, false, "fff");
+			/*//락 확인//
+			String lockPath = lockfilepath;
+			SVNLock lock = repository.getLock(lockPath);
+			
+			if (lock == null) {
+                System.out.println(lockfilepath + " isn't lock");
+                resultlock.put("resultval", "0");
+            }
+			
+			else if(lock != null){
+				System.out.println(lockfilepath + " is lock");
+				resultlock.put("resultval", "1");
+			}*/
+			
+			resultlock.put("resultval", "1");
+		    
+	        return resultlock;
+		} catch (SVNException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			
+			resultlock.put("resultval", "0");
+		}
+		
+		return resultlock;
+	}
+	
+	public Map<String, Object> dounlock(String repourl, String lockfilepath, String userid, String userpassword){
+		Map<String, Object>resultunlock = new HashMap<String, Object>();
+		
+		System.out.println("repourl: " + repourl + "/ filepath: " + lockfilepath);
+		
+		SVNRepository repository = null;
+		
+		try {
+			repository = SVNRepositoryFactory.create(SVNURL.parseURIEncoded(lockfilepath));
+			
+			ISVNAuthenticationManager authManager = SVNWCUtil.createDefaultAuthenticationManager(userid, userpassword);
+			repository.setAuthenticationManager(authManager);
+			
+			//File Lock//
+			SVNClientManager clientManager = SVNClientManager.newInstance();
+			SVNWCClient wcclient = clientManager.getWCClient();
+			
+			SVNURL svnURLs[] = new SVNURL[1];
+			SVNURL svnURL = SVNURL.parseURIEncoded(lockfilepath);
+			
+			svnURLs[0] = svnURL;
+			
+			wcclient.doUnlock(svnURLs, false);
+			
+			resultunlock.put("resultval", "1");
+		    
+	        return resultunlock;
+		} catch (SVNException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			
+			resultunlock.put("resultval", "0");
+		}
+		
+		return resultunlock;
 	}
 }
