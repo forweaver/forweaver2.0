@@ -18,6 +18,15 @@
 			session-authentication-strategy-ref="sas" />
 	</security:http>
 	
+		<!-- Stateless RESTful service using Basic authentication -->
+	<security:http pattern="/s/**">
+		<security:intercept-url pattern='/s/**'
+			access="ROLE_ADMIN, ROLE_USER" />
+		<security:http-basic />
+		<security:session-management
+			session-authentication-strategy-ref="sas" />
+	</security:http>
+	
 	<!-- Empty filter chain for the login page -->
 	<security:http pattern="/resources/**" security="none" />
 

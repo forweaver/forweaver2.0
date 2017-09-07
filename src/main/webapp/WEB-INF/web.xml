@@ -77,37 +77,6 @@
 	<servlet-mapping>
 		<servlet-name>springmvc</servlet-name>
 		<url-pattern>/</url-pattern>
-		<url-pattern>/m/*</url-pattern>
-	</servlet-mapping>
-   <servlet>
-     <servlet-name>GitServlet</servlet-name>
-     <servlet-class>org.eclipse.jgit.http.server.GitServlet</servlet-class>
-     <init-param>
-       <param-name>base-path</param-name>
-       <param-value>/Users/macbook/project/git/</param-value>
-     </init-param>
-     <init-param>
-       <param-name>export-all</param-name>
-       <param-value>1</param-value>
-     </init-param>
-     <load-on-startup>2</load-on-startup>
-	</servlet>
-   <servlet-mapping>
-     <servlet-name>GitServlet</servlet-name>
-     <url-pattern>/g/*</url-pattern>
-   </servlet-mapping>
-	<!-- SVNKit dav -->
-	<servlet>
-		<servlet-name>svnkit</servlet-name>
-		<servlet-class>org.tmatesoft.svn.core.internal.server.dav.DAVServlet</servlet-class>
-		<init-param>
-			<param-name>SVNParentPath</param-name>
-			<param-value>/Users/macbook/project/svn/</param-value><!-- 이게 실제 svn 주소 -->
-		</init-param>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>svnkit</servlet-name>
-		<url-pattern>/s/*</url-pattern> <!-- url로 들어오는 주소 -->
 	</servlet-mapping>
 <error-page>
     <error-code>404</error-code>
