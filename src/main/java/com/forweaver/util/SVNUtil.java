@@ -57,12 +57,13 @@ public class SVNUtil implements VCUtil{
 	private String svnreporootPath;
 	private String path;
 	private SVNRepository repository;
-
+	private SVNURL svnURL;
+	
 	@Autowired
 	AnnotationHandler annotationhandler;
 
 	public SVNUtil(){
-		this.svnPath = Config.gitPath;
+		this.svnPath = Config.svnPath;
 		this.svnreporootPath = "file://"+this.svnPath; //svn의 저장소 주소//
 	}
 
@@ -99,14 +100,13 @@ public class SVNUtil implements VCUtil{
 	public void RepoInt(String parentDirctoryName, String repositoryName) {
 		try {
 			SVNRepository repository = SVNRepositoryFactory.create( SVNURL.parseURIEncoded(this.svnreporootPath+"/"+parentDirctoryName+"/"+repositoryName));
-
 			this.repository = repository;
+		
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
 	}
 
-	@Override
 	public boolean createRepository() {
 		try {
 			SVNURL tgtURL = SVNRepositoryFactory.createLocalRepository( new File( this.path ), true , false );
@@ -120,7 +120,6 @@ public class SVNUtil implements VCUtil{
 		return true;
 	}
 
-	@Override
 	public boolean deleteRepository() {
 		try {
 			FileUtils.deleteDirectory(new File(this.path)); //파일제거//
@@ -136,7 +135,6 @@ public class SVNUtil implements VCUtil{
 	 * @param filePath
 	 * @return
 	 */
-	@Override
 	public boolean isDirectory(String commitID, String filePath) {
 		//해당 filepath만 검증//
 		logger.debug("==> isDirectory filePath: " + filePath);
@@ -164,7 +162,6 @@ public class SVNUtil implements VCUtil{
 	 * @param filePath
 	 * @return
 	 */
-	@Override
 	@SuppressWarnings("finally")
 	public VCFileInfo getFileInfo(String commitID, String filePath) {
 
@@ -343,7 +340,6 @@ public class SVNUtil implements VCUtil{
 		return content;
 	}
 
-	@Override
 	public int getCommitListCount(String commitID) {
 		int logcount = 0;
 
@@ -599,13 +595,11 @@ public class SVNUtil implements VCUtil{
 		return svncommitLogList;
 	}
 
-	@Override
 	public List<String> getBranchList() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
 	public List<String> getSimpleBranchAndTagNameList() {
 		// TODO Auto-generated method stub
 		return null;
@@ -616,13 +610,11 @@ public class SVNUtil implements VCUtil{
 
 	}
 
-	@Override
 	public int[][] getDayAndHour() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
 	public List<VCBlame> getBlame(String filePath, String commitID) {
 		logger.debug("===== Blame set...");
 		logger.debug("filePath: " + filePath);
@@ -740,37 +732,31 @@ public class SVNUtil implements VCUtil{
         return editor.closeEdit();
     }
 
-	@Override
 	public VCSimpleLog getVCCommit(String refName) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
 	public List<VCSimpleFileInfo> getGitFileInfoList(String commitID, String filePath) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
 	public List<String> getGitFileList(String commitID) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
 	public VCLog getLog(String commitID) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
 	public List<VCSimpleLog> getLogList(String branchName, int page, int number) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
 	public void getRepositoryZip(String commitName, String format, HttpServletResponse response) {
 		// TODO Auto-generated method stub
 
@@ -861,5 +847,22 @@ public class SVNUtil implements VCUtil{
 		}
 
 		return resultunlock;
+	}
+	
+	/** 저장소 정보를 가져옴
+	 * @param svnRepository 
+	 * @param branchName
+	 * @return
+	 */
+	public SvnInfo getSvnInfo(String branchName){
+		SvnInfo svnInfo = new SvnInfo();
+		SVNRepository repository = this.repository;
+		
+		try{
+			svnInfo.run(repository, branchName);
+		}catch(Exception e){
+			System.err.println(e.getMessage());
+		}
+		return svnInfo;
 	}
 }

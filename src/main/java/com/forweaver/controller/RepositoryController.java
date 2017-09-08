@@ -26,23 +26,23 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.forweaver.domain.Data;
+import com.forweaver.domain.Invite;
 import com.forweaver.domain.Post;
 import com.forweaver.domain.Repository;
-import com.forweaver.domain.Invite;
 import com.forweaver.domain.Weaver;
-import com.forweaver.domain.vc.VCLog;
 import com.forweaver.domain.vc.VCFileInfo;
+import com.forweaver.domain.vc.VCLog;
 import com.forweaver.domain.vc.VCSimpleFileInfo;
 import com.forweaver.service.DataService;
 import com.forweaver.service.GitService;
+import com.forweaver.service.InviteService;
 import com.forweaver.service.PostService;
 import com.forweaver.service.RepositoryService;
 import com.forweaver.service.SVNService;
 import com.forweaver.service.TagService;
-import com.forweaver.service.VCService;
-import com.forweaver.service.InviteService;
 import com.forweaver.service.WeaverService;
 import com.forweaver.util.WebUtil;
+
 
 @Controller
 @RequestMapping("/repository")
@@ -1000,9 +1000,19 @@ public class RepositoryController {
 	@RequestMapping("/{creatorName}/{repositoryName}/info")
 	public String info(@PathVariable("repositoryName") String repositoryName,
 			@PathVariable("creatorName") String creatorName, Model model){
+		logger.debug("**********************< /{creatorName}/{repositoryName}/info >*******************");
+		
 		Repository repository = repositoryService.get(creatorName+"/"+repositoryName);
 		model.addAttribute("repository", repository);
-		model.addAttribute("gitInfo", gitService.getGitInfo(creatorName, repositoryName, "HEAD"));
+		
+		if(repository.getType() == 1){
+			model.addAttribute("gitInfo", gitService.getGitInfo(creatorName, repositoryName, "HEAD"));
+		} else if(repository.getType() == 2){
+			svnService.getSvnInfo(creatorName, repositoryName, "-1");
+			//model.addAttribute("gitInfo", svnService.getSvnInfo(creatorName, repositoryName, "-1"));
+		}
+		
+		logger.debug("*********************************************************************************");
 		return "/repository/info";
 	}
 

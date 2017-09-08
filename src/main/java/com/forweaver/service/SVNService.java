@@ -17,6 +17,7 @@ import com.forweaver.domain.vc.VCSimpleFileInfo;
 import com.forweaver.domain.vc.VCSimpleLog;
 import com.forweaver.util.GitInfo;
 import com.forweaver.util.SVNUtil;
+import com.forweaver.util.SvnInfo;
 
 @Service
 public class SVNService implements VCService{
@@ -129,9 +130,11 @@ public class SVNService implements VCService{
 		return null;
 	}
 
-	public GitInfo getVCInfo(String parentDirctoryName, String repositoryName, String branchName) {
-		// TODO Auto-generated method stub
-		return null;
+	public SvnInfo getSvnInfo(String parentDirctoryName,
+			String repositoryName,String branchName){
+		svnUtil.RepoInt(parentDirctoryName, repositoryName);
+
+		return svnUtil.getSvnInfo(branchName);
 	}
 
 	public String getReadme(String creatorName, String projectName, String commit,
@@ -148,6 +151,11 @@ public class SVNService implements VCService{
 		
 		System.out.println("readme info: " + readme);
 		return readme;
+	}
+
+	public GitInfo getVCInfo(String parentDirctoryName, String repositoryName, String branchName) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

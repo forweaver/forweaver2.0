@@ -38,6 +38,7 @@ public class RepositoryDao {
 	 * @return
 	 */
 	public Repository get(String repositoryName) {
+		logger.debug("==> repository name: " + repositoryName);
 		Query query = new Query(Criteria.where("_id").is(repositoryName));
 		return mongoTemplate.findOne(query, Repository.class);
 	}

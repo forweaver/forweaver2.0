@@ -3,10 +3,6 @@ package com.forweaver.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +11,9 @@ import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.forweaver.domain.Invite;
 import com.forweaver.domain.Pass;
 import com.forweaver.domain.Repository;
-import com.forweaver.domain.Invite;
 import com.forweaver.domain.Weaver;
 import com.forweaver.mongodb.dao.InviteDao;
 import com.forweaver.mongodb.dao.PostDao;
@@ -25,6 +21,10 @@ import com.forweaver.mongodb.dao.RepositoryDao;
 import com.forweaver.mongodb.dao.WeaverDao;
 import com.forweaver.util.GitUtil;
 import com.forweaver.util.SVNUtil;
+
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
 
 /** 저장소 관리 서비스
  *

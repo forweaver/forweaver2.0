@@ -11,7 +11,7 @@ public class Config {
 
 	@PostConstruct
 	private void init() {
-		gitPath = "/home/vc";
-		svnPath = "/home/svn";
+		gitPath = "/home/vc/";
+		svnPath = "/Users/macbook/project/svn/";
 	}
 }
