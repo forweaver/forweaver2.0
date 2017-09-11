@@ -55,8 +55,11 @@ public class SvnInfo {
 				logger.debug("date: " + datelist.get(i));
 			}
 			
-			//3. 라인추가 (저장소 전체 파일 리스트 -> diff파싱//
+			//3. 라인추가 개수(저장소 전체 커밋 리스트 -> diff파싱))//
+			Map<String, Object> lineinfo = doDiffLineInfo(repository);
 			
+			logger.debug("total add line count: " + lineinfo.get("addlinecount"));
+			logger.debug("total remove line count: " + lineinfo.get("removelinecount"));
 			
 		} catch (SVNException e) {
 			// TODO Auto-generated catch block
@@ -142,17 +145,24 @@ public class SvnInfo {
 		return loglist;
 	}
 	
-	/** SVN Diff 수행
+	/** SVN 라인정보 출력
 	 *
 	 * @param revesionone
 	 * @param revesiontwo
 	 * @return
 	 */
-	public String doDiff(SVNRepository repository, long revesionone, long revesiontwo){
+	public Map<String, Object> doDiffLineInfo(SVNRepository repository){
+		Map<String, Object> lineinfo = new HashMap<String, Object>();
+		
 		String diffresult = null;
+		int totaladd_line = 0;
+		int totalremove_line = 0;
 
 		try {
 			SVNURL svnURL = repository.getRepositoryRoot(false);
+			long latestrevesion = repository.getLatestRevision();
+			
+			logger.debug("latest revesion: " + latestrevesion);
 
 			// Get diffClient.
 		    SVNClientManager clientManager = SVNClientManager.newInstance();
@@ -160,24 +170,40 @@ public class SvnInfo {
 
 		    // Using diffClient, write the changes by commitId into
 		    // byteArrayOutputStream, as unified format.
-		    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-		    diffClient.doDiff(svnURL, null, SVNRevision.create(revesionone), SVNRevision.create(revesiontwo), SVNDepth.INFINITY, true, byteArrayOutputStream);
-		    //diffClient.doDiff(new File(repourl), SVNRevision.UNDEFINED, SVNRevision.create(revesionone), SVNRevision.create(revesiontwo), true, true, byteArrayOutputStream);
-		    diffresult = byteArrayOutputStream.toString();
-		    
-		    String parsediff[] = diffresult.split("\n");
-		    
-		    for(int i=0; i<parsediff.length; i++){
-		    	logger.debug("diff info["+i+"]: " + parsediff[i]);
+		    for(int i=0; i<Integer.parseInt(""+latestrevesion); i++){
+		    	long startrevesion = i;
+		    	long endrevesion = i+1;
+		    	
+		    	if(i > Integer.parseInt(""+latestrevesion)){
+		    		endrevesion = latestrevesion;
+		    	}
+		    	ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+			    diffClient.doDiff(svnURL, null, SVNRevision.create(startrevesion), SVNRevision.create(endrevesion), SVNDepth.INFINITY, true, byteArrayOutputStream);
+			    //diffClient.doDiff(new File(repourl), SVNRevision.UNDEFINED, SVNRevision.create(revesionone), SVNRevision.create(revesiontwo), true, true, byteArrayOutputStream);
+			    diffresult = byteArrayOutputStream.toString();
+			    
+			    String parsediff[] = diffresult.split("\n");
+			    
+			    logger.debug("startrevesion: " + startrevesion + " / endrevesion: " + endrevesion);
+			    
+			    //diff 정보를 파싱//
+			    for(int loop=0; loop<parsediff.length; loop++){
+			    	logger.debug("diff info["+loop+"]: " + parsediff[loop]);
+			    }
+			    
+			    logger.debug("------------------");
 		    }
 		    
-	        return diffresult;
+		    lineinfo.put("addlinecount", totaladd_line);
+		    lineinfo.put("removelinecount", totalremove_line);
+		    
+	        return lineinfo;
 		} catch (SVNException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 
 		}
 
-		return diffresult;
+		return lineinfo;
 	}
 }
