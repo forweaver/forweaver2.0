@@ -1031,10 +1031,21 @@ public class RepositoryController {
 	@RequestMapping("/{creatorName}/{repositoryName}/info:frequency")
 	public String punchcard(@PathVariable("repositoryName") String repositoryName,
 			@PathVariable("creatorName") String creatorName, Model model){
+		logger.debug("******************< /{creatorName}/{repositoryName}/info:frequency >**********************");
+		
 		Repository repository = repositoryService.get(creatorName+"/"+repositoryName);
 
 		model.addAttribute("repository", repository);
-		model.addAttribute("dayAndHour", gitService.loadDayAndHour(creatorName, repositoryName));
+		
+		if(repository.getType() == 1){
+			model.addAttribute("dayAndHour", gitService.loadDayAndHour(creatorName, repositoryName));
+		} else if(repository.getType() == 2){
+			model.addAttribute("dayAndHour", svnService.loadDayAndHour(creatorName, repositoryName));
+		}
+		
+		
+		logger.debug("******************< /{creatorName}/{repositoryName}/info:frequency >**********************");
+		
 		return "/repository/frequency";
 	}
 

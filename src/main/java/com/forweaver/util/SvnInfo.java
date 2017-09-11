@@ -1,5 +1,6 @@
 package com.forweaver.util;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,11 +13,15 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.tmatesoft.svn.core.SVNDepth;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNLogEntry;
 import org.tmatesoft.svn.core.SVNLogEntryPath;
 import org.tmatesoft.svn.core.SVNURL;
 import org.tmatesoft.svn.core.io.SVNRepository;
+import org.tmatesoft.svn.core.wc.SVNClientManager;
+import org.tmatesoft.svn.core.wc.SVNDiffClient;
+import org.tmatesoft.svn.core.wc.SVNRevision;
 
 import com.forweaver.domain.Weaver;
 import com.forweaver.service.WeaverService;
@@ -50,14 +55,8 @@ public class SvnInfo {
 				logger.debug("date: " + datelist.get(i));
 			}
 			
-			//3. 커밋수(날짜별 커밋수)
-			List<HashMap<String, Object>> datecommitinfo = doPrintHitLogDate(repository, commitinfo);
+			//3. 라인추가 (저장소 전체 파일 리스트 -> diff파싱//
 			
-			for(int i=0; i<datecommitinfo.size(); i++){
-				logger.debug("date: " + datecommitinfo.get(i).get("date["+i+"]") + ", hitcount: " + datecommitinfo.get(i).get("logcount["+i+"]"));
-			}
-			
-			//4. 
 			
 		} catch (SVNException e) {
 			// TODO Auto-generated catch block
@@ -143,71 +142,42 @@ public class SvnInfo {
 		return loglist;
 	}
 	
-	public List<HashMap<String, Object>> doPrintHitLogDate(SVNRepository repository, Map<String, Object> commitinfo){
-		//SVNRepository repository = null;
-		Collection logEntries = null;
-		
-		//醫낇빀�젙蹂대�� 媛�吏� 由ъ뒪�듃//
-		//List<Object> authorlist = (List<Object>) commitinfo.get("authorlist");
-		List<Object> datelist = (List<Object>) commitinfo.get("datelist");
-		
-		List<HashMap<String, Object>>loghitinfolist = new ArrayList<HashMap<String, Object>>();
-		
-		HashMap<String, Object>loglist = new HashMap<String, Object>();
-		
-		long startRevision = 0;
-		long endRevision = -1; //HEAD (the latest) revision
-		
-		int logcount = 0; //key濡� �솢�슜//
-		
-		try {
-			//repository = SVNRepositoryFactory.create(SVNURL.parseURIEncoded(repourl));
-			
-			/*//인증정보를 설정//
-			ISVNAuthenticationManager authManager = SVNWCUtil.createDefaultAuthenticationManager(userid, userpassword);
-	        repository.setAuthenticationManager(authManager);*/
-	       
-			logEntries = repository.log(new String[] { "" }, null, startRevision, endRevision, true, true);
+	/** SVN Diff 수행
+	 *
+	 * @param revesionone
+	 * @param revesiontwo
+	 * @return
+	 */
+	public String doDiff(SVNRepository repository, long revesionone, long revesiontwo){
+		String diffresult = null;
 
-			//전체 횟수는 모든 커밋에 대한 날짜정보를 기반//
-			for(int i=0; i<datelist.size(); i++){
-				//년,월,일을 비교하기 위해서 파싱//
-				String datearray[] = datelist.get(i).toString().split(" ");
-				logger.debug("ori date: " + datearray[0]+","+datearray[1]+","+datearray[2]);
-				//키값을 대입//
-				loglist.put("date["+i+"]", datelist.get(i).toString());
-				
-				for (Iterator entries = logEntries.iterator(); entries.hasNext();) {
-					SVNLogEntry logEntry = (SVNLogEntry) entries.next();
-					
-					//년,월,일을 비교하기 위해서 파싱//
-					String comparedatearray[] = logEntry.getDate().toString().split(" ");
-					logger.debug("comp date: " + comparedatearray[0]+","+comparedatearray[1]+","+comparedatearray[2]);
-					//날짜(년,월,일)가 일치하는지 판단//
-					if(datearray[0].equals(comparedatearray[0]) && 
-							datearray[1].equals(comparedatearray[1]) && 
-							datearray[2].equals(comparedatearray[2])){
-						logcount++;
-						logger.debug("ok" + logcount);
-					} else{
-						logger.debug("not ok" + + logcount);
-					}
-				}
-				
-				loghitinfolist.add(loglist); //리스트에 대입//
-				
-				loglist.put("logcount["+i+"]", ""+logcount);
-				logcount = 0;
-				
-				logger.debug("---------------------------------");
-			}
-			
-			return loghitinfolist;
-		}
-		catch (SVNException e) {
+		try {
+			SVNURL svnURL = repository.getRepositoryRoot(false);
+
+			// Get diffClient.
+		    SVNClientManager clientManager = SVNClientManager.newInstance();
+		    SVNDiffClient diffClient = clientManager.getDiffClient();
+
+		    // Using diffClient, write the changes by commitId into
+		    // byteArrayOutputStream, as unified format.
+		    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+		    diffClient.doDiff(svnURL, null, SVNRevision.create(revesionone), SVNRevision.create(revesiontwo), SVNDepth.INFINITY, true, byteArrayOutputStream);
+		    //diffClient.doDiff(new File(repourl), SVNRevision.UNDEFINED, SVNRevision.create(revesionone), SVNRevision.create(revesiontwo), true, true, byteArrayOutputStream);
+		    diffresult = byteArrayOutputStream.toString();
+		    
+		    String parsediff[] = diffresult.split("\n");
+		    
+		    for(int i=0; i<parsediff.length; i++){
+		    	logger.debug("diff info["+i+"]: " + parsediff[i]);
+		    }
+		    
+	        return diffresult;
+		} catch (SVNException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
+
 		}
-		
-		return loghitinfolist;
+
+		return diffresult;
 	}
 }

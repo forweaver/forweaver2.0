@@ -640,6 +640,7 @@ public class GitUtil implements VCUtil{
 
 		try{
 			for(RevCommit rc:git.log().all().call())
+				
 				array[rc.getCommitterIdent().getWhen().getDay()]
 						[rc.getCommitterIdent().getWhen().getHours()]++;
 

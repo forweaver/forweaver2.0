@@ -126,8 +126,8 @@ public class SVNService implements VCService{
 	}
 
 	public int[][] loadDayAndHour(String parentDirctoryName, String repositoryName) {
-		// TODO Auto-generated method stub
-		return null;
+		svnUtil.RepoInt(parentDirctoryName,repositoryName);	
+		return svnUtil.getDayAndHour();
 	}
 
 	public SvnInfo getSvnInfo(String parentDirctoryName,

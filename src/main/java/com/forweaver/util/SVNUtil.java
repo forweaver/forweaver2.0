@@ -3,6 +3,9 @@ package com.forweaver.util;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -11,10 +14,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
+import org.eclipse.jgit.diff.PatchIdDiffFormatter;
+import org.eclipse.jgit.revwalk.RevCommit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +30,7 @@ import org.tmatesoft.svn.core.SVNDepth;
 import org.tmatesoft.svn.core.SVNDirEntry;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNLogEntry;
+import org.tmatesoft.svn.core.SVNLogEntryPath;
 import org.tmatesoft.svn.core.SVNNodeKind;
 import org.tmatesoft.svn.core.SVNProperties;
 import org.tmatesoft.svn.core.SVNProperty;
@@ -39,7 +46,6 @@ import org.tmatesoft.svn.core.wc.SVNLogClient;
 import org.tmatesoft.svn.core.wc.SVNRevision;
 import org.tmatesoft.svn.core.wc.SVNWCClient;
 import org.tmatesoft.svn.core.wc.SVNWCUtil;
-
 import com.forweaver.config.Config;
 import com.forweaver.domain.Repository;
 import com.forweaver.domain.vc.VCBlame;
@@ -502,7 +508,7 @@ public class SVNUtil implements VCUtil{
 		    diffClient.doDiff(svnURL, null, SVNRevision.create(revesionone), SVNRevision.create(revesiontwo), SVNDepth.INFINITY, true, byteArrayOutputStream);
 		    //diffClient.doDiff(new File(repourl), SVNRevision.UNDEFINED, SVNRevision.create(revesionone), SVNRevision.create(revesiontwo), true, true, byteArrayOutputStream);
 		    diffresult = byteArrayOutputStream.toString();
-
+		    
 	        return diffresult;
 		} catch (SVNException e) {
 			// TODO Auto-generated catch block
@@ -611,8 +617,26 @@ public class SVNUtil implements VCUtil{
 	}
 
 	public int[][] getDayAndHour() {
-		// TODO Auto-generated method stub
-		return null;
+		//로그정보를 넘기면 요일 숫자를 뽑아내는 메소드//
+		//로그정보를 넘기면 시간정보를 숫자로 뽑아내는 메소드//
+		int[][] array = new int[7][24];
+
+		//로그뽑아오기//
+		Map<String, Object> commitinfo = doPrintRepoLog(repository); //전체 커밋정보 리스트//
+		
+		List<Object> datelist = (List<Object>) commitinfo.get("datelist");
+		
+		for(int i=0; i<datelist.size(); i++){
+			logger.debug("date: " + datelist.get(i));
+			
+			//파싱 후 시각화 배열에 적용//
+			String day_time[] = datelist.get(i).toString().split("/");
+			
+			array[Integer.parseInt(day_time[0])]
+					[Integer.parseInt(day_time[1])]++;
+		}
+
+		return array;
 	}
 
 	public List<VCBlame> getBlame(String filePath, String commitID) {
@@ -864,5 +888,72 @@ public class SVNUtil implements VCUtil{
 			System.err.println(e.getMessage());
 		}
 		return svnInfo;
+	}
+	
+	public Map<String, Object> doPrintRepoLog(SVNRepository repository){
+		//SVNRepository repository = null;
+		Collection logEntries = null;
+		
+		//媛� 濡쒓렇�뿉�꽌 �븘�슂�븳 �뜲�씠�꽣瑜� ���옣�븷 �닔 �엳�뒗 �옄猷뚭뎄議� �꽑�뼵//
+		List<Object>datelist = new ArrayList<Object>();
+		
+		//醫낇빀�젙蹂대�� 媛�吏� 由ъ뒪�듃//
+		Map<String, Object>loglist = new HashMap<String, Object>();
+		
+		long startRevision = 0;
+		long endRevision = -1; //HEAD (the latest) revision
+		
+		int logcount = 0; //key濡� �솢�슜//
+		
+		try {
+			//repository = SVNRepositoryFactory.create(SVNURL.parseURIEncoded(repourl));
+			
+			/*//인증정보를 설정//
+			ISVNAuthenticationManager authManager = SVNWCUtil.createDefaultAuthenticationManager(userid, userpassword);
+	        repository.setAuthenticationManager(authManager);*/
+	       
+			logEntries = repository.log(new String[] { "" }, null, startRevision, endRevision, true, true);
+
+			for (Iterator entries = logEntries.iterator(); entries.hasNext();) {
+				SVNLogEntry logEntry = (SVNLogEntry) entries.next();
+				
+				String parsingresult = "";
+				//파싱//
+				String dateinfo[] = logEntry.getDate().toString().split(" ");
+				String timeinfo[] = dateinfo[3].split(":");
+				
+				if(dateinfo[0].equals("Sun")){
+					parsingresult = "0";
+				} else if(dateinfo[0].equals("Mon")){
+					parsingresult = "1";
+				} else if(dateinfo[0].equals("Tue")){
+					parsingresult = "2";
+				} else if(dateinfo[0].equals("Wed")){
+					parsingresult = "3";
+				} else if(dateinfo[0].equals("Thu")){
+					parsingresult = "4";
+				} else if(dateinfo[0].equals("Fri")){
+					parsingresult = "5";
+				} else if(dateinfo[0].equals("Sat")){
+					parsingresult = "6";
+				}
+				
+				parsingresult += "/" + timeinfo[0];
+				
+				datelist.add(parsingresult);
+				
+				logcount++;
+			}
+			
+			loglist.put("datelist", datelist);
+			loglist.put("count", ""+logcount);
+			
+			return loglist;
+		}
+		catch (SVNException e) {
+			e.printStackTrace();
+		}
+		
+		return loglist;
 	}
 }
