@@ -6,61 +6,62 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
-
 import org.apache.commons.io.FileUtils;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
+import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.keygen.KeyGenerators;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.forweaver.dao.DataDao;
+import com.forweaver.dao.WeaverDao;
 import com.forweaver.domain.Data;
 import com.forweaver.domain.Pass;
 import com.forweaver.domain.RePassword;
 import com.forweaver.domain.Weaver;
-import com.forweaver.mongodb.dao.DataDao;
-import com.forweaver.mongodb.dao.WeaverDao;
 import com.forweaver.util.GitUtil;
-import com.forweaver.util.MailUtil;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
+
+@EnableCaching
 @Service("userDetailsService")
 public class WeaverService implements UserDetailsService {
 
 	private static final Logger logger =
 			LoggerFactory.getLogger(WeaverService.class);
 
-	@Autowired 
+	@Autowired
 	private WeaverDao weaverDao;
-	@Autowired 
+	@Autowired
 	private DataDao dataDao;
-	@Autowired 
-	private PasswordEncoder passwordEncoder;
+
+	private PasswordEncoder passwordEncoder = new ShaPasswordEncoder();
+
 	@Autowired @Qualifier("sessionRegistry")
 	private SessionRegistry sessionRegistry;
-	@Autowired 
+	@Autowired
 	private CacheManager cacheManager;
-	@Autowired 
-	private MailUtil mailUtil;
-	@Autowired 
+	@Autowired
 	private GitUtil gitUtil;
 
+	@Override
 	public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
 		// TODO Auto-generated method stub
 		Weaver weaver = weaverDao.get(id);
@@ -75,7 +76,7 @@ public class WeaverService implements UserDetailsService {
 		id = id.toLowerCase();
 		if(id.equals("tracker") || id.equals("lecture") || id.equals("repassword") || id.equals("community") ||
 				id.equals("forweaver") || id.equals("weaver") || id.startsWith("rule_") || id.equals("resources") ||
-				id.startsWith("error") || id.equals("login") || id.equals("admin") || id.equals("check") || id.equals("chat") || 
+				id.startsWith("error") || id.equals("login") || id.equals("admin") || id.equals("check") || id.equals("chat") ||
 				weaverDao.get(id) != null)
 			return true;
 
@@ -100,16 +101,16 @@ public class WeaverService implements UserDetailsService {
 	public void add(Weaver weaver,MultipartFile data) { // 회원 추가 서비스
 		Pass pass;
 		if(weaverDao.existsWeaver())
-			pass = new Pass("ROLE_USER"); 
+			pass = new Pass("ROLE_USER");
 		else
 			pass = new Pass("ROLE_ADMIN"); // 최초 회원 가입시 운영자 지위
 		weaver.addPass(pass);
 		weaver.setPassword(passwordEncoder.encodePassword(weaver.getPassword(), null));
-		
+
 		if(data != null && data.getSize()>0)
 			weaver.setData(dataDao.insert(new Data(new ObjectId(new Date()).toString(), data, weaver)));
-		weaverDao.insert(weaver);	
-		
+		weaverDao.insert(weaver);
+
 		File file = new File(gitUtil.getGitPath() + weaver.getId());
 		file.mkdir();
 	}
@@ -200,11 +201,11 @@ public class WeaverService implements UserDetailsService {
 		return result;
 	}
 
-
-	/** 비밀번호를 재발급을 위한 메서드
+/*
+	*//** 비밀번호를 재발급을 위한 메서드
 	 * @param email
 	 * @return 성공여부
-	 */
+	 *//*
 	public boolean sendRepassword(String email){
 		Cache rePasswordCache = cacheManager.getCache("repassword");
 		Object object = rePasswordCache.get(email);
@@ -217,14 +218,14 @@ public class WeaverService implements UserDetailsService {
 
 		mailUtil.sendMail(email,"[forweaver] 비밀번호 재발급",
 				"링크 - http://forweaver.com/repassword/"+email+"/"+key+"\n"+
-						"변경된 비밀번호 - "+password+"\n"+		
+						"변경된 비밀번호 - "+password+"\n"+
 				"\n링크에 5분이내에 접속하시고 나서 변경된 비밀번호로 로그인해주세요!");
 		Element newElement = new Element(email, rePassword);
 		rePasswordCache.put(newElement);
 
 		return true;
 	}
-
+*/
 	/** 인증된 키를 통해 재발급된 비밀번호로 변경하는 메서드
 	 * @param email
 	 * @param key
@@ -239,7 +240,7 @@ public class WeaverService implements UserDetailsService {
 
 		if(rePassword.getKey().equals(key)){
 			Weaver weaver = weaverDao.get(email);
-			weaver.setPassword(passwordEncoder.encodePassword(rePassword.getPassword(),null));	
+			weaver.setPassword(passwordEncoder.encodePassword(rePassword.getPassword(),null));
 			weaverDao.update(weaver);
 		}
 		return true;
@@ -251,7 +252,7 @@ public class WeaverService implements UserDetailsService {
 	 * @return
 	 */
 	public boolean validPassword(Weaver weaver,String password){
-		if(password != null && password.length()>3 && 
+		if(password != null && password.length()>3 &&
 				weaver.getPassword().equals(passwordEncoder.encodePassword(password, null)))
 			return true;
 		return false;

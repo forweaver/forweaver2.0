@@ -8,6 +8,7 @@ import java.util.Date;
 import javax.persistence.Id;
 
 import org.apache.commons.codec.binary.Base64;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -24,7 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @Document
 public class Data implements Serializable {
-	
+
 	static final long serialVersionUID = 3423431L;
 	@Id
 	private String id;
@@ -36,15 +37,16 @@ public class Data implements Serializable {
 	private String type;
 	private Date date;
 	private String filePath;
-	
+
 	//임시로 기본 파일 패스를 정함
 	@Transient
-	public static String path = "/home/file/";
-	
+	@Value("${data.repository.path}")
+	public static String path;
+
 	public Data(){
-		
+
 	}
-	
+
 	public Data(String id ,MultipartFile data,Weaver weaver){
 		this.id = id;
 		this.date = new Date();
@@ -54,16 +56,16 @@ public class Data implements Serializable {
 			this.content= data.getBytes();
 		}catch(IOException e){
 			this.content= null;
-		}		
+		}
 		this.name = data.getOriginalFilename();
 		this.name = this.name.replace(" ", "_");
 		this.name = this.name.replace("#", "_");
-		this.name = this.name.replace("?", "_");	
+		this.name = this.name.replace("?", "_");
 		this.name = this.name.trim();
 		this.type = data.getContentType();
-		this.filePath = path+weaver.getId()+File.separator+this.id+File.separator+this.name;		
-	}	
-	
+		this.filePath = path+weaver.getId()+File.separator+this.id+File.separator+this.name;
+	}
+
 	public String getId() {
 		return id.toString();
 	}
@@ -95,7 +97,7 @@ public class Data implements Serializable {
 		return new Base64().encodeToString(this.content);
 	}
 
-	
+
 
 	public Weaver getWeaver() {
 		return weaver;
@@ -111,7 +113,7 @@ public class Data implements Serializable {
 	public void setDate(Date date) {
 		this.date = date;
 	}
-	
+
 	public String getFilePath() {
 		return filePath;
 	}
@@ -119,5 +121,5 @@ public class Data implements Serializable {
 	public void setFilePath(String filePath) {
 		this.filePath = filePath;
 	}
-	
+
 }

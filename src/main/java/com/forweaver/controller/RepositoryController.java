@@ -47,23 +47,23 @@ import com.forweaver.util.WebUtil;
 @Controller
 @RequestMapping("/repository")
 public class RepositoryController {
-	
+
 	private static final Logger logger =
 			LoggerFactory.getLogger(RepositoryController.class);
 
-	@Autowired 
+	@Autowired
 	private InviteService invateService;
-	@Autowired 
+	@Autowired
 	private WeaverService weaverService;
-	@Autowired 
+	@Autowired
 	private RepositoryService repositoryService;
-	@Autowired 
+	@Autowired
 	private PostService postService;
-	@Autowired 
+	@Autowired
 	private GitService gitService;
-	@Autowired 
+	@Autowired
 	private TagService tagService;
-	@Autowired 
+	@Autowired
 	private DataService dataService;
 	@Autowired
 	private SVNService svnService;
@@ -98,7 +98,7 @@ public class RepositoryController {
 		int size = WebUtil.getPageSize(page,0);
 
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
-		model.addAttribute("repositorys", 
+		model.addAttribute("repositorys",
 				repositoryService.getRepositories(currentWeaver, null, "", sort, pageNum, size));
 		model.addAttribute("repositoryCount", repositoryService.countRepositories(currentWeaver,null, "", sort));
 		model.addAttribute("pageIndex", pageNum);
@@ -121,7 +121,7 @@ public class RepositoryController {
 		int size = WebUtil.getPageSize(page,0);
 
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
-		model.addAttribute("repositorys", 
+		model.addAttribute("repositorys",
 				repositoryService.getRepositories(currentWeaver, tagList, null, sort, pageNum, size));
 		model.addAttribute("repositoryCount", repositoryService.countRepositories(currentWeaver,tagList, null, sort));
 		model.addAttribute("pageIndex", pageNum);
@@ -156,7 +156,7 @@ public class RepositoryController {
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
 	public String add(@RequestParam Map<String, String> params,Model model) {
 		logger.debug("********************** < /add > *********************");
-		
+
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 		List<String> tagList = tagService.stringToTagList(params.get("tags"));
 		int authLevel = 0;
@@ -166,26 +166,26 @@ public class RepositoryController {
 		int type = 1;
 		if(params.get("type") != null)
 			type = Integer.parseInt(params.get("type"));
-		
-		if(!Pattern.matches("^[a-z]{1}[a-z0-9_]{4,14}$", params.get("name")) || 
-				params.get("name").length() <5 || 
-				params.get("description").length() <5 || 
-				params.get("description").length() > 50 || 
+
+		if(!Pattern.matches("^[a-z]{1}[a-z0-9_]{4,14}$", params.get("name")) ||
+				params.get("name").length() <5 ||
+				params.get("description").length() <5 ||
+				params.get("description").length() > 50 ||
 				!tagService.isPublicTags(tagList)){
 			model.addAttribute("say", "잘못 입력하셨습니다!!!");
 			model.addAttribute("url", "/repository/");
 			return "/alert";
 		}
-		Repository repository = new Repository(params.get("name"), 
+		Repository repository = new Repository(params.get("name"),
 				authLevel,
 				type,
-				params.get("description"), 
+				params.get("description"),
 				currentWeaver,
 				tagList);
 
 		repositoryService.add(repository,currentWeaver);
 		logger.debug("********************************************************");
-		
+
 		return "redirect:/repository/";//+repository.getName();
 	}
 
@@ -198,11 +198,11 @@ public class RepositoryController {
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 		List<String> tags = new ArrayList<String>();
 		tags.add("@"+repository.getName());
-		
+
 		if(repositoryService.delete(currentWeaver, repository))
 			for(Post post:postService.getPosts(tags, null, null, "", 1, Integer.MAX_VALUE)) // 저장소에 쓴 글 모두 삭제
 				postService.delete(post);
-			
+
 		else{
 			model.addAttribute("say", "삭제하지 못하였습니다!!!");
 			model.addAttribute("url", "/repository/"+creatorName+"/"+repositoryName);
@@ -217,7 +217,7 @@ public class RepositoryController {
 			@PathVariable("creatorName") String creatorName,
 			@PathVariable("log") String log,HttpServletResponse res) throws IOException {
 		logger.debug("**********< /{creatorName}/{repositoryName}/data/log:{log}/** >***************");
-		
+
 		Repository repository = repositoryService.get(creatorName+"/"+repositoryName);
 		String uri = URLDecoder.decode(request.getRequestURI(),"UTF-8");
 		String filePath = uri.substring(uri.indexOf("filepath:")+9);
@@ -227,7 +227,7 @@ public class RepositoryController {
 		log = log.substring(0, log.indexOf("/"));
 
 		VCFileInfo FileInfo = null;
-		
+
 		if(repository.getType() == 1){
 			FileInfo = gitService.getFileInfo(creatorName, repositoryName, log, filePath);
 		} else if(repository.getType() == 2){
@@ -249,26 +249,26 @@ public class RepositoryController {
 			o.write(imgData);
 			o.flush();
 			o.close();
-			
+
 			logger.debug("******************************************************************************");
 			return;
-		} 
+		}
 
 	}
 
 	@RequestMapping(value=
-		{	"/{creatorName}/{repositoryName}", 
+		{	"/{creatorName}/{repositoryName}",
 		"/{creatorName}/{repositoryName}/browser"}
 			)
 	public String browser(@PathVariable("repositoryName") String repositoryName,
-			@PathVariable("creatorName") String creatorName) {		
+			@PathVariable("creatorName") String creatorName) {
 		List<String> gitBranchList = gitService.getBranchList(creatorName, repositoryName);
 		return "redirect:/repository/"+creatorName+"/"+repositoryName+"/browser/log:"+gitBranchList.get(0)+"/filepath:/";
 	}
 
 	@RequestMapping("/{creatorName}/{repositoryName}/browser/log:{log}")
 	public String fileBrowser(HttpServletRequest request){
-		return "redirect:"+request.getRequestURI()+"/filepath:/"; 
+		return "redirect:"+request.getRequestURI()+"/filepath:/";
 	}
 
 	@RequestMapping("/{creatorName}/{repositoryName}/browser/log:{log}/**")
@@ -276,20 +276,20 @@ public class RepositoryController {
 			@PathVariable("creatorName") String creatorName,
 			@PathVariable("log") String log,Model model) throws UnsupportedEncodingException  {
 		logger.debug("********************** < /{creatorName}/{repositoryName}/browser/log:{log}/** > *********************");
-		
+
 		Repository repository = repositoryService.get(creatorName+"/"+repositoryName);
 		String uri = URLDecoder.decode(request.getRequestURI(),"UTF-8");
 		String filePath = uri.substring(uri.indexOf("filepath:")+9);
 		filePath = filePath.replace(",jsp", ".jsp");
-	
+
 		log = uri.substring(uri.indexOf("/log:")+5);
 		log = log.substring(0, log.indexOf("/"));
-		
+
 		logger.debug("& filepath: " + filePath);
 		logger.debug("& log: " + log);
 
 		VCFileInfo FileInfo = null;
-		
+
 		//1 - Git case, //
 		if(repository.getType() == 1){
 			FileInfo = gitService.getFileInfo(creatorName, repositoryName, log, filePath);
@@ -297,12 +297,9 @@ public class RepositoryController {
 			FileInfo = svnService.getFileInfo(creatorName, repositoryName, log, filePath);
 		}
 
-		logger.debug("& filename: " + FileInfo.getName());
-		logger.debug("& isDirectory: " + FileInfo.isDirectory());
-		
 		if(FileInfo ==null || FileInfo.isDirectory()){ // 만약에 주소의 파일이 디렉토리라면
 			if(repository.getType() == 1){
-				List<VCSimpleFileInfo> gitFileInfoList = 
+				List<VCSimpleFileInfo> gitFileInfoList =
 						gitService.getGitSimpleFileInfoList(creatorName, repositoryName,log,filePath);
 
 				List<String> gitBranchList = gitService.getBranchList(creatorName, repositoryName);
@@ -319,18 +316,18 @@ public class RepositoryController {
 			} else if(repository.getType() == 2){
 				logger.debug("------------------------------> svn case");
 				log = "-1";
-				
+
 				logger.debug("==> Directory Info");
 				logger.debug("==> repositoryName: " + repositoryName);
 				logger.debug("==> filePath: " + filePath);
-				
-				List<VCSimpleFileInfo> svnFileInfoList = 
+
+				List<VCSimpleFileInfo> svnFileInfoList =
 						svnService.getVCSimpleFileInfoList(creatorName, repositoryName,log,filePath);
 
 				for (int i = 0; i < svnFileInfoList.size(); i++) {
 					logger.debug("directory info log: " + svnFileInfoList.get(i).getName());
 				}
-				
+
 				model.addAttribute("repository", repository);
 				model.addAttribute("gitFileInfoList", svnFileInfoList);
 				model.addAttribute("gitBranchList", "");
@@ -355,7 +352,7 @@ public class RepositoryController {
 			model.addAttribute("filePath",filePath);
 			model.addAttribute("isCodeName",WebUtil.isCodeName(filePath));
 			model.addAttribute("isImageName",WebUtil.isImageName(filePath));
-			
+
 			logger.debug("***************************************************************");
 			return "/repository/fileViewer";
 		}
@@ -366,7 +363,7 @@ public class RepositoryController {
 			@PathVariable("creatorName") String creatorName,
 			@PathVariable("log") String log,Model model) throws UnsupportedEncodingException  {
 		logger.debug("********************< /{creatorName}/{repositoryName}/edit/log:{log}/** >********************");
-		
+
 		Repository repository = repositoryService.get(creatorName+"/"+repositoryName);
 		String uri = URLDecoder.decode(request.getRequestURI(),"UTF-8");
 		String filePath = uri.substring(uri.indexOf("filepath:")+9);
@@ -382,7 +379,7 @@ public class RepositoryController {
 		log = log.substring(0, log.indexOf("/"));
 
 		VCFileInfo FileInfo = null;
-		
+
 		if(repository.getType() == 1){
 			FileInfo = gitService.getFileInfo(creatorName, repositoryName, log, filePath);
 		} else if(repository.getType() == 2){
@@ -410,18 +407,18 @@ public class RepositoryController {
 			@RequestParam("path") String path,
 			@RequestParam("code") String code,Model model)  {
 		logger.debug("*****************< /{creatorName}/{repositoryName}/file-edit >*******************");
-		
+
 		Repository repository = repositoryService.get(creatorName+"/"+repositoryName);
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
-		
+
 		if(!repositoryService.updateFile(repository, currentWeaver,log, message,path, code)){
 			model.addAttribute("say", "업로드 실패! 저장소에 가입되어 있는지 혹은 최신 커밋의 파일인지 확인해보세요!");
 			model.addAttribute("url", "/repository/"+creatorName+"/"+repositoryName+"/edit/log:"+log+"/filepath:/"+path);
-			
+
 			logger.debug("*********************************************************************************");
 			return "/alert";
 		}
-		
+
 		logger.debug("*********************************************************************************");
 		return "redirect:/repository/"+creatorName+"/"+repositoryName+"/browser/log:"+log+"/filepath:/"+path;
 	}
@@ -431,7 +428,7 @@ public class RepositoryController {
 			@PathVariable("creatorName") String creatorName,
 			@PathVariable("log") String log,Model model) throws UnsupportedEncodingException{
 		logger.debug("*************************< /{creatorName}/{repositoryName}/blame/log:{log}/** > ***************************");
-		
+
 		Repository repository = repositoryService.get(creatorName+"/"+repositoryName);
 		String uri = URLDecoder.decode(request.getRequestURI(),"UTF-8");
 		String filePath = uri.substring(uri.indexOf("filepath:")+9);
@@ -444,9 +441,9 @@ public class RepositoryController {
 		}
 
 		log = uri.substring(uri.indexOf("/log:")+5);
-		log = log.substring(0, log.indexOf("/"));		
+		log = log.substring(0, log.indexOf("/"));
 		VCFileInfo FileInfo = null;
-		
+
 		if(repository.getType() ==1){
 			FileInfo = gitService.getFileInfoWithBlame(creatorName, repositoryName, log, filePath);
 		} else if(repository.getType() == 2){
@@ -467,7 +464,7 @@ public class RepositoryController {
 		model.addAttribute("gitBlameList", FileInfo.getBlames());
 		model.addAttribute("selectCommitIndex", FileInfo.getSelectCommitIndex());
 		model.addAttribute("gitLog", FileInfo.getSelectLog());
-		
+
 		logger.debug("***********************************************************************************************************");
 		return "/repository/blame";
 	}
@@ -484,15 +481,15 @@ public class RepositoryController {
 			@PathVariable("page") String page,Model model) {
 		int pageNum = WebUtil.getPageNumber(page);
 		int size = WebUtil.getPageSize(page,0);
-		
+
 		Repository repository = repositoryService.get(creatorName+"/"+repositoryName);
 		List<String> tags = new ArrayList<String>();
 		tags.add("@"+repository.getName());
-		
+
 		model.addAttribute("repository", repository);
-		model.addAttribute("posts", 
+		model.addAttribute("posts",
 				postService.getPosts(tags, null, null, sort, pageNum, size));
-		model.addAttribute("postCount", 
+		model.addAttribute("postCount",
 				postService.countPosts(tags, null, null, sort));
 		model.addAttribute("pageIndex", pageNum);
 		model.addAttribute("pageUrl", "/repository/"+creatorName+"/"+repositoryName+"/community/sort:"+sort+"/page:");
@@ -511,20 +508,20 @@ public class RepositoryController {
 			@PathVariable("sort") String sort,
 			@PathVariable("page") String page,Model model){
 		int pageNum = WebUtil.getPageNumber(page);
-		int size = WebUtil.getPageSize(page,0);	
+		int size = WebUtil.getPageSize(page,0);
 
 		Repository repository = repositoryService.get(creatorName+"/"+repositoryName);
 		List<String> tagList = tagService.stringToTagList(tagNames);
 		tagList.add("@"+repository.getName());
-		
+
 		model.addAttribute("repository", repository);
-		model.addAttribute("posts", 
+		model.addAttribute("posts",
 				postService.getPosts(tagList, null, null, sort, pageNum, size));
-		model.addAttribute("postCount", 
+		model.addAttribute("postCount",
 				postService.countPosts(tagList, null, null, sort));
 
 		model.addAttribute("pageIndex", pageNum);
-		model.addAttribute("pageUrl", 
+		model.addAttribute("pageUrl",
 				"/repository/"+repositoryName+"/community/tags:"+tagNames+"/sort:"+sort+"/page:");
 		return "/repository/community";
 	}
@@ -575,9 +572,9 @@ public class RepositoryController {
 	public String log(@PathVariable("repositoryName") String repositoryName,
 			@PathVariable("creatorName") String creatorName,Model model) {
 		logger.debug("*********************< /{creatorName}/{repositoryName}/log >**********************");
-		
+
 		Repository repository = repositoryService.get(creatorName+"/"+repositoryName);
-		
+
 		logger.debug("==> repository type: " + repository.getType());
 
 		if(repository.getType() == 1){
@@ -587,9 +584,9 @@ public class RepositoryController {
 			model.addAttribute("selectBranch",gitBranchList.get(0));
 			model.addAttribute("repository", repository);
 			model.addAttribute("pageIndex",1);
-			model.addAttribute("gitCommitListCount", 
+			model.addAttribute("gitCommitListCount",
 					gitService.getCommitListCount(creatorName, repositoryName,gitBranchList.get(0)));
-			model.addAttribute("gitCommitList", 
+			model.addAttribute("gitCommitList",
 					gitService.getGitLogList(creatorName, repositoryName,gitBranchList.get(0),1,15));
 		} else if(repository.getType() == 2){
 			model.addAttribute("repository", repository);
@@ -597,12 +594,12 @@ public class RepositoryController {
 			model.addAttribute("gitCommitListCount", svnService.getCommitListCount(creatorName, repositoryName, "-1"));
 			model.addAttribute("gitCommitList", svnService.getVCCommitLogList(creatorName, repositoryName, "-1", 1, 15));
 		}
-		
+
 		logger.debug("*******************************************************");
 		return "/repository/log";
 	}
 	/*
-	@RequestMapping("/{creatorName}/{repositoryName}/rss") 
+	@RequestMapping("/{creatorName}/{repositoryName}/rss")
 	@ResponseBody
 	public String rss(@PathVariable("repositoryName") String repositoryName,
 			@PathVariable("creatorName") String creatorName,Model model) {
@@ -642,9 +639,9 @@ public class RepositoryController {
 		model.addAttribute("selectBranch",log);
 		model.addAttribute("repository", repository);
 		model.addAttribute("pageIndex",1);
-		model.addAttribute("gitCommitListCount", 
+		model.addAttribute("gitCommitListCount",
 				gitService.getCommitListCount(creatorName, repositoryName,log));
-		model.addAttribute("gitCommitList", 
+		model.addAttribute("gitCommitList",
 				gitService.getGitLogList(creatorName, repositoryName,log,1,15));
 		return "/repository/log";
 	}
@@ -705,9 +702,9 @@ public class RepositoryController {
 		model.addAttribute("selectBranch",log);
 		model.addAttribute("repository", repository);
 		model.addAttribute("pageIndex",page);
-		model.addAttribute("gitCommitListCount", 
+		model.addAttribute("gitCommitListCount",
 				gitService.getCommitListCount(creatorName, repositoryName,log));
-		model.addAttribute("gitCommitList", 
+		model.addAttribute("gitCommitList",
 				gitService.getGitLogList(creatorName, repositoryName,log,pageNum,size));
 		return "/repository/log";
 	}
@@ -718,17 +715,17 @@ public class RepositoryController {
 			@PathVariable("log") String log,
 			HttpServletRequest request,Model model) {
 		logger.debug("**********************< /{creatorName}/{repositoryName}/log-viewer/log:{log} >************************");
-		
+
 		Repository repository = repositoryService.get(creatorName+"/"+repositoryName);
 		String uri = request.getRequestURI();
 		log = uri.substring(uri.indexOf("/log:")+5);
-		
+
 		logger.debug("==> repository type: " + repository.getType());
 		logger.debug("==> uri: " + uri);
 		logger.debug("==> log: " + log);
-		
+
 		VCLog repoLog = null;
-		
+
 		if(repository.getType() == 1){
 			repoLog = gitService.getGitLog(creatorName, repositoryName, log);
 			if(repoLog == null)
@@ -738,12 +735,12 @@ public class RepositoryController {
 			if(repoLog == null)
 				return "redirect:/repository/"+ creatorName+"/"+repositoryName+"/log";
 		}
-		
+
 		model.addAttribute("repository", repository);
 		model.addAttribute("gitLog",repoLog);
-		
+
 		logger.debug("************************************************************");
-		
+
 		return "/repository/logViewer";
 	}
 
@@ -767,19 +764,19 @@ public class RepositoryController {
 		if(repositoryService.deleteWeaver(repository, currentWeaver,deleteWeaver)){
 			Post post;
 			if(currentWeaver.equals(repository.getCreator())){//관리자가 탈퇴시킬시에 메세지
-				post = new Post(currentWeaver, 
-						deleteWeaver.getId()+"님을 탈퇴 처리하였습니다.", "", 
+				post = new Post(currentWeaver,
+						deleteWeaver.getId()+"님을 탈퇴 처리하였습니다.", "",
 						tagService.stringToTagList("@"+repository.getName()+",탈퇴"));//저장소에 메세지 보냄
 				postService.add(post,null);
-				post = new Post(currentWeaver, 
-						deleteWeaver.getId()+"님이 저장소명:"+repository.getName()+"에서 탈퇴 당하셨습니다.", "", 
+				post = new Post(currentWeaver,
+						deleteWeaver.getId()+"님이 저장소명:"+repository.getName()+"에서 탈퇴 당하셨습니다.", "",
 						tagService.stringToTagList("$"+deleteWeaver.getId()));//저장소에 메세지 보냄
 				postService.add(post, null);
 				model.addAttribute("url", "/repository/"+creatorName+"/"+repositoryName+"/weaver/");
 
 			}else{//사용자가 탈퇴할시에 메세지
-				post = new Post(currentWeaver, 
-						deleteWeaver.getId()+"님이 탈퇴하셨습니다.", "", 
+				post = new Post(currentWeaver,
+						deleteWeaver.getId()+"님이 탈퇴하셨습니다.", "",
 						tagService.stringToTagList("@"+repository.getName()+",탈퇴"));//저장소에 메세지 보냄
 				postService.add(post, null);
 				model.addAttribute("url", "/");
@@ -807,7 +804,7 @@ public class RepositoryController {
 		if(weaverService.get(weaverName) == null){
 			model.addAttribute("url", "/repository/"+creatorName+"/"+repositoryName+"/weaver/");
 			model.addAttribute("say", "회원이 존재하지 않습니다!");
-			return "/alert";		
+			return "/alert";
 		}
 
 
@@ -817,21 +814,21 @@ public class RepositoryController {
 					+ "아니면 <a href='/repository/"+creatorName+"/"+repositoryName+"/weaver/"+waitingWeaver.getId()+"/join-cancel'>거절하시겠습니까?</a><a>";
 
 			Post post = new Post(repositoryCreator,
-					title, 
-					"", 
+					title,
+					"",
 					tagService.stringToTagList("$"+waitingWeaver.getId()),true);
 			invateService.createWaitJoin(
-					repository.getName(), 
-					proposer.getId(), 
-					waitingWeaver.getId(), 
+					repository.getName(),
+					proposer.getId(),
+					waitingWeaver.getId(),
 					postService.add(post,null));
 			model.addAttribute("url", "/repository/"+creatorName+"/"+repositoryName+"/weaver/");
 			model.addAttribute("say", "회원에게 초대장을 보냈습니다!");
-			return "/alert";	
+			return "/alert";
 		}
 		model.addAttribute("url", "/repository/"+creatorName+"/"+repositoryName+"/weaver/");
 		model.addAttribute("say", "회원을 추가하지 못했습니다!");
-		return "/alert";		
+		return "/alert";
 
 	}
 
@@ -846,21 +843,21 @@ public class RepositoryController {
 			String title = waitingWeaver.getId()+"님이 저장소명:"+creatorName+"/"+repositoryName+"에 가입 신청을 </a><a href='/repository/"+creatorName+"/"+repositoryName+"/weaver/"+waitingWeaver.getId()+"/join-ok'>승락하시겠습니까?</a> "
 					+ "아니면 <a href='/repository/"+creatorName+"/"+repositoryName+"/weaver/"+waitingWeaver.getId()+"/join-cancel'>거절하시겠습니까?</a><a>";
 			Post post = new Post(waitingWeaver,
-					title, 
-					"", 
+					title,
+					"",
 					tagService.stringToTagList("$"+repository.getCreatorName()),true);
 			invateService.createWaitJoin(
-					repository.getName(), 
-					waitingWeaver.getId(), 
-					waitingWeaver.getId(), 
+					repository.getName(),
+					waitingWeaver.getId(),
+					waitingWeaver.getId(),
 					postService.add(post,null));
 			model.addAttribute("url", "/");
 			model.addAttribute("say", "가입 부탁 메시지를 보냈습니다!");
-			return "/alert";	
+			return "/alert";
 		}
 		model.addAttribute("url", "/");
 		model.addAttribute("say", "가입 부탁 메시지를 보내지 못했습니다!");
-		return "/alert";		
+		return "/alert";
 
 	}
 
@@ -876,13 +873,13 @@ public class RepositoryController {
 		if(invateService.isOkJoin(invate, repository.getCreatorName(), currentWeaver) //요청자가 쪽지를 보내고 관리자가 승인을 하는 경우
 				&& repository.getCreator().equals(currentWeaver)
 				&& invateService.deleteWaitJoin(invate, repository, waitingWeaver)){
-			postService.delete( waitingWeaver,postService.get(invate.getPostID()));	
+			postService.delete( waitingWeaver,postService.get(invate.getPostID()));
 			repositoryService.addWeaver(repository, waitingWeaver);
-			Post post = new Post(waitingWeaver, 
+			Post post = new Post(waitingWeaver,
 					"관리자 "+repository.getCreatorName()+"님의 승인으로 저장소명:"+
 							creatorName+"/"+repositoryName+
-							"에 가입이 승인되었습니다!", 
-							"", 
+							"에 가입이 승인되었습니다!",
+							"",
 							tagService.stringToTagList("@"+repository.getName()+",가입"),true); //@저장소명,가입 태그를 걸어줌
 
 			postService.add(post,null);
@@ -893,13 +890,13 @@ public class RepositoryController {
 				&& invateService.isOkJoin(invate, repository.getCreatorName(), currentWeaver)
 				&& !repository.getCreator().equals(currentWeaver)
 				&& invateService.deleteWaitJoin(invate, repository, currentWeaver)){
-			postService.delete(repository.getCreator(),postService.get(invate.getPostID()));	
+			postService.delete(repository.getCreator(),postService.get(invate.getPostID()));
 			repositoryService.addWeaver(repository, waitingWeaver);
 
 			Post post = new Post(currentWeaver, //가입자가 관리자에게 보내는 메세지
 					currentWeaver.getId()+"님이 저장소명:"+creatorName+"/"+repositoryName+
-					"를 가입 초대를 수락하셨습니다!", 
-					"", 
+					"를 가입 초대를 수락하셨습니다!",
+					"",
 					tagService.stringToTagList("@"+repository.getName()+",가입"),true); //@저장소명,가입 태그를 걸어줌
 
 			postService.add(post,null);
@@ -909,7 +906,7 @@ public class RepositoryController {
 
 		model.addAttribute("url", "/");
 		model.addAttribute("say", "권한이 없습니다!");
-		return "/alert";		
+		return "/alert";
 	}
 
 	@RequestMapping("/{creatorName}/{repositoryName}/weaver/{weaver}/join-cancel") // 저장소 가입 승인 취소
@@ -924,12 +921,12 @@ public class RepositoryController {
 				&& invateService.isOkJoin(invate, repository.getCreatorName(), currentWeaver)
 				&& repository.getCreator().equals(currentWeaver)
 				&& invateService.deleteWaitJoin(invate, repository, currentWeaver)){
-			postService.delete(waitingWeaver,postService.get(invate.getPostID()));	
+			postService.delete(waitingWeaver,postService.get(invate.getPostID()));
 			Post post = new Post(currentWeaver,  //관리자가 가입자에게 보내는 메세지
 					"관리자 "+repository.getCreatorName()+"님의 저장소명:"+
 					creatorName+"/"+repositoryName+
-					"에 가입이 거절되었습니다.", 
-					"", 
+					"에 가입이 거절되었습니다.",
+					"",
 					tagService.stringToTagList("$"+waitingWeaver.getId()),true);
 
 			postService.add(post,null);
@@ -940,11 +937,11 @@ public class RepositoryController {
 				&& invateService.isOkJoin(invate, repository.getCreatorName(), currentWeaver)
 				&& !repository.getCreatorName().equals(currentWeaver.getId())
 				&& invateService.deleteWaitJoin(invate, repository, currentWeaver)){
-			postService.delete(repository.getCreator(),postService.get(invate.getPostID()));	
+			postService.delete(repository.getCreator(),postService.get(invate.getPostID()));
 			Post post = new Post(currentWeaver, //가입자가 관리자에게 보내는 메세지
 					currentWeaver.getId()+"님이 저장소명:"+creatorName+"/"+repositoryName+
-					"를 가입 초대를 거절하셨습니다.", 
-					"", 
+					"를 가입 초대를 거절하셨습니다.",
+					"",
 					tagService.stringToTagList("$"+repository.getCreatorName()),true);
 
 			postService.add(post,null);
@@ -954,7 +951,7 @@ public class RepositoryController {
 
 		model.addAttribute("url", "/");
 		model.addAttribute("say", "권한이 없습니다!");
-		return "/alert";		
+		return "/alert";
 	}
 
 	@RequestMapping(value="/{creatorName}/{repositoryName}/{branchName}/upload" , method=RequestMethod.POST)
@@ -973,7 +970,7 @@ public class RepositoryController {
 		}
 		return "redirect:/repository/"+creatorName+"/"+repositoryName;
 	}
-	
+
 	@RequestMapping(value="/{creatorName}/{repositoryName}/reset")
 	public String reset(@PathVariable("repositoryName") String repositoryName,
 			@PathVariable("creatorName") String creatorName,Model model) {
@@ -1001,17 +998,17 @@ public class RepositoryController {
 	public String info(@PathVariable("repositoryName") String repositoryName,
 			@PathVariable("creatorName") String creatorName, Model model){
 		logger.debug("**********************< /{creatorName}/{repositoryName}/info >*******************");
-		
+
 		Repository repository = repositoryService.get(creatorName+"/"+repositoryName);
 		model.addAttribute("repository", repository);
-		
+
 		if(repository.getType() == 1){
 			model.addAttribute("gitInfo", gitService.getGitInfo(creatorName, repositoryName, "HEAD"));
 		} else if(repository.getType() == 2){
 			svnService.getSvnInfo(creatorName, repositoryName, "-1");
 			//model.addAttribute("gitInfo", svnService.getSvnInfo(creatorName, repositoryName, "-1"));
 		}
-		
+
 		logger.debug("*********************************************************************************");
 		return "/repository/info";
 	}
@@ -1032,20 +1029,20 @@ public class RepositoryController {
 	public String punchcard(@PathVariable("repositoryName") String repositoryName,
 			@PathVariable("creatorName") String creatorName, Model model){
 		logger.debug("******************< /{creatorName}/{repositoryName}/info:frequency >**********************");
-		
+
 		Repository repository = repositoryService.get(creatorName+"/"+repositoryName);
 
 		model.addAttribute("repository", repository);
-		
+
 		if(repository.getType() == 1){
 			model.addAttribute("dayAndHour", gitService.loadDayAndHour(creatorName, repositoryName));
 		} else if(repository.getType() == 2){
 			model.addAttribute("dayAndHour", svnService.loadDayAndHour(creatorName, repositoryName));
 		}
-		
-		
+
+
 		logger.debug("******************< /{creatorName}/{repositoryName}/info:frequency >**********************");
-		
+
 		return "/repository/frequency";
 	}
 

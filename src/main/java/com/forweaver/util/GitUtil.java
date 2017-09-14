@@ -37,11 +37,11 @@ import org.gitective.core.BlobUtils;
 import org.gitective.core.CommitUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.forweaver.config.Config;
 import com.forweaver.domain.git.statistics.GitChildStatistics;
 import com.forweaver.domain.git.statistics.GitParentStatistics;
 import com.forweaver.domain.vc.VCBlame;
@@ -60,20 +60,19 @@ public class GitUtil implements VCUtil{
 	private static final Logger logger =
 			LoggerFactory.getLogger(GitUtil.class);
 
+	@Value("${git.repository.path}")
 	private String gitPath;
 	private String path;
 	private Repository localRepo;
 	private Git git;
 
-	public String getGitPath() {
-		return gitPath;
+	public GitUtil(){
 	}
 
-	public void setGitPath(String gitPath) {
-		this.gitPath = gitPath;
-	}
-	public GitUtil(){
-		this.gitPath = Config.gitPath;
+
+
+	public String getGitPath() {
+		return gitPath;
 	}
 
 	/** 저장소 초기화 메서드
@@ -125,6 +124,7 @@ public class GitUtil implements VCUtil{
 	/** 저장소 생성함.
 	 * @throws Exception
 	 */
+	@Override
 	public boolean createRepository(){
 		try {
 			git.init().setBare(true).setDirectory(new File(this.path)).call();
@@ -141,6 +141,7 @@ public class GitUtil implements VCUtil{
 	/** git 디렉토리 삭제
 	 * @throws Exception
 	 */
+	@Override
 	public boolean deleteRepository(){
 		try {
 			FileUtils.deleteDirectory(new File(this.path));
@@ -156,6 +157,7 @@ public class GitUtil implements VCUtil{
 	 * @param filePath
 	 * @return
 	 */
+	@Override
 	public boolean isDirectory(String commitID, String filePath){
 		if(filePath.length() == 0)
 			return true;
@@ -187,6 +189,7 @@ public class GitUtil implements VCUtil{
 	 * @param filePath
 	 * @return
 	 */
+	@Override
 	public VCFileInfo getFileInfo(String commitID, String filePath) {
 		List<VCSimpleLog> logList = new ArrayList<VCSimpleLog>();
 		RevCommit selectCommit = this.getCommit(commitID);
@@ -226,6 +229,7 @@ public class GitUtil implements VCUtil{
 	 * @param refName
 	 * @return
 	 */
+	@Override
 	public VCSimpleLog getVCCommit(String refName) {
 		return new VCSimpleLog(CommitUtils.getCommit(this.localRepo, refName));
 	}
@@ -234,6 +238,7 @@ public class GitUtil implements VCUtil{
 	 * @param refName
 	 * @return
 	 */
+	@Override
 	public int getCommitListCount(String refName) {
 		try {
 			Iterable<RevCommit> gitLogIterable = this.git
@@ -258,6 +263,7 @@ public class GitUtil implements VCUtil{
 	 * @param filePath
 	 * @return
 	 */
+	@Override
 	public List<VCSimpleFileInfo> getGitFileInfoList(String commitID,String filePath) {
 		List<VCSimpleFileInfo> gitFileInfoList = new ArrayList<VCSimpleFileInfo>();
 		List<String> fileList = this.getGitFileList(commitID);
@@ -284,6 +290,7 @@ public class GitUtil implements VCUtil{
 	 * @param commitID
 	 * @return
 	 */
+	@Override
 	public List<String> getGitFileList(String commitID) {
 		List<String> fileList = new ArrayList<String>();
 		try{
@@ -306,6 +313,7 @@ public class GitUtil implements VCUtil{
 	 * @param commitID
 	 * @return
 	 */
+	@Override
 	public VCLog getLog(String commitID) {
 		VCLog gitLog = null;
 		String diffs = new String();
@@ -362,6 +370,7 @@ public class GitUtil implements VCUtil{
 	}
 
 	// 커밋 로그 목록를 가져옴
+	@Override
 	public List<VCSimpleLog> getLogList(String branchName,
 			int page, int number) {
 		List<VCSimpleLog> gitLogList = new ArrayList<VCSimpleLog>();
@@ -388,6 +397,7 @@ public class GitUtil implements VCUtil{
 	/** 저장소에서 브랜치 정보를 가져옴
 	 * @return
 	 */
+	@Override
 	public List<String> getBranchList() {
 		ArrayList<String> branchList = new ArrayList<String>();
 
@@ -407,6 +417,7 @@ public class GitUtil implements VCUtil{
 	/** 브랜치 목록과 태그 목록을 가져옴
 	 * @return
 	 */
+	@Override
 	public List<String> getSimpleBranchAndTagNameList() {
 		String branchName = "";
 		List<String> branchList = new ArrayList<String>();
@@ -442,6 +453,7 @@ public class GitUtil implements VCUtil{
 	 * @param format
 	 * @param response
 	 */
+	@Override
 	public void getRepositoryZip(String commitName,String format, HttpServletResponse response) {
 
 		try {
@@ -634,13 +646,14 @@ public class GitUtil implements VCUtil{
 	/** 일주일 24시간별로 커밋의 갯수를 측정하는 코드 빈도수 시각화에 쓰임
 	 * @return
 	 */
+	@Override
 	public int[][] getDayAndHour(){
 
 		int[][] array = new int[7][24];
 
 		try{
 			for(RevCommit rc:git.log().all().call())
-				
+
 				array[rc.getCommitterIdent().getWhen().getDay()]
 						[rc.getCommitterIdent().getWhen().getHours()]++;
 
@@ -693,6 +706,7 @@ public class GitUtil implements VCUtil{
 	 * @param commitID
 	 * @return
 	 */
+	@Override
 	public List<VCBlame> getBlame(String filePath, String commitID){
 		List<VCBlame> gitBlames = new ArrayList<VCBlame>();
 		RevCommit commit = CommitUtils.getCommit(this.localRepo, commitID);

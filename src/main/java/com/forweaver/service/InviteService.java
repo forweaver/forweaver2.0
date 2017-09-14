@@ -6,9 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.forweaver.domain.Repository;
+import com.forweaver.dao.InviteDao;
 import com.forweaver.domain.Invite;
 import com.forweaver.domain.Weaver;
-import com.forweaver.mongodb.dao.InviteDao;
 
 /** 초대장 관리 서비스
  *

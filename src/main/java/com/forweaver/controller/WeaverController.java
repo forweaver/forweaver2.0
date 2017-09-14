@@ -33,7 +33,7 @@ public class WeaverController {
 
 	private static final Logger logger =
 			LoggerFactory.getLogger(WeaverController.class);
-	
+
 	@Autowired
 	private WeaverService weaverService;
 	@Autowired
@@ -42,20 +42,19 @@ public class WeaverController {
 	private RepositoryService repositoryService;
 	@Autowired
 	private CodeService codeService;
-	@Autowired 
+	@Autowired
 	private TagService tagService;
 
 	@RequestMapping(value = "/login",method = RequestMethod.GET)
-	public String login(@RequestParam("state") String state,Model model) {
+	public String login(@RequestParam(value = "error", required = false) String error,
+	        @RequestParam(value = "logout", required = false) String logout,Model model) {
 
-		if("fail".equals(state))
+		if(error != null)
 			model.addAttribute("script", "alert('로그인 실패!!! 다시 로그인해주세요!')");
-
-		if("not".equals(state))
-			model.addAttribute("script", "alert('서비스를 이용하시려면 로그인부터 해주세요!')");
 
 		return "/weaver/login";
 	}
+
 
 
 	@RequestMapping("/join")
@@ -72,7 +71,7 @@ public class WeaverController {
 			HttpServletRequest request,Model model) {
 
 		if(!Pattern.matches("^[a-z]{1}[a-z0-9_]{4,14}$", id) || password.length()<4 ||
-				say.length()>50 || 
+				say.length()>50 ||
 				!Pattern.matches("[\\w\\~\\-\\.]+@[\\w\\~\\-]+(\\.[\\w\\~\\-]+)+",email)){
 			model.addAttribute("say", "잘못 입력하셨습니다!");
 			model.addAttribute("url", "/join");
@@ -104,7 +103,7 @@ public class WeaverController {
 		long weaverCount = weaverService.countWeavers();
 		List<Weaver> weavers = weaverService.getWeavers(pageNum, size);
 
-		model.addAttribute("weavers", weavers);	
+		model.addAttribute("weavers", weavers);
 		model.addAttribute("weaverCount", weaverCount);
 
 		model.addAttribute("pageIndex", pageNum);
@@ -132,7 +131,7 @@ public class WeaverController {
 		List<Weaver> weavers= weaverService.getWeavers(tagList,pageNum,size);
 		long weaverCount = weaverService.countWeavers(tagList);
 
-		model.addAttribute("weavers", weavers);	
+		model.addAttribute("weavers", weavers);
 		model.addAttribute("weaverCount", weaverCount);
 
 		model.addAttribute("pageIndex", pageNum);
@@ -383,7 +382,7 @@ public class WeaverController {
 
 		Weaver currentWeaver = weaverService.getCurrentWeaver();
 
-		if (!tagService.validateTag(tags, currentWeaver)) 
+		if (!tagService.validateTag(tags, currentWeaver))
 			return "redirect:/";
 
 		model.addAttribute("weaver", weaver);
@@ -430,13 +429,13 @@ public class WeaverController {
 			throws IOException {
 		Weaver weaver = weaverService.get(id);
 		byte[] imgData = null;
-		
+
 		if(weaver.getData() != null) {
 			res.setHeader("Content-Disposition", "attachment; filename = "+weaver.getData().getName());
 			res.setContentType(weaver.getData().getType());
 			imgData = weaver.getData().getContent();
 		}
-		
+
 		if (imgData == null) {
 			imgData = WebUtil.downloadFile("http://www.gravatar.com/avatar/" + WebUtil.convertMD5(weaver.getEmail()) + ".jpg");
 			res.setHeader("Content-Disposition", "attachment; filename = icon.jpg");
@@ -446,7 +445,7 @@ public class WeaverController {
 			res.sendRedirect("/resources/forweaver/img/null.png");
 			return;
 		}
-		
+
 		OutputStream o = res.getOutputStream();
 		o.write(imgData);
 		o.flush();
@@ -459,20 +458,20 @@ public class WeaverController {
 		return weaverService.idCheck(req.getParameter("id"));
 	}
 
-	@RequestMapping(value = "/repassword/{email}/{key}")
+/*	@RequestMapping(value = "/repassword/{email}/{key}")
 	public String repassword(@PathVariable("email") String email,@PathVariable("key") String key) {
 
 		if(weaverService.changePassword(email, key))
 			return "/weaver/repassword";
 		else
 			return "/error500";
-	}
-
+	}*/
+/*
 	@RequestMapping(value = "/repassword", method = RequestMethod.POST)
 	@ResponseBody
 	public boolean repasswordCheck(@RequestParam("email") String email) {
 		return weaverService.sendRepassword(email);
-	}
+	}*/
 
 
 	@RequestMapping(value = "/del")
@@ -483,7 +482,7 @@ public class WeaverController {
 			return "redirect:/";
 		return "/weaver/del";
 	}
-	
+/*
 	@RequestMapping(value = "/del", method = RequestMethod.POST)
 	public String delete(Model model,@RequestParam("password") String password) {
 		Weaver weaver = weaverService.getCurrentWeaver();
@@ -496,7 +495,7 @@ public class WeaverController {
 		model.addAttribute("say", "성공적으로 탈퇴 처리됐습니다!");
 		model.addAttribute("url", "/j_spring_security_logout");
 		return "/alert";
-	}
+	}*/
 
 
 

@@ -16,7 +16,7 @@ import org.tmatesoft.svn.core.internal.server.dav.DAVServlet;
 @WebServlet("/s/*")
 public class SVNRepositoryServlet extends DAVServlet{
 	private static final long serialVersionUID = 1L;
-	@Value("svn.path")
+	@Value("${svn.repository.path}")
 	private String svnPath;
 
 	@Override
@@ -24,21 +24,25 @@ public class SVNRepositoryServlet extends DAVServlet{
 		// TODO Auto-generated method stub
 		super.init(new ServletConfig() {
 
+			@Override
 			public String getServletName() {
 				// TODO Auto-generated method stub
 				return "svnServlet";
 			}
 
+			@Override
 			public ServletContext getServletContext() {
 				// TODO Auto-generated method stub
 				return null;
 			}
 
+			@Override
 			public Enumeration<String> getInitParameterNames() {
 				// TODO Auto-generated method stub
 				return null;
 			}
 
+			@Override
 			public String getInitParameter(String name) {
 				// TODO Auto-generated method stub
 				if("SVNParentPath".equals(name))

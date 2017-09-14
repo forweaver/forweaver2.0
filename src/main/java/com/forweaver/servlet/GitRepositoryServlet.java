@@ -11,35 +11,38 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.jgit.http.server.GitServlet;
-
-import com.forweaver.config.Config;
+import org.springframework.beans.factory.annotation.Value;
 
 @WebServlet(urlPatterns = { "/g/*" })
 public class GitRepositoryServlet extends GitServlet {
 	private static final long serialVersionUID = 1L;
+	@Value("${git.repository.path}")
 	private String gitPath;
 
 	@Override
 	public void init(ServletConfig config) throws ServletException {
-		gitPath = Config.gitPath;
 		super.init(new ServletConfig() {
 
 
+			@Override
 			public String getServletName() {
 				// TODO Auto-generated method stub
 				return "gitServlet";
 			}
 
+			@Override
 			public ServletContext getServletContext() {
 				// TODO Auto-generated method stub
 				return null;
 			}
 
+			@Override
 			public Enumeration<String> getInitParameterNames() {
 				// TODO Auto-generated method stub
 				return null;
 			}
 
+			@Override
 			public String getInitParameter(String arg0) {
 				// TODO Auto-generated method stub
 				if("base-path".equals(arg0))

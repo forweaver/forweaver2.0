@@ -11,14 +11,14 @@ import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.forweaver.dao.InviteDao;
+import com.forweaver.dao.PostDao;
+import com.forweaver.dao.RepositoryDao;
+import com.forweaver.dao.WeaverDao;
 import com.forweaver.domain.Invite;
 import com.forweaver.domain.Pass;
 import com.forweaver.domain.Repository;
 import com.forweaver.domain.Weaver;
-import com.forweaver.mongodb.dao.InviteDao;
-import com.forweaver.mongodb.dao.PostDao;
-import com.forweaver.mongodb.dao.RepositoryDao;
-import com.forweaver.mongodb.dao.WeaverDao;
 import com.forweaver.util.GitUtil;
 import com.forweaver.util.SVNUtil;
 
@@ -34,7 +34,7 @@ public class RepositoryService{
 
 	private static final Logger logger =
 			LoggerFactory.getLogger(RepositoryService.class);
-	
+
 	@Autowired private WeaverDao weaverDao;
 	@Autowired private RepositoryDao repositoryDao;
 	@Autowired private CacheManager cacheManager;
@@ -58,7 +58,7 @@ public class RepositoryService{
 				return;
 
 			gitUtil.Init(repository);
-			
+
 			if(!gitUtil.createRepository())
 				return;
 		} else if(repository.getType() == 2){
@@ -68,23 +68,23 @@ public class RepositoryService{
 			logger.debug("password: " + currentWeaver.getPassword());
 			logger.debug("username: " + currentWeaver.getUsername());
 			logger.debug("email: " + currentWeaver.getEmail());
-			
+
 			logger.debug("<<Repository info>>");
 			logger.debug("Category: " + repository.getType());
 			logger.debug("Category name: " + repository.getCreatorName());
 			logger.debug("Category email: " + repository.getCreatorEmail());
 			logger.debug("Category description : " + repository.getDescription());
 			logger.debug("Category projectname: " + repository.getName());
-			
+
 			if(currentWeaver == null)
 				return;
-			
+
 			svnUtil.Init(repository);
-				
+
 			if(!svnUtil.createRepository())
 				return;
 		}
-		
+
 		repositoryDao.insert(repository);
 		Pass pass = new Pass(repository.getName(),2);
 		currentWeaver.addPass(pass);
@@ -182,7 +182,7 @@ public class RepositoryService{
 	 * @return
 	 */
 	public boolean push(Repository repository, Weaver weaver,String ip) {
-		if(repository == null || repository.getAuthLevel() > 0 || 
+		if(repository == null || repository.getAuthLevel() > 0 ||
 				(weaver == null &&  repository.isJoinWeaver(weaver)))
 			return false;
 
@@ -273,7 +273,7 @@ public class RepositoryService{
 	 * @param zip
 	 */
 	public boolean uploadFile(Repository repository,Weaver weaver,String branchName,String message,String path,MultipartFile file){
-		if(message==null || message.length() < 5 ||weaver  == null || 
+		if(message==null || message.length() < 5 ||weaver  == null ||
 				weaver.getPass(repository.getName()) == null)
 			return false;
 
@@ -301,8 +301,8 @@ public class RepositoryService{
 		logger.debug("==> message: " + message);
 		logger.debug("==> path: " + path);
 		logger.debug("==> code: " + code);
-		
-		if(message==null || message.length() < 5 ||weaver  == null || 
+
+		if(message==null || message.length() < 5 ||weaver  == null ||
 				weaver.getPass(repository.getName()) == null)
 			return false;
 

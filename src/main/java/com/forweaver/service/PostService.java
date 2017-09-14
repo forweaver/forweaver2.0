@@ -11,14 +11,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.forweaver.dao.DataDao;
+import com.forweaver.dao.PostDao;
+import com.forweaver.dao.RePostDao;
 import com.forweaver.domain.Data;
 import com.forweaver.domain.Pass;
 import com.forweaver.domain.Post;
 import com.forweaver.domain.RePost;
 import com.forweaver.domain.Weaver;
-import com.forweaver.mongodb.dao.DataDao;
-import com.forweaver.mongodb.dao.PostDao;
-import com.forweaver.mongodb.dao.RePostDao;
 
 @Service
 public class PostService {

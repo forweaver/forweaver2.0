@@ -18,6 +18,7 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.tmatesoft.svn.core.SVNCommitInfo;
 import org.tmatesoft.svn.core.SVNDepth;
@@ -40,7 +41,6 @@ import org.tmatesoft.svn.core.wc.SVNRevision;
 import org.tmatesoft.svn.core.wc.SVNWCClient;
 import org.tmatesoft.svn.core.wc.SVNWCUtil;
 
-import com.forweaver.config.Config;
 import com.forweaver.domain.Repository;
 import com.forweaver.domain.vc.VCBlame;
 import com.forweaver.domain.vc.VCFileInfo;
@@ -53,18 +53,18 @@ public class SVNUtil implements VCUtil{
 	private static final Logger logger =
 			LoggerFactory.getLogger(SVNUtil.class);
 
+	@Value("${svn.repository.path}")
 	private String svnPath;
+	@Value("file://${svn.repository.path}")
 	private String svnreporootPath;
 	private String path;
 	private SVNRepository repository;
 	private SVNURL svnURL;
-	
+
 	@Autowired
 	AnnotationHandler annotationhandler;
 
 	public SVNUtil(){
-		this.svnPath = Config.svnPath;
-		this.svnreporootPath = "file://"+this.svnPath; //svn의 저장소 주소//
 	}
 
 	public String getSvnPath() {
@@ -101,12 +101,13 @@ public class SVNUtil implements VCUtil{
 		try {
 			SVNRepository repository = SVNRepositoryFactory.create( SVNURL.parseURIEncoded(this.svnreporootPath+"/"+parentDirctoryName+"/"+repositoryName));
 			this.repository = repository;
-		
+
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
 	}
 
+	@Override
 	public boolean createRepository() {
 		try {
 			SVNURL tgtURL = SVNRepositoryFactory.createLocalRepository( new File( this.path ), true , false );
@@ -120,6 +121,7 @@ public class SVNUtil implements VCUtil{
 		return true;
 	}
 
+	@Override
 	public boolean deleteRepository() {
 		try {
 			FileUtils.deleteDirectory(new File(this.path)); //파일제거//
@@ -135,6 +137,7 @@ public class SVNUtil implements VCUtil{
 	 * @param filePath
 	 * @return
 	 */
+	@Override
 	public boolean isDirectory(String commitID, String filePath) {
 		//해당 filepath만 검증//
 		logger.debug("==> isDirectory filePath: " + filePath);
@@ -162,6 +165,7 @@ public class SVNUtil implements VCUtil{
 	 * @param filePath
 	 * @return
 	 */
+	@Override
 	@SuppressWarnings("finally")
 	public VCFileInfo getFileInfo(String commitID, String filePath) {
 
@@ -340,6 +344,7 @@ public class SVNUtil implements VCUtil{
 		return content;
 	}
 
+	@Override
 	public int getCommitListCount(String commitID) {
 		int logcount = 0;
 
@@ -502,7 +507,7 @@ public class SVNUtil implements VCUtil{
 		    diffClient.doDiff(svnURL, null, SVNRevision.create(revesionone), SVNRevision.create(revesiontwo), SVNDepth.INFINITY, true, byteArrayOutputStream);
 		    //diffClient.doDiff(new File(repourl), SVNRevision.UNDEFINED, SVNRevision.create(revesionone), SVNRevision.create(revesiontwo), true, true, byteArrayOutputStream);
 		    diffresult = byteArrayOutputStream.toString();
-		    
+
 	        return diffresult;
 		} catch (SVNException e) {
 			// TODO Auto-generated catch block
@@ -595,11 +600,13 @@ public class SVNUtil implements VCUtil{
 		return svncommitLogList;
 	}
 
+	@Override
 	public List<String> getBranchList() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@Override
 	public List<String> getSimpleBranchAndTagNameList() {
 		// TODO Auto-generated method stub
 		return null;
@@ -610,6 +617,7 @@ public class SVNUtil implements VCUtil{
 
 	}
 
+	@Override
 	public int[][] getDayAndHour() {
 		//로그정보를 넘기면 요일 숫자를 뽑아내는 메소드//
 		//로그정보를 넘기면 시간정보를 숫자로 뽑아내는 메소드//
@@ -617,15 +625,15 @@ public class SVNUtil implements VCUtil{
 
 		//로그뽑아오기//
 		Map<String, Object> commitinfo = doPrintRepoLog(repository); //전체 커밋정보 리스트//
-		
+
 		List<Object> datelist = (List<Object>) commitinfo.get("datelist");
-		
+
 		for(int i=0; i<datelist.size(); i++){
 			logger.debug("date: " + datelist.get(i));
-			
+
 			//파싱 후 시각화 배열에 적용//
 			String day_time[] = datelist.get(i).toString().split("/");
-			
+
 			array[Integer.parseInt(day_time[0])]
 					[Integer.parseInt(day_time[1])]++;
 		}
@@ -633,6 +641,7 @@ public class SVNUtil implements VCUtil{
 		return array;
 	}
 
+	@Override
 	public List<VCBlame> getBlame(String filePath, String commitID) {
 		logger.debug("===== Blame set...");
 		logger.debug("filePath: " + filePath);
@@ -750,31 +759,37 @@ public class SVNUtil implements VCUtil{
         return editor.closeEdit();
     }
 
+	@Override
 	public VCSimpleLog getVCCommit(String refName) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@Override
 	public List<VCSimpleFileInfo> getGitFileInfoList(String commitID, String filePath) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@Override
 	public List<String> getGitFileList(String commitID) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@Override
 	public VCLog getLog(String commitID) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@Override
 	public List<VCSimpleLog> getLogList(String branchName, int page, int number) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@Override
 	public void getRepositoryZip(String commitName, String format, HttpServletResponse response) {
 		// TODO Auto-generated method stub
 
@@ -866,16 +881,16 @@ public class SVNUtil implements VCUtil{
 
 		return resultunlock;
 	}
-	
+
 	/** 저장소 정보를 가져옴
-	 * @param svnRepository 
+	 * @param svnRepository
 	 * @param branchName
 	 * @return
 	 */
 	public SvnInfo getSvnInfo(String branchName){
 		SvnInfo svnInfo = new SvnInfo();
 		SVNRepository repository = this.repository;
-		
+
 		try{
 			svnInfo.run(repository, branchName);
 		}catch(Exception e){
@@ -883,39 +898,39 @@ public class SVNUtil implements VCUtil{
 		}
 		return svnInfo;
 	}
-	
+
 	public Map<String, Object> doPrintRepoLog(SVNRepository repository){
 		//SVNRepository repository = null;
 		Collection logEntries = null;
-		
+
 		//媛� 濡쒓렇�뿉�꽌 �븘�슂�븳 �뜲�씠�꽣瑜� ���옣�븷 �닔 �엳�뒗 �옄猷뚭뎄議� �꽑�뼵//
 		List<Object>datelist = new ArrayList<Object>();
-		
+
 		//醫낇빀�젙蹂대�� 媛�吏� 由ъ뒪�듃//
 		Map<String, Object>loglist = new HashMap<String, Object>();
-		
+
 		long startRevision = 0;
 		long endRevision = -1; //HEAD (the latest) revision
-		
+
 		int logcount = 0; //key濡� �솢�슜//
-		
+
 		try {
 			//repository = SVNRepositoryFactory.create(SVNURL.parseURIEncoded(repourl));
-			
+
 			/*//인증정보를 설정//
 			ISVNAuthenticationManager authManager = SVNWCUtil.createDefaultAuthenticationManager(userid, userpassword);
 	        repository.setAuthenticationManager(authManager);*/
-	       
+
 			logEntries = repository.log(new String[] { "" }, null, startRevision, endRevision, true, true);
 
 			for (Iterator entries = logEntries.iterator(); entries.hasNext();) {
 				SVNLogEntry logEntry = (SVNLogEntry) entries.next();
-				
+
 				String parsingresult = "";
 				//파싱//
 				String dateinfo[] = logEntry.getDate().toString().split(" ");
 				String timeinfo[] = dateinfo[3].split(":");
-				
+
 				if(dateinfo[0].equals("Sun")){
 					parsingresult = "0";
 				} else if(dateinfo[0].equals("Mon")){
@@ -931,23 +946,23 @@ public class SVNUtil implements VCUtil{
 				} else if(dateinfo[0].equals("Sat")){
 					parsingresult = "6";
 				}
-				
+
 				parsingresult += "/" + timeinfo[0];
-				
+
 				datelist.add(parsingresult);
-				
+
 				logcount++;
 			}
-			
+
 			loglist.put("datelist", datelist);
 			loglist.put("count", ""+logcount);
-			
+
 			return loglist;
 		}
 		catch (SVNException e) {
 			e.printStackTrace();
 		}
-		
+
 		return loglist;
 	}
 }

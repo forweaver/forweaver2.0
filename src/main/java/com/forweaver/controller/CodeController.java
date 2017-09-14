@@ -43,8 +43,7 @@ public class CodeController {
 	private static final Logger logger =
 			LoggerFactory.getLogger(CodeController.class);
 
-	@Autowired
-	private CodeService codeService;
+
 	@Autowired
 	private TagService tagService;
 	@Autowired
@@ -53,6 +52,8 @@ public class CodeController {
 	private RePostService rePostService;
 	@Autowired
 	private DataService dataService;
+	@Autowired
+	private CodeService codeService;
 
 	@RequestMapping("/")
 	public String front(){

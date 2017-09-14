@@ -11,8 +11,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
+import com.forweaver.dao.DataDao;
 import com.forweaver.domain.Weaver;
-import com.forweaver.mongodb.dao.DataDao;
 import com.forweaver.service.TagService;
 import com.forweaver.service.WeaverService;
 
