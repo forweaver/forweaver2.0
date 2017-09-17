@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.forweaver.domain.Weaver;
 import com.forweaver.domain.git.statistics.GitParentStatistics;
+import com.forweaver.domain.git.statistics.SvnParentStatistics;
 import com.forweaver.domain.vc.VCFileInfo;
 import com.forweaver.domain.vc.VCLog;
 import com.forweaver.domain.vc.VCSimpleFileInfo;
@@ -121,9 +122,10 @@ public class SVNService implements VCService{
 		
 	}
 
-	public GitParentStatistics loadStatistics(String parentDirctoryName, String repositoryName) {
+	public SvnParentStatistics loadStatistics_svn(String parentDirctoryName, String repositoryName) {
 		// TODO Auto-generated method stub
-		return null;
+		svnUtil.RepoInt(parentDirctoryName,repositoryName);
+		return svnUtil.getCommitStatistics();
 	}
 
 	public int[][] loadDayAndHour(String parentDirctoryName, String repositoryName) {
@@ -155,6 +157,11 @@ public class SVNService implements VCService{
 	}
 
 	public GitInfo getVCInfo(String parentDirctoryName, String repositoryName, String branchName) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public GitParentStatistics loadStatistics(String parentDirctoryName, String repositoryName) {
 		// TODO Auto-generated method stub
 		return null;
 	}

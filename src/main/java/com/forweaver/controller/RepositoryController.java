@@ -1039,11 +1039,20 @@ public class RepositoryController {
 	@RequestMapping("/{creatorName}/{repositoryName}/info:stream")
 	public String stream(@PathVariable("repositoryName") String repositoryName,
 			@PathVariable("creatorName") String creatorName, Model model){
+		logger.debug("******************< /{creatorName}/{repositoryName}/info:stream >**********************");
+
 		Repository repository = repositoryService.get(creatorName+"/"+repositoryName);
 
 		model.addAttribute("repository", repository);
 		//로그 정보를 돌면서 SvnChildStatistics를 채워준다. 추가/삭제 수는 현재 리비전과 다음 리비전과의 비교//
-		model.addAttribute("gps", gitService.loadStatistics(creatorName, repositoryName));
+		if(repository.getType() == 1){
+			model.addAttribute("gps", gitService.loadStatistics(creatorName, repositoryName));
+		} else if(repository.getType() == 2){
+			model.addAttribute("gps", svnService.loadStatistics_svn(creatorName, repositoryName));
+		}
+		
+		logger.debug("***************************************************************************************");
+		
 		return "/repository/stream";
 	}
 

@@ -5,6 +5,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
 import com.forweaver.domain.git.statistics.GitParentStatistics;
+import com.forweaver.domain.git.statistics.SvnParentStatistics;
 import com.forweaver.domain.vc.VCFileInfo;
 import com.forweaver.domain.vc.VCLog;
 import com.forweaver.domain.vc.VCSimpleFileInfo;
@@ -22,6 +23,7 @@ public interface VCService {
 	public VCLog getVCCommitLog(String parentDirctoryName,String repositoryName,String branchName) ;
 	public void getProjectZip(String parentDirctoryName,String repositoryName,String commitName,String format,HttpServletResponse response);
 	public GitParentStatistics loadStatistics(String parentDirctoryName,String repositoryName);
+	public SvnParentStatistics loadStatistics_svn(String parentDirctoryName,String repositoryName);
 	public int[][] loadDayAndHour(String parentDirctoryName,String repositoryName);
 	public GitInfo getVCInfo(String parentDirctoryName,String repositoryName,String branchName);
 	public String getReadme(String creatorName,String projectName,String commit,List<VCSimpleFileInfo> gitFileInfoList);

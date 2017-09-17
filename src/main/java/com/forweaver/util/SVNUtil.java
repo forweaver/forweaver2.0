@@ -15,10 +15,13 @@ import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
+import org.eclipse.jgit.diff.DiffFormatter;
+import org.eclipse.jgit.revwalk.RevCommit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.tmatesoft.svn.core.SVNCommitInfo;
 import org.tmatesoft.svn.core.SVNDepth;
 import org.tmatesoft.svn.core.SVNDirEntry;
@@ -42,6 +45,9 @@ import org.tmatesoft.svn.core.wc.SVNWCUtil;
 
 import com.forweaver.config.Config;
 import com.forweaver.domain.Repository;
+import com.forweaver.domain.git.statistics.GitChildStatistics;
+import com.forweaver.domain.git.statistics.GitParentStatistics;
+import com.forweaver.domain.git.statistics.SvnParentStatistics;
 import com.forweaver.domain.vc.VCBlame;
 import com.forweaver.domain.vc.VCFileInfo;
 import com.forweaver.domain.vc.VCLog;
@@ -951,5 +957,19 @@ public class SVNUtil implements VCUtil{
 		}
 		
 		return loglist;
+	}
+	
+	/** 각 유저가 날짜별로 커밋을 한 정보를 취합함.
+	 * @return
+	 */
+	public SvnParentStatistics getCommitStatistics(){
+		logger.debug("--> svn statistic info");
+		
+		SvnParentStatistics svnParentStatistics = new SvnParentStatistics();
+		
+		//리비전 당 정보들을 SvnChildStatistics 맞춰 넣어준다.//
+		
+		
+		return svnParentStatistics;
 	}
 }
