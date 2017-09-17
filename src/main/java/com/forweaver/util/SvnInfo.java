@@ -157,6 +157,7 @@ public class SvnInfo {
 		String diffresult = null;
 		int totaladd_line = 0;
 		int totalremove_line = 0;
+		int fileinfo_count = 0;
 
 		try {
 			SVNURL svnURL = repository.getRepositoryRoot(false);
@@ -189,6 +190,48 @@ public class SvnInfo {
 			    //diff 정보를 파싱//
 			    for(int loop=0; loop<parsediff.length; loop++){
 			    	logger.debug("diff info["+loop+"]: " + parsediff[loop]);
+			    	
+			    	//diff정보에서 사이즈가 1이라는 것은 diff 상태에 대한 플래그만 존재한다는 경우 (빈 공백 등이 이에 해당)//
+			    	if(parsediff[loop].length() == 1){
+			    		//따로 다시 파싱할 필요가 없는 경우.//
+			    		//"+", "-"에 판단해서 라인추가, 삭제를 구별//
+			    		if(parsediff[loop].equals("+")){
+			    			totaladd_line ++;
+			    		} else if(parsediff[loop].equals("-")){
+			    			totalremove_line ++;
+			    		}
+			    	}
+			    	
+			    	//diff정보에서 사이즈가 1이상이라는 것은 diff 상태 플래그 이후에도 텍스트 정보가 존재한다는 의미//
+			    	if(parsediff[loop].length() > 1){
+			    		//1. diff 파일상태 : 파일 헤더정보일 경우 최소 길이가 3이상 ("+++", "---" 은 정해진 규칙)
+			    		//2. diff 라인상태 : 라인 정보에 대한 것은 최소 길이가 3이하일 수도 있다.//
+			    		//3. 판단의 기준은 length 4를 기준으로 한다.//
+			    		if(parsediff[loop].length() >= 4){
+			    			String diffflag = parsediff[loop].substring(0, 4);
+			    			
+			    			if(diffflag.equals("+++ ") || diffflag.equals("--- ") || diffflag.equals("@@ -")){
+			    				//logger.debug("file info");
+			    			} else{
+			    				//라인을 판단하기 위해서 diff플래그 파싱//
+			    				String diffflagline = parsediff[loop].substring(0, 1);
+			    				
+			    				if(diffflagline.equals("+")){
+			    					totaladd_line ++;
+			    				} else if(diffflagline.equals("-")){
+			    					totalremove_line ++;
+			    				}
+			    			}
+			    		} else if(parsediff[loop].length() < 4){
+			    			String diffflag = parsediff[loop].substring(0, 1);
+			    			
+			    			if(diffflag.equals("+")){
+			    				totaladd_line ++;
+			    			} else if(diffflag.equals("-")){
+			    				totalremove_line ++;
+			    			}
+			    		}
+			    	}
 			    }
 			    
 			    logger.debug("------------------");
