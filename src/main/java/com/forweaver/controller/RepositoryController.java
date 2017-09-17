@@ -1023,6 +1023,7 @@ public class RepositoryController {
 		Repository repository = repositoryService.get(creatorName+"/"+repositoryName);
 
 		model.addAttribute("repository", repository);
+		//로그 정보를 돌면서 SvnChildStatistics를 채워준다. 추가/삭제 수는 현재 리비전과 다음 리비전과의 비교//
 		model.addAttribute("gps", gitService.loadStatistics(creatorName, repositoryName));
 		return "/repository/stream";
 	}

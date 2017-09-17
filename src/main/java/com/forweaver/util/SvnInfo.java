@@ -56,10 +56,13 @@ public class SvnInfo {
 			}
 			
 			//3. 라인추가 개수(저장소 전체 커밋 리스트 -> diff파싱))//
-			Map<String, Object> lineinfo = doDiffLineInfo(repository);
+			Map<String, Object> diffinfo = doDiffInfo(repository);
 			
-			logger.debug("total add line count: " + lineinfo.get("addlinecount"));
-			logger.debug("total remove line count: " + lineinfo.get("removelinecount"));
+			logger.debug("total add line count: " + diffinfo.get("addlinecount"));
+			logger.debug("total remove line count: " + diffinfo.get("removelinecount"));
+			logger.debug("total add file count: " + diffinfo.get("addfilecount"));
+			logger.debug("total remove file count: " + diffinfo.get("removefilecount"));
+			logger.debug("total modify file count: " + diffinfo.get("modifyfilecount"));
 			
 		} catch (SVNException e) {
 			// TODO Auto-generated catch block
@@ -151,13 +154,18 @@ public class SvnInfo {
 	 * @param revesiontwo
 	 * @return
 	 */
-	public Map<String, Object> doDiffLineInfo(SVNRepository repository){
-		Map<String, Object> lineinfo = new HashMap<String, Object>();
+	public Map<String, Object> doDiffInfo(SVNRepository repository){
+		Map<String, Object> diffinfo = new HashMap<String, Object>();
+		
+		//파일정보에 대한 정보를 저장하는 배열//
+		List<String> fileinfolist = new ArrayList<String>();
 		
 		String diffresult = null;
 		int totaladd_line = 0;
 		int totalremove_line = 0;
-		int fileinfo_count = 0;
+		int totalfileadd_count = 0;
+		int totalfileremove_count = 0;
+		int totalfilemodify_count = 0;
 
 		try {
 			SVNURL svnURL = repository.getRepositoryRoot(false);
@@ -171,6 +179,7 @@ public class SvnInfo {
 
 		    // Using diffClient, write the changes by commitId into
 		    // byteArrayOutputStream, as unified format.
+		    
 		    for(int i=0; i<Integer.parseInt(""+latestrevesion); i++){
 		    	long startrevesion = i;
 		    	long endrevesion = i+1;
@@ -178,9 +187,9 @@ public class SvnInfo {
 		    	if(i > Integer.parseInt(""+latestrevesion)){
 		    		endrevesion = latestrevesion;
 		    	}
+		    	
 		    	ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 			    diffClient.doDiff(svnURL, null, SVNRevision.create(startrevesion), SVNRevision.create(endrevesion), SVNDepth.INFINITY, true, byteArrayOutputStream);
-			    //diffClient.doDiff(new File(repourl), SVNRevision.UNDEFINED, SVNRevision.create(revesionone), SVNRevision.create(revesiontwo), true, true, byteArrayOutputStream);
 			    diffresult = byteArrayOutputStream.toString();
 			    
 			    String parsediff[] = diffresult.split("\n");
@@ -204,14 +213,23 @@ public class SvnInfo {
 			    	
 			    	//diff정보에서 사이즈가 1이상이라는 것은 diff 상태 플래그 이후에도 텍스트 정보가 존재한다는 의미//
 			    	if(parsediff[loop].length() > 1){
-			    		//1. diff 파일상태 : 파일 헤더정보일 경우 최소 길이가 3이상 ("+++", "---" 은 정해진 규칙)
+			    		//1. diff 파일상태 : 파일 헤더정보일 경우 최소 길이가 3이상 ("+++ ", "--- " 은 정해진 규칙)
 			    		//2. diff 라인상태 : 라인 정보에 대한 것은 최소 길이가 3이하일 수도 있다.//
 			    		//3. 판단의 기준은 length 4를 기준으로 한다.//
 			    		if(parsediff[loop].length() >= 4){
 			    			String diffflag = parsediff[loop].substring(0, 4);
 			    			
-			    			if(diffflag.equals("+++ ") || diffflag.equals("--- ") || diffflag.equals("@@ -")){
-			    				//logger.debug("file info");
+			    			if(diffflag.equals("+++ ") || diffflag.equals("--- ")){
+			    				//파일 추가/삭제에 대한 정보//		
+			    				//바로 비교가 불가하기에 정보를 먼저 배열에 저장//
+			    				String fileinfo[] = parsediff[loop].split(" ");
+			    				if(fileinfo.length == 2){
+			    					fileinfolist.add(fileinfo[1]);	
+			    				} else if(fileinfo.length == 3){
+			    					fileinfolist.add(fileinfo[1] + fileinfo[2]);	
+			    				}
+			    			} else if(diffflag.equals("@@ -")){
+			    				//logger.debug("file flag");
 			    			} else{
 			    				//라인을 판단하기 위해서 diff플래그 파싱//
 			    				String diffflagline = parsediff[loop].substring(0, 1);
@@ -237,16 +255,58 @@ public class SvnInfo {
 			    logger.debug("------------------");
 		    }
 		    
-		    lineinfo.put("addlinecount", totaladd_line);
-		    lineinfo.put("removelinecount", totalremove_line);
+		    //파일정보 판단//
+		    for(int i=0; i<fileinfolist.size(); i++){
+		    	String fileinfo_compare_1 = fileinfolist.get(i).toString();
+		    	String fileinfo_compare_2 = fileinfolist.get(i+1).toString();
+		    	
+		    	//diff 형식에 따르면 (~) 명으로 해당 파일에 상태를 추출한다.//
+		    	int start_1_position = fileinfo_compare_1.indexOf('(');
+		    	int end_1_position = fileinfo_compare_1.indexOf(')');
+		    	//substring으로 파일부분만 추출한다.//
+		    	String fileinfo_compare_1_status = fileinfo_compare_1.substring(start_1_position+1, end_1_position);
+		    	
+		    	//리비전이면 숫자에 따라 달라지기에 공통되는 부분으로 다시 파싱//
+		    	if(fileinfo_compare_1_status.startsWith("revision")){
+		    		fileinfo_compare_1_status = fileinfo_compare_1_status.substring(0,8);
+		    	}
+		    	
+		    	int start_2_position = fileinfo_compare_2.indexOf('(');
+		    	int end_2_position = fileinfo_compare_2.indexOf(')');
+		    	String fileinfo_compare_2_status = fileinfo_compare_2.substring(start_2_position+1, end_2_position);
+		    	
+		    	if(fileinfo_compare_2_status.startsWith("revision")){
+		    		fileinfo_compare_2_status = fileinfo_compare_2_status.substring(0,8);
+		    	}
+		    	
+		    	//1. (nonexistent -> revision)이 설정되면 파일 추가//
+				//2. (revision -> nonexistent)이 설정되면 파일 제거//
+				//3. (revision -> revision)이 설정되면 파일 수정//
+		    	if(fileinfo_compare_1_status.equals("nonexistent") && fileinfo_compare_2_status.equals("revision")){
+		    		totalfileadd_count ++;
+		    	} else if(fileinfo_compare_1_status.equals("revision") && fileinfo_compare_2_status.equals("nonexistent")){
+		    		totalfileremove_count ++;
+		    	} else if(fileinfo_compare_1_status.equals("revision") && fileinfo_compare_2_status.equals("revision")){
+		    		totalfilemodify_count ++;
+		    	}
+		    	
+		    	i = i+1; //2개씩 이동//
+		    }
 		    
-	        return lineinfo;
+		    
+		    diffinfo.put("addlinecount", totaladd_line);
+		    diffinfo.put("removelinecount", totalremove_line);
+		    diffinfo.put("addfilecount", totalfileadd_count);
+		    diffinfo.put("removefilecount", totalfileremove_count);
+		    diffinfo.put("modifyfilecount", totalfilemodify_count);
+		    
+	        return diffinfo;
 		} catch (SVNException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 
 		}
 
-		return lineinfo;
+		return diffinfo;
 	}
 }
