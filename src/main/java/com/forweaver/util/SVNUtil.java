@@ -47,6 +47,7 @@ import com.forweaver.domain.vc.VCFileInfo;
 import com.forweaver.domain.vc.VCLog;
 import com.forweaver.domain.vc.VCSimpleFileInfo;
 import com.forweaver.domain.vc.VCSimpleLog;
+import com.forweaver.domain.vc.VCSvnInfo;
 
 @Component
 public class SVNUtil implements VCUtil{
@@ -872,16 +873,17 @@ public class SVNUtil implements VCUtil{
 	 * @param branchName
 	 * @return
 	 */
-	public SvnInfo getSvnInfo(String branchName){
+	public VCSvnInfo getSvnInfo(String branchName){
 		SvnInfo svnInfo = new SvnInfo();
+		VCSvnInfo info = null;
 		SVNRepository repository = this.repository;
 		
 		try{
-			svnInfo.run(repository, branchName);
+			info = svnInfo.run(repository, branchName);
 		}catch(Exception e){
 			System.err.println(e.getMessage());
 		}
-		return svnInfo;
+		return info;
 	}
 	
 	public Map<String, Object> doPrintRepoLog(SVNRepository repository){

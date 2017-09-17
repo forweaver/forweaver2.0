@@ -24,13 +24,16 @@ import org.tmatesoft.svn.core.wc.SVNDiffClient;
 import org.tmatesoft.svn.core.wc.SVNRevision;
 
 import com.forweaver.domain.Weaver;
+import com.forweaver.domain.vc.VCSvnInfo;
 import com.forweaver.service.WeaverService;
 
 public class SvnInfo {
 	private static final Logger logger =
 			LoggerFactory.getLogger(SvnInfo.class);
 	
-	public void run(SVNRepository repository, String start) throws IOException {
+	public VCSvnInfo run(SVNRepository repository, String start) throws IOException {
+		VCSvnInfo info = new VCSvnInfo();
+		
 		try {
 			logger.debug("==> repository lastest revesion: " + repository.getLatestRevision());
 			logger.debug("==> repository address: " + repository.getRepositoryRoot(false).getPath());
@@ -42,32 +45,24 @@ public class SvnInfo {
 			
 			@SuppressWarnings("unchecked")
 			List<Object> authorlist = (List<Object>) commitinfo.get("authorlist");
-		
-			for(int i=0; i<authorlist.size(); i++){
-				logger.debug("author: " + authorlist.get(i));
-			}
-			//해당 정보를 통합저장 클래스에 저장//
 			
 			//2. 날짜 정보//
 			List<Object> datelist = (List<Object>) commitinfo.get("datelist");
 			
-			for(int i=0; i<datelist.size(); i++){
-				logger.debug("date: " + datelist.get(i));
-			}
-			
 			//3. 라인추가 개수(저장소 전체 커밋 리스트 -> diff파싱))//
 			Map<String, Object> diffinfo = doDiffInfo(repository);
 			
-			logger.debug("total add line count: " + diffinfo.get("addlinecount"));
-			logger.debug("total remove line count: " + diffinfo.get("removelinecount"));
-			logger.debug("total add file count: " + diffinfo.get("addfilecount"));
-			logger.debug("total remove file count: " + diffinfo.get("removefilecount"));
-			logger.debug("total modify file count: " + diffinfo.get("modifyfilecount"));
+			info.setAuthorlist(authorlist);
+			info.setDatelist(datelist);
+			info.setDiffinfo(diffinfo);
 			
+			return info;
 		} catch (SVNException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		return info;
 	}
 	
 	public Map<String, Object> doPrintRepoLog(SVNRepository repository){

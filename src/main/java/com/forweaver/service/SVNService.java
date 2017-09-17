@@ -15,6 +15,7 @@ import com.forweaver.domain.vc.VCFileInfo;
 import com.forweaver.domain.vc.VCLog;
 import com.forweaver.domain.vc.VCSimpleFileInfo;
 import com.forweaver.domain.vc.VCSimpleLog;
+import com.forweaver.domain.vc.VCSvnInfo;
 import com.forweaver.util.GitInfo;
 import com.forweaver.util.SVNUtil;
 import com.forweaver.util.SvnInfo;
@@ -130,7 +131,7 @@ public class SVNService implements VCService{
 		return svnUtil.getDayAndHour();
 	}
 
-	public SvnInfo getSvnInfo(String parentDirctoryName,
+	public VCSvnInfo getSvnInfo(String parentDirctoryName,
 			String repositoryName,String branchName){
 		svnUtil.RepoInt(parentDirctoryName, repositoryName);
 

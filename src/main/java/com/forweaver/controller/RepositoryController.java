@@ -33,6 +33,7 @@ import com.forweaver.domain.Weaver;
 import com.forweaver.domain.vc.VCFileInfo;
 import com.forweaver.domain.vc.VCLog;
 import com.forweaver.domain.vc.VCSimpleFileInfo;
+import com.forweaver.domain.vc.VCSvnInfo;
 import com.forweaver.service.DataService;
 import com.forweaver.service.GitService;
 import com.forweaver.service.InviteService;
@@ -1008,7 +1009,25 @@ public class RepositoryController {
 		if(repository.getType() == 1){
 			model.addAttribute("gitInfo", gitService.getGitInfo(creatorName, repositoryName, "HEAD"));
 		} else if(repository.getType() == 2){
-			svnService.getSvnInfo(creatorName, repositoryName, "-1");
+			VCSvnInfo svninfo = svnService.getSvnInfo(creatorName, repositoryName, "-1");
+			
+			//커밋터 정보 출력//
+			for(int i=0; i<svninfo.getAuthorlist().size(); i++){
+				logger.debug("author: " + svninfo.getAuthorlist().get(i));
+			}
+			
+			//날짜정보//
+			for(int i=0; i<svninfo.getDatelist().size(); i++){
+				logger.debug("date: " + svninfo.getDatelist().get(i));
+			}
+			
+			//라인, 파일 수//
+			logger.debug("total add line count: " + svninfo.getDiffinfo().get("addlinecount"));
+			logger.debug("total remove line count: " + svninfo.getDiffinfo().get("removelinecount"));
+			logger.debug("total add file count: " + svninfo.getDiffinfo().get("addfilecount"));
+			logger.debug("total remove file count: " + svninfo.getDiffinfo().get("removefilecount"));
+			logger.debug("total modify file count: " + svninfo.getDiffinfo().get("modifyfilecount"));
+			
 			//model.addAttribute("gitInfo", svnService.getSvnInfo(creatorName, repositoryName, "-1"));
 		}
 		
