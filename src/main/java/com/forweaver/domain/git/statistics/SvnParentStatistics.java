@@ -18,7 +18,7 @@ public class SvnParentStatistics implements Serializable {
 		this.userHashMap = new HashMap<String, SvnTotalStatistics>();
 	}
 
-	public void addGitChildStatistics(SvnChildStatistics gcs){
+	public void addSvnChildStatistics(SvnChildStatistics gcs){
 		if(svnChildStatistics.size() > 0){
 			for(int i = 1 ; i <= svnChildStatistics.size() ; i++){
 				SvnChildStatistics lastGCS = svnChildStatistics.get(svnChildStatistics.size()-i);
@@ -47,11 +47,11 @@ public class SvnParentStatistics implements Serializable {
 		}
 	}
 
-	public List<SvnChildStatistics> getGitChildStatistics() {
+	public List<SvnChildStatistics> getSvnChildStatistics() {
 		return svnChildStatistics;
 	}
 
-	public void setGitChildStatistics(
+	public void setSvnChildStatistics(
 			List<SvnChildStatistics> gitChildrenStatistics) {
 		this.svnChildStatistics = gitChildrenStatistics;
 	}

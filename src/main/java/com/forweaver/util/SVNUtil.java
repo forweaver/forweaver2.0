@@ -15,8 +15,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
-import org.eclipse.jgit.diff.DiffFormatter;
-import org.eclipse.jgit.revwalk.RevCommit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +44,7 @@ import org.tmatesoft.svn.core.wc.SVNWCUtil;
 import com.forweaver.config.Config;
 import com.forweaver.domain.Repository;
 import com.forweaver.domain.git.statistics.GitChildStatistics;
-import com.forweaver.domain.git.statistics.GitParentStatistics;
+import com.forweaver.domain.git.statistics.SvnChildStatistics;
 import com.forweaver.domain.git.statistics.SvnParentStatistics;
 import com.forweaver.domain.vc.VCBlame;
 import com.forweaver.domain.vc.VCFileInfo;
@@ -967,9 +965,219 @@ public class SVNUtil implements VCUtil{
 		
 		SvnParentStatistics svnParentStatistics = new SvnParentStatistics();
 		
-		//리비전 당 정보들을 SvnChildStatistics 맞춰 넣어준다.//
+		//리비전 당 비교 정보들을 SvnChildStatistics 맞춰 넣어준다.//
+		//필요한 정보 : 커밋터 계정(이메일), 추가라인 수, 삭제 라인 수, 추가파일 수, 제거 파일 수, 커밋날짜 -> 해당 케이스를 리스트로 관리//
+		List<String>commiterlist = new ArrayList<String>();
+		List<String>addlinelist = new ArrayList<String>();
+		List<String>deletelinelist = new ArrayList<String>();
+		List<String>addfilelist = new ArrayList<String>();
+		List<String>deletefilelist = new ArrayList<String>();
+		List<Date>datelist = new ArrayList<Date>();
 		
+		String diffresult = null;
+		int add_line = 0;
+		int remove_line = 0;
+		
+		//파일정보에 대한 정보를 저장하는 배열//
+		List<String> fileinfolist = new ArrayList<String>();
+		
+		//diff와 로그정보를 가져온다.//
+		//저장소의 로그기록을 가져온다.//
+		Collection logEntries = null;
+
+		int selectCommitIndex = Integer.parseInt("0");
+		int endRevesion = Integer.parseInt("-1"); //HEAD (the latest) revision
+
+		try{
+			logEntries = this.repository.log(new String[] { "" }, null, selectCommitIndex, endRevesion, true, true);
+
+			for (Iterator entries = logEntries.iterator(); entries.hasNext();) {
+				SVNLogEntry logEntry = (SVNLogEntry) entries.next();
+
+				if(logEntry.getAuthor() == null){
+					commiterlist.add("not commiter");
+				} else{
+					commiterlist.add(logEntry.getAuthor());
+				}
+				datelist.add(logEntry.getDate());
+			}
+			
+			//diff정보를 기반//
+			SVNURL svnURL = this.repository.getRepositoryRoot(false);
+			long latestrevesion = this.repository.getLatestRevision();
+			
+			logger.debug("latest revesion: " + latestrevesion);
+			
+			// Get diffClient.
+		    SVNClientManager clientManager = SVNClientManager.newInstance();
+		    SVNDiffClient diffClient = clientManager.getDiffClient();
+
+		    // Using diffClient, write the changes by commitId into
+		    // byteArrayOutputStream, as unified format.
+		    
+		    for(int i=0; i<Integer.parseInt(""+latestrevesion); i++){
+		    	long startrevesion = i;
+		    	long endrevesion = i+1;
+		    	
+		    	if(i > Integer.parseInt(""+latestrevesion)){
+		    		endrevesion = latestrevesion;
+		    	}
+		    	
+		    	ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+			    diffClient.doDiff(svnURL, null, SVNRevision.create(startrevesion), SVNRevision.create(endrevesion), SVNDepth.INFINITY, true, byteArrayOutputStream);
+			    diffresult = byteArrayOutputStream.toString();
+			    
+			    String parsediff[] = diffresult.split("\n");
+			    
+			    logger.debug("startrevesion: " + startrevesion + " / endrevesion: " + endrevesion);
+			    
+			    //diff 정보를 파싱//
+			    for(int loop=0; loop<parsediff.length; loop++){
+			    	logger.debug("diff info["+loop+"]: " + parsediff[loop]);
+			    	
+			    	//diff정보에서 사이즈가 1이라는 것은 diff 상태에 대한 플래그만 존재한다는 경우 (빈 공백 등이 이에 해당)//
+			    	if(parsediff[loop].length() == 1){
+			    		//따로 다시 파싱할 필요가 없는 경우.//
+			    		//"+", "-"에 판단해서 라인추가, 삭제를 구별//
+			    		if(parsediff[loop].equals("+")){
+			    			add_line ++;
+			    		} else if(parsediff[loop].equals("-")){
+			    			remove_line ++;
+			    		}
+			    	}
+			    	
+			    	//diff정보에서 사이즈가 1이상이라는 것은 diff 상태 플래그 이후에도 텍스트 정보가 존재한다는 의미//
+			    	if(parsediff[loop].length() > 1){
+			    		//1. diff 파일상태 : 파일 헤더정보일 경우 최소 길이가 3이상 ("+++ ", "--- " 은 정해진 규칙)
+			    		//2. diff 라인상태 : 라인 정보에 대한 것은 최소 길이가 3이하일 수도 있다.//
+			    		//3. 판단의 기준은 length 4를 기준으로 한다.//
+			    		if(parsediff[loop].length() >= 4){
+			    			String diffflag = parsediff[loop].substring(0, 4);
+			    			
+			    			if(diffflag.equals("+++ ") || diffflag.equals("--- ")){
+			    				//파일 추가/삭제에 대한 정보//		
+			    				//바로 비교가 불가하기에 정보를 먼저 배열에 저장//
+			    				String fileinfo[] = parsediff[loop].split(" ");
+			    				if(fileinfo.length == 2){
+			    					fileinfolist.add(fileinfo[1]);	
+			    				} else if(fileinfo.length == 3){
+			    					fileinfolist.add(fileinfo[1] + fileinfo[2]);
+			    				}
+			    			} else if(diffflag.equals("@@ -")){
+			    				//logger.debug("file flag");
+			    			} else{
+			    				//라인을 판단하기 위해서 diff플래그 파싱//
+			    				String diffflagline = parsediff[loop].substring(0, 1);
+			    				
+			    				if(diffflagline.equals("+")){
+			    					add_line ++;
+			    				} else if(diffflagline.equals("-")){
+			    					remove_line ++;
+			    				}
+			    			}
+			    		} else if(parsediff[loop].length() < 4){
+			    			String diffflag = parsediff[loop].substring(0, 1);
+			    			
+			    			if(diffflag.equals("+")){
+			    				add_line ++;
+			    			} else if(diffflag.equals("-")){
+			    				remove_line ++;
+			    			}
+			    		}
+			    	}
+			    }
+			    
+			    logger.debug("------------------");
+			    
+			    //초기화(다음 리비전 비교를 위해)//
+		    	
+		    	//저장//
+		    	addlinelist.add(""+add_line);
+		    	deletelinelist.add(""+remove_line);
+		    	
+		    	//파일비교//
+		    	Map<String, Object> fileinfo = getFileinfo(fileinfolist);
+		    	
+		    	addfilelist.add(""+fileinfo.get("addcount"));
+		    	deletefilelist.add(""+fileinfo.get("removecount"));
+		    	
+		    	logger.debug("<semi result>");
+		    	logger.debug("add line count: " + add_line);
+		    	logger.debug("remove line count: " + remove_line);
+		    	logger.debug("file add count: " + fileinfo.get("addcount"));
+				logger.debug("file remove count: " + fileinfo.get("removecount"));
+				
+		    	add_line= 0;
+		    	remove_line = 0;
+		    	fileinfolist.clear();
+		    }
+		    
+		    //Child를 만들어준다.//
+		    for(int i=0; i<datelist.size(); i++){
+		    	svnParentStatistics.addSvnChildStatistics(
+						new SvnChildStatistics(
+								commiterlist.get(i),
+								Integer.parseInt(addlinelist.get(i).toString()),
+								Integer.parseInt(deletelinelist.get(i).toString()),
+								Integer.parseInt(addfilelist.get(i).toString()),
+								Integer.parseInt(deletefilelist.get(i).toString()),
+								datelist.get(i)
+								)); // 날짜
+		    }
+		} catch (SVNException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch(Exception e){
+			e.printStackTrace();
+		}
 		
 		return svnParentStatistics;
+	}
+	
+	private Map<String, Object> getFileinfo(List<String>fileinfolist){
+		Map<String, Object> fileinfo = new HashMap<String,Object>();
+		
+		int fileadd_count = 0;
+		int fileremove_count = 0;
+		
+		for (int i = 0; i < fileinfolist.size(); i++) {
+			String fileinfo_compare_1 = fileinfolist.get(i).toString();
+			String fileinfo_compare_2 = fileinfolist.get(i + 1).toString();
+
+			// diff 형식에 따르면 (~) 명으로 해당 파일에 상태를 추출한다.//
+			int start_1_position = fileinfo_compare_1.indexOf('(');
+			int end_1_position = fileinfo_compare_1.indexOf(')');
+			// substring으로 파일부분만 추출한다.//
+			String fileinfo_compare_1_status = fileinfo_compare_1.substring(start_1_position + 1, end_1_position);
+
+			// 리비전이면 숫자에 따라 달라지기에 공통되는 부분으로 다시 파싱//
+			if (fileinfo_compare_1_status.startsWith("revision")) {
+				fileinfo_compare_1_status = fileinfo_compare_1_status.substring(0, 8);
+			}
+
+			int start_2_position = fileinfo_compare_2.indexOf('(');
+			int end_2_position = fileinfo_compare_2.indexOf(')');
+			String fileinfo_compare_2_status = fileinfo_compare_2.substring(start_2_position + 1, end_2_position);
+
+			if (fileinfo_compare_2_status.startsWith("revision")) {
+				fileinfo_compare_2_status = fileinfo_compare_2_status.substring(0, 8);
+			}
+
+			// 1. (nonexistent -> revision)이 설정되면 파일 추가//
+			// 2. (revision -> nonexistent)이 설정되면 파일 제거//
+			// 3. (revision -> revision)이 설정되면 파일 수정//
+			if (fileinfo_compare_1_status.equals("nonexistent") && fileinfo_compare_2_status.equals("revision")) {
+				fileadd_count ++;
+			} else if (fileinfo_compare_1_status.equals("revision") && fileinfo_compare_2_status.equals("nonexistent")) {
+				fileremove_count ++;
+			} 
+
+			i = i + 1; // 2개씩 이동//
+		}
+		
+		fileinfo.put("addcount", fileadd_count);
+		fileinfo.put("removecount", fileremove_count);
+		
+		return fileinfo;
 	}
 }
