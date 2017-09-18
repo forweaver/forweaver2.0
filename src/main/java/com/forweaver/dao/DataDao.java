@@ -8,6 +8,7 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -25,23 +26,27 @@ public class DataDao {
 	private static final Logger logger =
 			LoggerFactory.getLogger(DataDao.class);
 
-	@Autowired private MongoTemplate mongoTemplate;
+	@Autowired 
+	private MongoTemplate mongoTemplate;
 
+	@Value("${data.repository.path}")
+	private String dataPath;
 	/** 자료 추가함.
 	 * @param data
 	 */
 	public Data insert(Data data) {
+		data.setFilePath(dataPath+data.getFilePath());
 		try {
 			mongoTemplate.insert(data);
 			FileUtils.writeByteArrayToFile(
 					new File(data.getFilePath()), data.getContent());
 		}
 		catch(MongoException e) {
-			System.out.println(e.getMessage());
+			logger.error(e.getMessage());
 			this.delete(data);
 			return null;
 		}catch(IOException e) {
-			System.out.println(e.getMessage());
+			logger.error(e.getMessage());
 			this.delete(data);
 			return null;
 		}
@@ -60,9 +65,9 @@ public class DataDao {
 			data.setContent(FileUtils.readFileToByteArray(new File(data.getFilePath())));
 		}
 		catch(MongoException e) {
-			System.out.println(e.getMessage());
+			logger.error(e.getMessage());
 		}catch(IOException e) {
-			System.out.println(e.getMessage());
+			logger.error(e.getMessage());
 		}
 		return data;
 	}
@@ -78,10 +83,10 @@ public class DataDao {
 			FileUtils.forceDelete(new File(data.getFilePath()));
 		}
 		catch(MongoException e) {
-			System.out.println(e.getMessage());
+			logger.error(e.getMessage());
 			return false;
 		}catch(IOException e) {
-			System.out.println(e.getMessage());
+			logger.error(e.getMessage());
 			return false;
 		}
 		return true;

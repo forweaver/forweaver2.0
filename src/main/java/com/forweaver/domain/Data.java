@@ -38,11 +38,6 @@ public class Data implements Serializable {
 	private Date date;
 	private String filePath;
 
-	//임시로 기본 파일 패스를 정함
-	@Transient
-	@Value("${data.repository.path}")
-	public static String path;
-
 	public Data(){
 
 	}
@@ -63,7 +58,7 @@ public class Data implements Serializable {
 		this.name = this.name.replace("?", "_");
 		this.name = this.name.trim();
 		this.type = data.getContentType();
-		this.filePath = path+weaver.getId()+File.separator+this.id+File.separator+this.name;
+		this.filePath = weaver.getId()+File.separator+this.id+File.separator+this.name;
 	}
 
 	public String getId() {
