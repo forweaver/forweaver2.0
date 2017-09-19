@@ -24,6 +24,7 @@ import org.tmatesoft.svn.core.SVNCommitInfo;
 import org.tmatesoft.svn.core.SVNDepth;
 import org.tmatesoft.svn.core.SVNDirEntry;
 import org.tmatesoft.svn.core.SVNException;
+import org.tmatesoft.svn.core.SVNLock;
 import org.tmatesoft.svn.core.SVNLogEntry;
 import org.tmatesoft.svn.core.SVNNodeKind;
 import org.tmatesoft.svn.core.SVNProperties;
@@ -404,7 +405,7 @@ public class SVNUtil implements VCUtil{
 
         	while (iterator.hasNext()) {
                 SVNDirEntry entry = (SVNDirEntry) iterator.next();
-
+                
                 //디렉터리 출력 형식에 맞게 가져온다.//
                 VCSimpleFileInfo svnFileInfo = new VCSimpleFileInfo(
                 		entry.getName(), path+"/"+entry.getName(),
@@ -415,6 +416,50 @@ public class SVNUtil implements VCUtil{
 						"svn not email");
 
                 svnFileInfoList.add(svnFileInfo);
+                
+                //lock/unlock 상태 추출//
+                SVNLock lock = repository.getLock(path+"/"+entry.getName());
+
+    			if (lock == null) {
+    				logger.debug("--> is not lock");
+                }
+
+    			else if(lock != null){
+    				logger.debug("--> is lock");
+    			}
+    			
+    			/*//락 테스트//
+				//File Lock//
+				SVNWCClient wcclient = clientManager.getWCClient();
+				SVNURL svnURLs[] = new SVNURL[1];
+				SVNURL svnURLlock = repository.getRepositoryRoot(false).appendPath(filePath, false);
+	
+				String lockPath = filePath;
+				SVNLock lock = repository.getLock(lockPath);
+	
+				if (lock == null) {
+					svnURLs[0] = svnURLlock;
+					
+					wcclient.doLock(svnURLs, false, "fff");
+	            }
+	
+				else if(lock != null){
+					svnURLs[0] = svnURLlock;
+					
+					wcclient.doUnlock(svnURLs, false);
+				}
+				
+				//락/언락 확인//
+				lockPath = filePath;
+				lock = repository.getLock(lockPath);
+	
+				if (lock == null) {
+	                logger.debug(filePath + " isn't lock");
+	            }
+	
+				else if(lock != null){
+					logger.debug(filePath + " is lock");
+				} */
             }
 
         	return svnFileInfoList;
@@ -808,6 +853,7 @@ public class SVNUtil implements VCUtil{
 
 			//wcclient.doLock(lockfilelist, true, "file lock");
 			wcclient.doLock(svnURLs, false, "fff");
+			
 			/*//락 확인//
 			String lockPath = lockfilepath;
 			SVNLock lock = repository.getLock(lockPath);

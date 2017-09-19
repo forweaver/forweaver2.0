@@ -13,17 +13,16 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.tmatesoft.svn.core.internal.server.dav.DAVServlet;
 
-@WebServlet("/s/*")
+/*@WebServlet("/s/*")
 public class SVNRepositoryServlet extends DAVServlet{
 	private static final long serialVersionUID = 1L;
 	@Value("svn.path")
-	private String svnPath;
+	private String svnPath = "/Users/macbook/project/svn/seochangwook/";
 
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		// TODO Auto-generated method stub
 		super.init(new ServletConfig() {
-
 			public String getServletName() {
 				// TODO Auto-generated method stub
 				return "svnServlet";
@@ -55,4 +54,4 @@ public class SVNRepositoryServlet extends DAVServlet{
 
 }
 
-}
+}*/

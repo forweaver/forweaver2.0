@@ -78,6 +78,19 @@
 		<servlet-name>springmvc</servlet-name>
 		<url-pattern>/</url-pattern>
 	</servlet-mapping>
+	<!-- SVNKit dav -->
+	<servlet>
+		<servlet-name>svnkit</servlet-name>
+		<servlet-class>org.tmatesoft.svn.core.internal.server.dav.DAVServlet</servlet-class>
+		<init-param>
+			<param-name>SVNParentPath</param-name>
+			<param-value>/Users/macbook/project/svn/seochangwook/</param-value><!-- 이게 실제 svn 주소 -->
+		</init-param>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>svnkit</servlet-name>
+		<url-pattern>/s/*</url-pattern> <!-- url로 들어오는 주소 -->
+</servlet-mapping>
 <error-page>
     <error-code>404</error-code>
     <location>/error404</location>
