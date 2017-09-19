@@ -83,7 +83,7 @@ $(document).ready(function() {
 				</c:forEach>
 				</c:forEach>
 				
-				<c:forEach items="${gps.getGitChildStatistics()}" var="gcs">
+				<c:forEach items="${gps.getSvnChildStatistics()}" var="gcs">
 				infoArray["${gcs.getUserEmail()}"]["${gcs.getDate()}"] = ${gcs.getTotal()};
 				</c:forEach>
 				
@@ -95,7 +95,7 @@ $(document).ready(function() {
 				</c:forEach>
 				chart(".chart1",data,"red",300,"Line");
 				data = [];
-				<c:forEach items="${gps.getGitChildStatistics()}" var="gcs">
+				<c:forEach items="${gps.getSvnChildStatistics()}" var="gcs">
 				infoArray["${gcs.getUserEmail()}"]["${gcs.getDate()}"] = ${gcs.getTotalFile()};
 				</c:forEach>
 				<c:forEach items="${gps.getUserHashMap().keySet()}" var="email">

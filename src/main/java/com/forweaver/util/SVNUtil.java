@@ -1002,6 +1002,10 @@ public class SVNUtil implements VCUtil{
 				datelist.add(logEntry.getDate());
 			}
 			
+			//맨 첫번째 정보는 무의미 하므로 제외//
+			commiterlist.remove(0);
+			datelist.remove(0);
+			
 			//diff정보를 기반//
 			SVNURL svnURL = this.repository.getRepositoryRoot(false);
 			long latestrevesion = this.repository.getLatestRevision();
@@ -1111,6 +1115,13 @@ public class SVNUtil implements VCUtil{
 		    	remove_line = 0;
 		    	fileinfolist.clear();
 		    }
+		    
+		    logger.debug("datesize: " + datelist.size());
+		    logger.debug("commitersize: " + commiterlist.size());
+		    logger.debug("addlinecount: " + addlinelist.size());
+		    logger.debug("deletelinecount: " + deletelinelist.size());
+		    logger.debug("addfilecount: " + addfilelist.size());
+		    logger.debug("deletefilecount: " + deletefilelist.size());
 		    
 		    //Child를 만들어준다.//
 		    for(int i=0; i<datelist.size(); i++){
