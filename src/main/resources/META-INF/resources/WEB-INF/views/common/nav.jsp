@@ -45,62 +45,22 @@
 				<!--/.nav-collapse -->
 			</div>
 			<div class="span11">
-				<span id = "tag-addon" style="margin-top:-5px;margin-right:-5px"class="span1 tag-addon"><i class="fa fa-hashtag"></i></span>
-				<div title="태그를 입력하시고 나서 꼭 엔터키나 스페이스키를 누르시면 추가가 됩니다."  class="span10 tag-span">
-					<input placeholder="여기에 태그를 입력하고 꼭 엔터!" class="tagarea tagarea-full" id="tags-input" />
-					<input name="tags" type="hidden" id="tag-hidden"/>
-
-					<script>
-					
-					var move = true;
-					function ieVersion () {
-						  var myNav = navigator.userAgent.toLowerCase();
-						  return (myNav.indexOf('msie') != -1) ? parseInt(myNav.split('msie')[1]) : false;
-						}
-					
-					if (ieVersion() && ieVersion()<11) {	
-						$(function() {$("#forweaver-nav").after(
-								"<div class='alert'>이 사이트는 인터넷 익스플로러 11 버젼 부터 지원합니다! "+
-								"<a href='http://windows.microsoft.com/ko-kr/internet-explorer/download-ie'>최신버젼</a>으로 업그레이드 "+
-								"하시거나 <a href='http://www.google.co.kr/chrome/browser/desktop/'>크롬</a>"+
-								"이나 <a href='http://www.mozilla.or.kr/ko/firefox/new/'>파이어폭스</a>로 이용해주세요!</div>");
-					});
-						}
-					$('#tags-input').tagsinput({
-						  confirmKeys: [13, 32],
-						  maxTags: 6,
-						  maxChars: 30,
-						  trimValue: true
-					});
-					$("#tag-hidden").val(getTagList(document.location.href));
-					
-					$.each(getTagList(document.location.href).split(","), function(index, value) { 
-						  $('#tags-input').tagsinput('add',value);
-					});
-					
-					$('#tags-input').on('itemAdded', function(event) {
-						 if(event.item.indexOf("?") !=-1 || event.item.indexOf("#") !=-1 || 
-								 event.item.indexOf(".") !=-1){
-							 $('#tags-input').tagsinput('remove',event.item);
-							 return;
-						 }
-						
-						$("#tag-hidden").val($("#tags-input").val());
-						
-						if(move)
-							movePage($("#tags-input").val(),"");
-						});
-					
-					$('#tags-input').on('itemRemoved', function(event) {
-						$("#tag-hidden").val($("#tags-input").val());
-						movePage($("#tags-input").val(),"");
-						});
-					
-					$('#tags-input').tagsinput('focus');
-					
-					</script>
-				</div>
+				<span id = "tag-addon" style="margin-top:-5px;margin-right:-5px"class="span1 tag-addon"><i class="fa fa-search"></i></span>
+				<input id = "search-input"style="margin-left:20px; width:810px; height:16px" type="text"/>
 			</div>
-		</div>
-	</div>
+		</div>		
+	</div>	
 </div>
+<script>
+$(function() {
+	$('#search-input').val(getSearchWord(document.location.href));
+	
+	$('#search-input').on('keyup', function (e) {
+
+	    if (e.keyCode == 13) {
+				var tagNames = $("#tags-input").val();
+				movePage(tagNames,$('#search-input').val());				
+        }
+	});
+});
+</script>

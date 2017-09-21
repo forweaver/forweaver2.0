@@ -86,6 +86,7 @@
 		<%@ include file="/WEB-INF/views/common/nav.jsp"%>
 		<div class="row">
 			<div class=" span12">
+			<%@ include file="/WEB-INF/views/common/tagSearch.jsp"%>
 				<table id="post-table" class="table table-hover">
 					<tbody>
 						<tr>
@@ -112,19 +113,7 @@
 						<tr>
 							<td class="post-bottom"><a href="/${post.writerName}"> <b>${post.writerName}</b></a>
 								${post.getFormatCreated()}</td>
-							<td class="post-bottom-tag"><c:forEach items="${post.tags}"
-									var="tag">
-									<span
-										class="tag-name
-										<c:if test="${tag.startsWith('@')}">
-										tag-private
-										</c:if>
-										<c:if test="${tag.startsWith('$')}">
-										tag-massage
-										</c:if>
-										">${tag}</span>
-								</c:forEach>
-								
+							<td class="post-bottom-tag">								
 							<c:if test="${post.getWriterName()==currentUser}">
 										<div class="function-div pull-right">
 											<a href="/community/${post.postID}/delete"

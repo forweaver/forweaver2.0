@@ -53,6 +53,8 @@
 		<%@ include file="/WEB-INF/views/common/nav.jsp"%>
 		<div class="row">
 			<div class=" span12">
+				<%@ include file="/WEB-INF/views/common/tagSearch.jsp"%>
+
 				<table id="post-table" class="table table-hover">
 					<tbody>
 						<tr>

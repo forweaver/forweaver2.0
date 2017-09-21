@@ -71,7 +71,9 @@
 				</div>
 			</div>
 			
-			
+			<div class="span12">
+				<%@ include file="/WEB-INF/views/common/tagSearch.jsp"%>
+			</div>
 				<div class="span12"><h4>저장소 관리</h4></div>
 			<form onsubmit="return checkRepository()" action="/repository/${repository.name}/edit" method="post">
 				<div id="repository-div" class="span10">
@@ -112,7 +114,7 @@
 					<hr/>
 				</div>
 				
-			<div class="span12"><h4>저장소 관리</h4></div>
+			<div class="span12"><h4>저장소 초기화</h4></div>
 			<div class="span12" style="text-align:center;margin-bottom:40px;">
 			
 			<a onclick="return confirm('정말로 저장소를 초기화시킬 생각입니까? 복구 불가능 합니다!')" href="/repository/${repository.name}/reset" class="btn btn-danger">저장소 초기화</a>

@@ -96,7 +96,9 @@
 			</h5>
 		</div>
 		<div class="row">
-
+<div class="span12">
+				<%@ include file="/WEB-INF/views/common/tagSearch.jsp"%>
+			</div>
 			<form id="postForm" onsubmit="return checkPost()" 
 					action="/community/${post.postID}/update"
 				enctype="multipart/form-data" method="post">

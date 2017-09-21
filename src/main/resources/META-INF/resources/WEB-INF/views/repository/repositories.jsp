@@ -34,11 +34,30 @@
 		return false;
 	}
 	
+	function showProjectContent() {
+		$('#page-pagination').hide();
+		$('#repository-table').hide();
+		$('#repository-div').fadeIn('slow');
+		$('#show-content-button').hide();
+		$('#hide-content-button').show();
+		editorMode = true;
+	}
+
+	function hideProjectContent() {
+		$('#page-pagination').show();
+		$('#repository-table').show();
+		$('#repository-div').hide();
+		$('#show-content-button').show();
+		$('#hide-content-button').hide();
+		editorMode = false;
+	}
 	
 	function changeValue(value){
 		$('#authLevel').val(value);
 	}
 		$(document).ready(function() {
+			
+			hideProjectContent();
 			
 			$("select").selectpicker({
 				style : 'btn-primary',
@@ -91,7 +110,23 @@
 			<h5>
 				<big><big><i class=" fa fa-bookmark"></i> 진행해보세요!</big></big> <small>저장소를 생성하여 프로젝트를 진행할 수 있습니다!</small>
 				<div style="margin-top: -10px" class="pull-right"  title='전체 저장소 갯수&#13;${repositoryCount}개'>
-
+<sec:authorize access="isAuthenticated()">
+							<a id="show-content-button" title="프로젝트 생성하기"
+								href="javascript:showProjectContent();"
+								class="post-button btn btn-primary"> <i class="fa fa-pencil"></i>
+							</a>
+							<a style="display: none;" id="hide-content-button"
+								title="작성 취소하기" href="javascript:hideProjectContent();"
+								class="post-button btn btn-primary"> <i class="fa fa-times"></i>
+							</a>
+							</sec:authorize>
+							
+							<sec:authorize access="isAnonymous()">
+							<button disabled="disabled" title="로그인을 하셔야 프로젝트를 생성할 수 있습니다!"
+								class="post-button btn btn-danger">
+								<i class="fa fa-pencil"></i>
+							</button>
+						</sec:authorize> 
 					<button class="btn btn-warning">
 						<b><i class="fa fa-database"></i> ${repositoryCount}</b>
 					</button>
@@ -100,10 +135,35 @@
 			</h5>
 		</div>
 		<div class="row">
-					<sec:authorize access="isAuthenticated()">			
+		
+					<div class="span12">
+				<ul class="nav nav-tabs" id="myTab">
+					<li id="age-desc"><a
+						href="/repository<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:age-desc/page:1">최신순</a></li>
+					<li id="public"><a
+							href="/repository<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:public/page:1">일반</a></li>
+					
+					<li id="private"><a
+						href="/repository<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:private/page:1">비공개</a></li>	
+					<li id="age-asc"><a
+						href="/repository<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:age-asc/page:1">오래된순</a></li>
+					<sec:authorize access="isAuthenticated()">
+						<li id="my"><a
+							href="/repository<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:my/page:1">가입한 저장소</a></li>
+					</sec:authorize>
+				</ul>
+			</div>
+		
+		
+		<div class="span12">
+				<%@ include file="/WEB-INF/views/common/tagSearch.jsp"%>
+			</div>
+		
+					<sec:authorize access="isAuthenticated()">
+					<div id="repository-div" class="span12">		
 			<form onsubmit="return checkRepository()" action="/repository/add" method="post">
 
-				<div id="repository-div" class="span12">
+				
 				<div style="margin-left:0px" class="span8">
 					<input maxlength="15" id ="repository-name" class="title span4"
 						placeholder="저장소명 (영문-소문자 숫자 언더바 조합 최소 5자)" name="name" type="text" /> 
@@ -128,32 +188,13 @@
 						
 					  <input maxlength="50" name ="description"class="title span12" type="text" id="repository-description"
 						placeholder="저장소에 대해 설명해주세요! (최대 50자까지)"></input>
-				</div>
 				
-
-				
-				<input value="0" id ="authLevel" name="authLevel" type="hidden"/> 	
+								<input value="0" id ="authLevel" name="authLevel" type="hidden"/> 	
 				<input value="1" id ="type" name="type" type="hidden"/> 	
 				<input name="tags" type="hidden" id="tag-hidden"/>
 			</form>
-			</sec:authorize>		
-			<div class="span12">
-				<ul class="nav nav-tabs" id="myTab">
-					<li id="age-desc"><a
-						href="/repository<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:age-desc/page:1">최신순</a></li>
-					<li id="public"><a
-							href="/repository<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:public/page:1">일반</a></li>
-					
-					<li id="private"><a
-						href="/repository<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:private/page:1">비공개</a></li>	
-					<li id="age-asc"><a
-						href="/repository<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:age-asc/page:1">오래된순</a></li>
-					<sec:authorize access="isAuthenticated()">
-						<li id="my"><a
-							href="/repository<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:my/page:1">가입한 저장소</a></li>
-					</sec:authorize>
-				</ul>
 			</div>
+			</sec:authorize>		
 
 			<div class="span12">		
 				<table id="repository-table" class="table table-hover">

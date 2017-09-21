@@ -44,8 +44,8 @@ function checkPost(){
 	function showPostContent() {
 		$('#page-pagination').hide();
 		$('#post-table').hide();
+		$('#post-div').fadeIn('slow');
 		$('#post-content-textarea').fadeIn('slow');
-
 		$('#show-content-button').hide();
 		$('#hide-content-button').show();
 		$('.md-editor').fadeIn('slow');
@@ -56,11 +56,13 @@ function checkPost(){
 	function hidePostContent() {
 		$('#page-pagination').show();
 		$('#post-table').show();
+		$('#post-div').hide();
 		$('#post-content-textarea').hide();
-
 		$('#show-content-button').show();
 		$('#hide-content-button').hide();
+		
 		$('.md-editor').hide();
+		
 		$('.file-div').hide();
 		editorMode = false;
 	}
@@ -192,7 +194,23 @@ function checkPost(){
 								<big><big><i class="fa fa-bookmark"></i> ${repository.name}</big></big>
 <small>${repository.description}</small>
 				<div style="margin-top:-10px" class="pull-right">
-
+<sec:authorize access="isAuthenticated()">
+							<a id="show-content-button" title="글 내용 작성하기"
+								href="javascript:showPostContent();"
+								class="post-button btn btn-primary"> <i class="fa fa-pencil"></i>
+							</a>
+							<a style="display: none;" id="hide-content-button"
+								title="작성 취소하기" href="javascript:hidePostContent();"
+								class="post-button btn btn-primary"> <i class="fa fa-times"></i>
+							</a>
+							</sec:authorize>
+							
+							<sec:authorize access="isAnonymous()">
+							<button disabled="disabled" title="로그인을 하셔야 글을 쓸 수 있습니다!"
+								class="post-button btn btn-danger">
+								<i class="fa fa-pencil"></i>
+							</button>
+						</sec:authorize> 
 				<button class="btn btn-warning">
 								<b><i class="fa fa-database"></i> ${postCount}</b>
 				</button>
@@ -241,9 +259,13 @@ function checkPost(){
 						class="input-block-level">
 				</div>
 			</div>
+			<div class="span12">
+				<%@ include file="/WEB-INF/views/common/tagSearch.jsp"%>
+			</div>
+			<div  id="post-div">
 			<div class="span10">
 					<input maxlength="200"  id="post-title-input" class="title span10" name="title"
-						placeholder="찾고 싶은 검색어나 쓰고 싶은 단문의 내용을 입력해주세요! (최대 200자 입력)" type="text"
+						placeholder="단문의 내용이나 글의 제목을 입력해주세요! (최대 200자 입력)" type="text"
 						value="" />
 				</div>
 			
@@ -275,6 +297,7 @@ function checkPost(){
 
 					</span>
 				</div>
+
 				<div class="span12">
 					<textarea data-provide="markdown"  name = content style="display: none;" id="post-content-textarea"
 						class="post-content span12" 
@@ -283,6 +306,7 @@ function checkPost(){
 				</div>
 				
 				</form>
+								</div>
 				<div class="span12">
 				
 					<table id="post-table" class="table table-hover">

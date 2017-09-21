@@ -1,11 +1,14 @@
-<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<%@ page language="java" contentType="text/html; charset=utf-8"
+	pageEncoding="utf-8"%>
 <%@ include file="/WEB-INF/includes/taglibs.jsp"%>
 
 <!DOCTYPE html>
-<html><head>
+<html>
+<head>
 <title>Forweaver : 소통해보세요!</title>
 <%@ include file="/WEB-INF/includes/src.jsp"%>
-<link rel="stylesheet" type="text/css" href="/resources/forweaver/css/bootstrap-markdown.min.css"/>
+<link rel="stylesheet" type="text/css"
+	href="/resources/forweaver/css/bootstrap-markdown.min.css" />
 <script src="/resources/forweaver/js/markdown/markdown.js"></script>
 <script src="/resources/forweaver/js/markdown/bootstrap-markdown.js"></script>
 <script src="/resources/forweaver/js/markdown/to-markdown.js"></script>
@@ -48,15 +51,10 @@
 	}
 	
 		function showPostContent() {
-			var tags = $("#tags-input").val();
-			if(tags.length == 0){
-				alert("태그가 하나도 입력되지 않았습니다. 태그를 먼저 입력해주세요!");
-				return;
-			}
 			$('#page-pagination').hide();
 			$('#post-table').hide();
+			$('#post-div').fadeIn('slow');
 			$('#post-content-textarea').fadeIn('slow');
-
 			$('#show-content-button').hide();
 			$('#hide-content-button').show();
 			$('.md-editor').fadeIn('slow');
@@ -67,8 +65,8 @@
 		function hidePostContent() {
 			$('#page-pagination').show();
 			$('#post-table').show();
+			$('#post-div').hide();
 			$('#post-content-textarea').hide();
-
 			$('#show-content-button').show();
 			$('#hide-content-button').hide();
 			
@@ -92,23 +90,7 @@
 					  "</div>"+
 					"</div>");
 			
-			$( "#post-title-input" ).focus(function() {
-				var tags = $("#tags-input").val();
-				if(tags.length == 0){
-					$( "#post-title-input" ).val('');
-					alert("태그가 하나도 입력되지 않았습니다. 태그를 먼저 입력해주세요!");
-					return;
-				}
-			});
-			
-			$( "#post-title-input" ).keypress(function() {
-				var tags = $("#tags-input").val();
-				if(tags.length == 0){
-					$( "#post-title-input" ).val('');
-					alert("태그가 하나도 입력되지 않았습니다. 태그를 먼저 입력해주세요!");
-					return;
-				}
-			});
+		
 			
 			
 			$( "#"+getSort(document.location.href) ).addClass( "active" );
@@ -130,14 +112,8 @@
 									movePage(tagNames+ ","+ tagname+" ","");
 								}
 							});
+															
 					
-					$('#search-button').click(
-							function() {
-									var tagNames = $("#tags-input").val();
-									movePage(tagNames,$('#post-title-input').val());							
-							});
-					
-					$('#post-title-input').val(getSearchWord(document.location.href));
 					
 					$('#post-title-input').keyup(
 							function(e) {
@@ -180,9 +156,27 @@
 		<div class="page-header page-header-none">
 			<alert></alert>
 			<h5>
-				<big><big><i class=" fa fa-comments"></i> 소통해보세요!</big></big>  <small><a href="/intro/community">아직 커뮤니티를 이용하는 방법을 모르신다면 사용법을 읽어주세요!</a></small>
-				<div style="margin-top: -10px" class="pull-right" title='전체 커뮤니티 글 수&#13;${postCount}개'>
-
+				<big><big><i class=" fa fa-comments"></i> 소통해보세요!</big></big> <small>아직
+					커뮤니티를 이용하는 방법을 모르신다면 사용법을 읽어주세요!</small>
+				<div style="margin-top: -10px" class="pull-right"
+					title='전체 커뮤니티 글 수&#13;${postCount}개'>
+					 <sec:authorize access="isAuthenticated()">
+							<a id="show-content-button" title="글 내용 작성하기"
+								href="javascript:showPostContent();"
+								class="post-button btn btn-primary"> <i class="fa fa-pencil"></i>
+							</a>
+							<a style="display: none;" id="hide-content-button"
+								title="작성 취소하기" href="javascript:hidePostContent();"
+								class="post-button btn btn-primary"> <i class="fa fa-times"></i>
+							</a>
+							</sec:authorize>
+							
+							<sec:authorize access="isAnonymous()">
+							<button disabled="disabled" title="로그인을 하셔야 글을 쓸 수 있습니다!"
+								class="post-button btn btn-danger">
+								<i class="fa fa-pencil"></i>
+							</button>
+						</sec:authorize> 
 					<button class="btn btn-warning">
 						<b><i class="fa fa-database"></i> ${postCount}</b>
 					</button>
@@ -191,7 +185,8 @@
 			</h5>
 		</div>
 		<div class="row">
-			<div class="span12">
+<div class="span12">
+
 				<ul class="nav nav-tabs" id="myTab">
 					<li id="age-desc"><a
 						href="/community<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:age-desc/page:1">최신순</a></li>
@@ -211,58 +206,47 @@
 						href="/community<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:repost-null/page:1">답변
 							없는 글</a></li>
 					<sec:authorize access="isAuthenticated()">
-					<li id="my"><a
-						href="/community<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:my/page:1">내가 쓴 글</a></li>		
+						<li id="my"><a
+							href="/community<c:if test="${tagNames != null }">/tags:${tagNames}</c:if><c:if test="${search != null }">/search:${search}</c:if>/sort:my/page:1">내가
+								쓴 글</a></li>
 					</sec:authorize>
 				</ul>
+
 			</div>
 
-		<div class="span9">
-					<input maxlength="200"  id="post-title-input" class="title span9" name="title"
-					title="이곳에 내용 입력하시고 오른쪽의 검색버튼을 누르면 검색이! 맨 오른쪽의 체크 버튼을 누르면 트위터 처럼 글을 쓸 수 있습니다."
-						placeholder="찾고 싶은 검색어나 쓰고 싶은 단문의 내용을 입력해주세요! (최대 200자 입력)" type="text"
-						value="" />
-				</div>
+			<div class="span12">
+				<%@ include file="/WEB-INF/views/common/tagSearch.jsp"%>
+			</div>
+			<div id="post-div">
+			
+			<div class="span11">
+
+				<input maxlength="200" id="post-title-input" class="title span11"
+					name="title"
+					title="이곳에 내용 입력하시고 맨 오른쪽의 체크 버튼을 누르면 단문을 쓸 수 있고, 연필 아이콘을 클릭하면 장문을 쓸 수 있습니다"
+					placeholder="단문의 내용이나 글의 제목을 입력해주세요! (최대 200자 입력)" type="text"
+					value="" />
+			</div>
 
 			<form id="postForm" onsubmit="return checkPost()"
 				action="/community/add" enctype="multipart/form-data" METHOD="POST">
 
-				<div class="span3">
-					<span> <a id='search-button' title="글 검색하기"
-						class="post-button btn btn-primary"> <i class="fa fa-search"></i>
-					</a> 
-					<sec:authorize access="isAuthenticated()">
-					<a id="show-content-button" title="글 내용 작성하기"
-						href="javascript:showPostContent();"
-						class="post-button btn btn-primary"> <i class="fa fa-pencil"></i>
-					</a> <a style="display: none;" id="hide-content-button" title="작성 취소하기"
-						href="javascript:hidePostContent();"
-						class="post-button btn btn-primary"> <i class="fa fa-pencil"></i>
-					</a>
-					</sec:authorize>
-					<sec:authorize access="isAnonymous()">
-					<button disabled="disabled" title="로그인을 하셔야 글을 쓸 수 있습니다!"
-						class="post-button btn btn-primary"> <i class="fa fa-pencil"></i>
-					</button> 
-						<button disabled="disabled" title="로그인을 하셔야 글을 쓸 수 있습니다!" class="post-button btn btn-primary">
-							<i class="fa fa-times"></i>
-						</button>
-					</sec:authorize>
-					<sec:authorize access="isAuthenticated()">
-						<button  id='post-ok' title="글 올리기" class="post-button btn btn-primary">
-							<i class="fa fa-check"></i>
-						</button>
-					</sec:authorize>
-					</span>
+				<div class="span1">
+							<button id='post-ok' title="글 올리기"
+								class="post-button btn btn-primary">
+								<i class="fa fa-check"></i>
+							</button>
 				</div>
 				<div class="span12">
-					<textarea data-provide="markdown"  style="display: none;" id="post-content-textarea" name="content"
-						class="post-content span12" 
+					<textarea data-provide="markdown" style="display: none;"
+						id="post-content-textarea" name="content"
+						class="post-content span12"
 						placeholder="글 내용을 입력해주세요!(직접적인 html 대신 마크다운 표기법 사용가능)"></textarea>
-						<div class="file-div"></div>
+					<div class="file-div"></div>
 				</div>
 			</form>
-
+			</div>
+			
 			<div class="span12">
 
 				<table id="post-table" class="table table-hover">
@@ -287,16 +271,14 @@
 												<p class="p-button">보냄</p>
 										</span>
 										</a>
-									</c:if> 
-									<c:if
+									</c:if> <c:if
 										test="${post.kind == 3 && !post.getWriterName().equals(currentUser.id)}">
 										<a href="/community/${post.postID}"> <span
 											class="span-button"> <i class="fa fa-envelope"></i>
 												<p class="p-button">받음</p>
 										</span>
 										</a>
-									</c:if> 
-									<c:if test="${post.kind <= 2}">
+									</c:if> <c:if test="${post.kind <= 2}">
 										<a href="/community/${post.postID}"> <span
 											class="span-button"> ${post.push}
 												<p class="p-button">추천</p>

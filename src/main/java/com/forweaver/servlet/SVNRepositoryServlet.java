@@ -13,50 +13,50 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.tmatesoft.svn.core.internal.server.dav.DAVServlet;
 
-@WebServlet("/s/*")
+
+@WebServlet("/cv/*")
 public class SVNRepositoryServlet extends DAVServlet{
 	private static final long serialVersionUID = 1L;
 	@Value("${svn.repository.path}")
-	private String svnPath;
+	private String svnParentPath;
 
-	@Override
-	public void init(ServletConfig config) throws ServletException {
-		// TODO Auto-generated method stub
-		super.init(new ServletConfig() {
-
-			@Override
-			public String getServletName() {
-				// TODO Auto-generated method stub
-				return "svnServlet";
-			}
-
-			@Override
-			public ServletContext getServletContext() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			@Override
-			public Enumeration<String> getInitParameterNames() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			@Override
-			public String getInitParameter(String name) {
-				// TODO Auto-generated method stub
-				if("SVNParentPath".equals(name))
-					return svnPath;
-				return null;
-			}
-		});
-	}
-
+@Override
+public void init(ServletConfig config) throws ServletException {
+	// TODO Auto-generated method stub
+	super.init(new ServletConfig() {
+		
+		@Override
+		public String getServletName() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		
+		@Override
+		public ServletContext getServletContext() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		
+		@Override
+		public Enumeration<String> getInitParameterNames() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		
+		@Override
+		public String getInitParameter(String name) {
+			// TODO Auto-generated method stub
+			if("SVNParentPath".equals(name))
+				return svnParentPath;
+			return null;
+		}
+	});
+}
 	@Override
 	public void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
+		// TODO Auto-generated method stub	
+		
 		super.service(request, response);
-
-}
+	}
 
 }
