@@ -166,4 +166,13 @@ public class SVNService implements VCService{
 		return null;
 	}
 
+	public void doLockservice(String parentDirctoryName, String repositoryName, String lockfilePath){
+		svnUtil.RepoInt(parentDirctoryName, repositoryName);
+		svnUtil.dolock(lockfilePath);
+	}
+	
+	public void doUnLockservice(String parentDirctoryName, String repositoryName, String lockfilePath){
+		svnUtil.RepoInt(parentDirctoryName, repositoryName);
+		svnUtil.dounlock(lockfilePath);
+	}
 }

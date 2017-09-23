@@ -78,8 +78,8 @@ public class AnnotationHandler implements ISVNAnnotateHandler {
             author = mergedAuthor;
         } 
            
-        String revStr = revision >= 0 ? SVNFormatUtil.formatString(Long.toString(revision), 6, false) : "     -";
-        String authorStr = author != null ? SVNFormatUtil.formatString(author, 10, false) : "         -";
+        String revStr = revision >= 0 ? SVNFormatUtil.formatString(Long.toString(revision), 6, false) : "";
+        String authorStr = author != null ? SVNFormatUtil.formatString(author, 10, false) : "";
         
         result.put("userName", authorStr);
         result.put("userEmail", authorStr);

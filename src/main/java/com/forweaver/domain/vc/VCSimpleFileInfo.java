@@ -16,6 +16,7 @@ public class VCSimpleFileInfo implements Serializable {
 	private String name;
 	private String path;
 	private boolean isDirectory;
+	private boolean isLock;
 	private String commitID;
 	private String simpleLog;
 	private Date commitDate;
@@ -39,8 +40,7 @@ public class VCSimpleFileInfo implements Serializable {
 	}
 	public VCSimpleFileInfo(String name, String path,
 			boolean isDirectory, String commitID, String simpleLog,
-			Date commitDate,String commiterName,
-			String commiterEmail) {
+			Date commitDate,String commiterName, boolean isLock) {
 		this.name = name;
 		this.path = path;
 		this.isDirectory = isDirectory;
@@ -48,7 +48,8 @@ public class VCSimpleFileInfo implements Serializable {
 		this.simpleLog = simpleLog;
 		this.commitDate = commitDate;
 		this.commiterName =commiterName;
-		this.commiterEmail = commiterEmail;
+		this.commiterEmail = commiterName;
+		this.isLock = isLock;
 	}
 	public String getName() {
 		return name;
@@ -106,6 +107,11 @@ public class VCSimpleFileInfo implements Serializable {
 		this.commiterEmail = commiterEmail;
 	}
 	
-	
+	public boolean isLock() {
+		return isLock;
+	}
+	public void setLock(boolean isLock) {
+		this.isLock = isLock;
+	}
 	
 }

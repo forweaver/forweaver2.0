@@ -300,6 +300,7 @@ public class RepositoryController {
 
 		logger.debug("& filename: " + FileInfo.getName());
 		logger.debug("& isDirectory: " + FileInfo.isDirectory());
+		logger.debug("& isLock: " + FileInfo.isLock());
 		
 		if(FileInfo ==null || FileInfo.isDirectory()){ // 만약에 주소의 파일이 디렉토리라면
 			if(repository.getType() == 1){
@@ -319,11 +320,14 @@ public class RepositoryController {
 				model.addAttribute("log",log);
 			} else if(repository.getType() == 2){
 				logger.debug("------------------------------> svn case");
+				
+				//숫자가 아닐경우 -1//
 				log = "-1";
 				
 				logger.debug("==> Directory Info");
 				logger.debug("==> repositoryName: " + repositoryName);
 				logger.debug("==> filePath: " + filePath);
+				logger.debug("==> logger: " + log);
 				
 				List<VCSimpleFileInfo> svnFileInfoList = 
 						svnService.getVCSimpleFileInfoList(creatorName, repositoryName,log,filePath);
@@ -335,7 +339,7 @@ public class RepositoryController {
 				model.addAttribute("repository", repository);
 				model.addAttribute("gitFileInfoList", svnFileInfoList);
 				model.addAttribute("gitBranchList", "");
-				model.addAttribute("selectBranch","");
+				model.addAttribute("selectBranch",log);
 				model.addAttribute("readme","test READEME");
 				model.addAttribute("filePath",filePath);
 				model.addAttribute("log",log);
@@ -356,6 +360,12 @@ public class RepositoryController {
 			model.addAttribute("filePath",filePath);
 			model.addAttribute("isCodeName",WebUtil.isCodeName(filePath));
 			model.addAttribute("isImageName",WebUtil.isImageName(filePath));
+			model.addAttribute("isLock", FileInfo.isLock());
+			if(FileInfo.isLock() == true){
+				model.addAttribute("LockAuth", FileInfo.getLockAuth());
+				model.addAttribute("LockDate", FileInfo.getLockDate());
+				model.addAttribute("LockComment", FileInfo.getLockComment());
+			}
 			
 			logger.debug("***************************************************************");
 			return "/repository/fileViewer";
@@ -1077,5 +1087,4 @@ public class RepositoryController {
 		
 		return "/repository/frequency";
 	}
-
 }

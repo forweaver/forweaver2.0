@@ -96,6 +96,15 @@ $(document).ready(function() {
 							<td 
 								class="none-top-border post-top-title-short"><a class="none-color" href="/repository/${repository.name}/log-viewer/log:${fn:substring(gitLog.logID,0,8)}">
 								${fn:substring(gitLog.shortMassage,0,45)}</a></td>
+							<c:if test="${repository.getType() == 2}">
+								<c:if test="${isLock == true}">
+									<td class="none-top-border td-button" rowspan="2">
+									<span class="span-button"> <i class="fa fa-lock"></i>
+									<p class="p-button">락</p>
+									</span>
+									</a></td>
+								</c:if>
+							</c:if>
 							<td class="none-top-border td-button" rowspan="2">
 							<a	href="/repository/${repository.name}/browser/log:${fn:substring(gitLog.logID,0,8)}">
 									<span class="span-button"> <i class="fa fa-eye"></i>
@@ -132,6 +141,12 @@ $(document).ready(function() {
 							<td class="post-bottom"><b>${gitLog.commiterName}</b>
 								${gitLog.getCommitDate()} &nbsp;&nbsp; <span
 								style="cursor: text;" class="tag-commit tag-name">${gitLog.logID}</span>
+								<c:if test="${isLock == true}">
+									<br>
+									<b>${LockAuth}</b>
+									${LockDate} &nbsp;&nbsp;
+									${LockComment}
+								</c:if>
 							</td>
 						</tr>
 					</tbody>

@@ -22,6 +22,7 @@ function showFileBrowser(directoryPath,selectBranch,fileBrowser) {
 		
 		$.each(fileBrowser, function(index, value) {
 
+			//파일브라우저 락 판단//
 			var appendHTML = "";
 			if (value.directory) {
 				appendHTML = "<tr>" +  	
@@ -34,17 +35,29 @@ function showFileBrowser(directoryPath,selectBranch,fileBrowser) {
 				"<img src ='/resources/forweaver/img/directory.png'></a></td>";
 
 			} else {
-				appendHTML = "<tr>" +
-				"<td class='td-icon'>" +
-				"<a rel='external' href ='"+
-				fileBrowserURL+
-				selectBranch+
-				"/filepath:"+
-				value.path.replace(".jsp",",jsp")+"'>" + 
-				"<img src ='/resources/forweaver/img/file.png'></a></td>";
+				console.log('file case');
+				if(value.lock == true){
+					console.log(value.name + ' is lock');
+					appendHTML = "<tr>" +
+					"<td class='td-icon'>" +
+					"<a rel='external' href ='"+
+					fileBrowserURL+
+					selectBranch+
+					"/filepath:"+
+					value.path.replace(".jsp",",jsp")+"'>" + 
+					"<img src ='/resources/forweaver/img/filelock.png'></a></td>";
+				} else{
+					console.log(value.name + ' is unlock');
+					appendHTML = "<tr>" +
+					"<td class='td-icon'>" +
+					"<a rel='external' href ='"+
+					fileBrowserURL+
+					selectBranch+
+					"/filepath:"+
+					value.path.replace(".jsp",",jsp")+"'>" + 
+					"<img src ='/resources/forweaver/img/file.png'></a></td>";
+				}
 			}
-			
-			
 			
 			appendHTML += "<td class = 'td-filename'>" +
 			"<a rel='external' href ='"+fileBrowserURL+selectBranch+"/filepath:"+value.path.replace(".jsp",",jsp")+"'>" + value.name + 

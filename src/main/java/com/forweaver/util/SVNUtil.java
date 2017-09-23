@@ -185,12 +185,13 @@ public class SVNUtil implements VCUtil{
 
 			for (Iterator entries = logEntries.iterator(); entries.hasNext();) {
 				SVNLogEntry logEntry = (SVNLogEntry) entries.next();
-
+				//lock/unlock 상태 추출//
+              
 				commitLogList.add(new VCSimpleLog(
 						""+logEntry.getRevision(),
 						logEntry.getMessage(),
 						logEntry.getAuthor(),
-						"not email svn",
+						"",
 						logEntry.getDate()));
 			}
 
@@ -207,9 +208,36 @@ public class SVNUtil implements VCUtil{
 			//파일의 내용을 불러온다.(String, byte[])//
 			String stringContent = doPrintFileStringcontent(filePath);
 			byte[] byteContent = doPrintFileBytecontent(filePath);
+			
+			//lock/unlock 상태 추출//
+            SVNLock lock = null;
+            boolean isLockflag = false;
+            String lockdate = "";
+            String lockAuthor = "";
+            String lockcomment = "";
+            
+			try {
+				lock = repository.getLock(filePath);
+		
+	            if (lock == null) {
+					isLockflag = false;
+					logger.debug(filePath + "file is not lock");
+	            }
+
+				else if(lock != null){
+					isLockflag = true;
+					lockdate = ""+lock.getCreationDate();
+					lockAuthor = "" + lock.getOwner();
+					lockcomment = "" + lock.getComment();
+					logger.debug(filePath + "file is lock");
+				}
+			} catch (SVNException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
 			return new VCFileInfo(filePath, stringContent, byteContent,
-					commitLogList, selectCommitIndex,isDirectory(commitID,filePath));
+					commitLogList, selectCommitIndex,isDirectory(commitID,filePath), isLockflag, lockdate, lockAuthor, lockcomment);
 		}
 	}
 
@@ -394,6 +422,7 @@ public class SVNUtil implements VCUtil{
 	private List<VCSimpleFileInfo> listEntries(SVNRepository repository, String path, String commitID) throws SVNException {
 		List<VCSimpleFileInfo> svnFileInfoList = new ArrayList<VCSimpleFileInfo>();
 
+		boolean isLockflag = false;
 		logger.debug("==> filepath: " + path);
 		logger.debug("==> commitID: " + commitID);
 
@@ -406,27 +435,30 @@ public class SVNUtil implements VCUtil{
         	while (iterator.hasNext()) {
                 SVNDirEntry entry = (SVNDirEntry) iterator.next();
                 
-                //디렉터리 출력 형식에 맞게 가져온다.//
-                VCSimpleFileInfo svnFileInfo = new VCSimpleFileInfo(
-                		entry.getName(), path+"/"+entry.getName(),
-						isDirectory(commitID,path),
-						""+entry.getRevision(), entry.getCommitMessage().toString(),
-						entry.getDate(),
-						entry.getAuthor(),
-						"svn not email");
-
-                svnFileInfoList.add(svnFileInfo);
-                
                 //lock/unlock 상태 추출//
                 SVNLock lock = repository.getLock(path+"/"+entry.getName());
-
-    			if (lock == null) {
-    				logger.debug("--> is not lock");
+                
+                if (lock == null) {
+    				isLockflag = false;
+    				logger.debug(path+"/"+entry.getName() + "file is not lock");
                 }
 
     			else if(lock != null){
-    				logger.debug("--> is lock");
+    				isLockflag = true;
+    				logger.debug(path+"/"+entry.getName() + "file is lock");
     			}
+                
+                //디렉터리 출력 형식에 맞게 가져온다.//
+                VCSimpleFileInfo svnFileInfo = new VCSimpleFileInfo(
+                		entry.getName(), path+"/"+entry.getName(),
+						isDirectory(commitID, path+"/"+entry.getName()),
+						""+entry.getRevision(), entry.getCommitMessage().toString(),
+						entry.getDate(),
+						entry.getAuthor(),
+						isLockflag);
+
+                
+                svnFileInfoList.add(svnFileInfo);
     			
     			/*//락 테스트//
 				//File Lock//
@@ -483,7 +515,7 @@ public class SVNUtil implements VCUtil{
 		String commitMessage = "";
 		String fullMessage = "";
 		String commiterName = "";
-		String commiterEmail = "svn no email";
+		String commiterEmail = "";
 		Date commitdate = null;
 
 		//diff와 로그정보를 가져온다.//
@@ -595,7 +627,7 @@ public class SVNUtil implements VCUtil{
 							""+logEntry.getRevision(),
 							logEntry.getMessage(),
 							logEntry.getAuthor(),
-							"not email svn",
+							"",
 							logEntry.getDate()));
 
 
@@ -830,92 +862,79 @@ public class SVNUtil implements VCUtil{
 
 	}
 
-	public Map<String, Object> dolock(String repourl, String lockfilepath, String userid, String userpassword){
-		Map<String, Object>resultlock = new HashMap<String, Object>();
-
-		System.out.println("repourl: " + repourl + " / filepath: " + lockfilepath);
-
-		SVNRepository repository = null;
+	public void dolock(String lockfilepath){
+		System.out.println("repository info: " + this.repository.getLocation() + "filepath: " + lockfilepath);
 
 		try {
-			repository = SVNRepositoryFactory.create(SVNURL.parseURIEncoded(lockfilepath));
 
-			ISVNAuthenticationManager authManager = SVNWCUtil.createDefaultAuthenticationManager(userid, userpassword);
-			repository.setAuthenticationManager(authManager);
 			//File Lock//
 			SVNClientManager clientManager = SVNClientManager.newInstance();
 			SVNWCClient wcclient = clientManager.getWCClient();
 
 			SVNURL svnURLs[] = new SVNURL[1];
-			SVNURL svnURL = SVNURL.parseURIEncoded(lockfilepath);
+			SVNURL svnURL = this.repository.getLocation().appendPath(lockfilepath, false);
 
 			svnURLs[0] = svnURL;
 
-			//wcclient.doLock(lockfilelist, true, "file lock");
-			wcclient.doLock(svnURLs, false, "fff");
+			//wcclient.doLock(lockfilepath, true, "file lock");
+			wcclient.doLock(svnURLs, false, "file lock");
 			
-			/*//락 확인//
+			//락 확인//
 			String lockPath = lockfilepath;
 			SVNLock lock = repository.getLock(lockPath);
 
 			if (lock == null) {
                 System.out.println(lockfilepath + " isn't lock");
-                resultlock.put("resultval", "0");
+                System.out.println(lock.getOwner());
+                System.out.println(lock.getID());
             }
 
 			else if(lock != null){
 				System.out.println(lockfilepath + " is lock");
-				resultlock.put("resultval", "1");
-			}*/
-
-			resultlock.put("resultval", "1");
-
-	        return resultlock;
+				System.out.println(lock.getOwner());
+                System.out.println(lock.getID());
+			}
 		} catch (SVNException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-
-			resultlock.put("resultval", "0");
 		}
-
-		return resultlock;
 	}
 
-	public Map<String, Object> dounlock(String repourl, String lockfilepath, String userid, String userpassword){
-		Map<String, Object>resultunlock = new HashMap<String, Object>();
-
-		System.out.println("repourl: " + repourl + "/ filepath: " + lockfilepath);
-
-		SVNRepository repository = null;
+	public void dounlock(String lockfilepath){
+		System.out.println("repository info: " + this.repository.getLocation() + "filepath: " + lockfilepath);
 
 		try {
-			repository = SVNRepositoryFactory.create(SVNURL.parseURIEncoded(lockfilepath));
+			String lockPath = lockfilepath;
+			SVNLock lock = repository.getLock(lockPath);
 
-			ISVNAuthenticationManager authManager = SVNWCUtil.createDefaultAuthenticationManager(userid, userpassword);
-			repository.setAuthenticationManager(authManager);
+			if (lock == null) {
+                System.out.println(lockfilepath + " isn't lock");
+                System.out.println(lock.getOwner());
+                System.out.println(lock.getID());
+            }
 
+			else if(lock != null){
+				System.out.println(lockfilepath + " is lock");
+				System.out.println(lock.getOwner());
+                System.out.println(lock.getID());
+			}
 			//File Lock//
 			SVNClientManager clientManager = SVNClientManager.newInstance();
 			SVNWCClient wcclient = clientManager.getWCClient();
 
 			SVNURL svnURLs[] = new SVNURL[1];
-			SVNURL svnURL = SVNURL.parseURIEncoded(lockfilepath);
+			SVNURL svnURL = this.repository.getLocation().appendPath(lockfilepath, false);
 
 			svnURLs[0] = svnURL;
 
+			//wcclient.doLock(lockfilepath, true, "file lock");
 			wcclient.doUnlock(svnURLs, false);
-
-			resultunlock.put("resultval", "1");
-
-	        return resultunlock;
+			
+			//락 확인//
 		} catch (SVNException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-
-			resultunlock.put("resultval", "0");
 		}
-
-		return resultunlock;
 	}
 	
 	/** 저장소 정보를 가져옴

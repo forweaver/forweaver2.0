@@ -20,11 +20,11 @@ public class VCFileInfo implements Serializable {
 	private int selectCommitIndex;
 	private boolean isDirectory;
 	private List<VCBlame> gitBlames = new ArrayList<VCBlame>();
-
-
-	public VCFileInfo(){
-	}
-
+	private boolean isLock;
+	private String LockDate;
+	private String LockAuth = "";
+	private String LockComment = "";
+	
 	public VCFileInfo(String name, String content,byte[] data,
 			List<VCSimpleLog> logList,int selectCommitIndex,boolean isDirectory) {
 		this.name = name;
@@ -34,6 +34,21 @@ public class VCFileInfo implements Serializable {
 		this.selectCommitIndex = selectCommitIndex;
 		this.isDirectory = isDirectory;
 	}
+
+	public VCFileInfo(String name, String content,byte[] data,
+			List<VCSimpleLog> logList,int selectCommitIndex,boolean isDirectory, boolean isLock, String LockDate, String LockAuth, String LockComment) {
+		this.name = name;
+		this.content = content;
+		this.data = data;
+		this.logList = logList;
+		this.selectCommitIndex = selectCommitIndex;
+		this.isDirectory = isDirectory;
+		this.isLock = isLock;
+		this.LockDate = LockDate;
+		this.LockAuth = LockAuth;
+		this.LockComment = LockComment;
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -99,7 +114,39 @@ public class VCFileInfo implements Serializable {
 		this.data = data;
 	}
 
+	public boolean isLock() {
+		return isLock;
+	}
+
+	public void setLock(boolean isLock) {
+		this.isLock = isLock;
+	}
+
+	public String getLockAuth() {
+		return LockAuth;
+	}
+
+	public void setLockAuth(String lockAuth) {
+		LockAuth = lockAuth;
+	}
+
+	public String getLockComment() {
+		return LockComment;
+	}
+
+	public void setLockComment(String lockComment) {
+		LockComment = lockComment;
+	}
+	
+	public String getLockDate() {
+		return LockDate;
+	}
+
+	public void setLockDate(String lockDate) {
+		LockDate = lockDate;
+	}
 
 
-
+	public VCFileInfo(){
+	}
 }
