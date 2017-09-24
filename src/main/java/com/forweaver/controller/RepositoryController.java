@@ -95,10 +95,22 @@ public class RepositoryController {
 			String format = url.substring(url.lastIndexOf(".")+1);
 			gitService.getRepositoryZip(creatorName, repositoryName, logName, format,response);
 		} else if(repository.getType() == 2){
-			logger.debug("svn project download zip");
+			//zip다운로드//
+			if(!svnService.existCommit(creatorName, repositoryName, logName)){
+				logger.debug("*********************************************************************************************************");
+			
+				return;
+			}
+			//zip다운로드//
+			logger.debug("zip download setting...");
+			String url = request.getRequestURI();
+			String format = url.substring(url.lastIndexOf(".")+1);
+			
+			svnService.getRepositoryZip(creatorName, repositoryName, logName, format,response);
 		}
 		
 		logger.debug("*********************************************************************************************************");
+		
 		return;
 	}
 

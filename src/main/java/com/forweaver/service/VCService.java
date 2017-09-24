@@ -21,7 +21,7 @@ public interface VCService {
 	public List<VCSimpleFileInfo> getVCSimpleFileInfoList(String parentDirctoryName,String repositoryName,String commitID,String filePath);
 	public List<VCSimpleLog> getVCCommitLogList(String parentDirctoryName,String repositoryName,String branchName,int page,int number) ;
 	public VCLog getVCCommitLog(String parentDirctoryName,String repositoryName,String branchName) ;
-	public void getProjectZip(String parentDirctoryName,String repositoryName,String commitName,String format,HttpServletResponse response);
+	public void getRepositoryZip(String parentDirctoryName,String repositoryName,String commitName,String format,HttpServletResponse response);
 	public GitParentStatistics loadStatistics(String parentDirctoryName,String repositoryName);
 	public SvnParentStatistics loadStatistics_svn(String parentDirctoryName,String repositoryName);
 	public int[][] loadDayAndHour(String parentDirctoryName,String repositoryName);

@@ -1,8 +1,11 @@
 package com.forweaver.util;
 
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.OutputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -11,10 +14,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
+import org.gitective.core.CommitUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +49,9 @@ import org.tmatesoft.svn.core.wc.SVNWCClient;
 import org.tmatesoft.svn.core.wc.SVNWCUtil;
 
 import com.forweaver.config.Config;
+import com.forweaver.domain.Code;
 import com.forweaver.domain.Repository;
+import com.forweaver.domain.SimpleCode;
 import com.forweaver.domain.git.statistics.GitChildStatistics;
 import com.forweaver.domain.git.statistics.SvnChildStatistics;
 import com.forweaver.domain.git.statistics.SvnParentStatistics;
@@ -832,9 +840,65 @@ public class SVNUtil implements VCUtil{
         return editor.closeEdit();
     }
 
-	public VCSimpleLog getVCCommit(String refName) {
-		// TODO Auto-generated method stub
-		return null;
+	/** 저장소에서 커밋을 갖고 옴
+	 * @param refName
+	 * @return
+	 */
+	public VCSimpleLog getVCCommit(String revesion) {
+		//리비전에 해당하는 커밋정보를 가져온다.//
+		SVNRepository repository = null;
+		VCSimpleLog simplelog = null;
+		
+		String commitLogId;
+		String shortMessage;
+		String commiterName;
+		String commiterEmail; //이름//
+		Date commiterDate;
+		
+		try {
+			repository = this.getRepository(); //저장소를 불러온다.//
+			long latestRevision = repository.getLatestRevision();
+			
+			logger.debug("* search revesion: " + revesion);
+			logger.debug("* repository info: " + repository.getLocation());
+			
+			//로그를 추출//
+			//저장소의 로그기록을 가져온다.//
+			Collection logEntries = null;
+
+			int selectCommitIndex = Integer.parseInt(revesion);
+			int endRevesion = Integer.parseInt(revesion); //HEAD (the latest) revision
+
+			try{
+				logEntries = this.repository.log(new String[] { "" }, null, selectCommitIndex, endRevesion, true, true);
+
+				for (Iterator entries = logEntries.iterator(); entries.hasNext();) {
+					SVNLogEntry logEntry = (SVNLogEntry) entries.next();
+					logger.debug("date: " + logEntry.getDate());
+					logger.debug("name: " + logEntry.getAuthor());
+					logger.debug("comment: "  +logEntry.getMessage());
+					
+					commitLogId = ""+logEntry.getRevision();
+					shortMessage = "" + logEntry.getMessage();
+					commiterName = "" + logEntry.getAuthor();
+					commiterEmail = "" + logEntry.getAuthor();
+					commiterDate = logEntry.getDate();
+					
+					simplelog = new VCSimpleLog(commitLogId, shortMessage, commiterName, commiterEmail, commiterDate);
+				}
+			} catch (SVNException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch(Exception e){
+				e.printStackTrace();
+			}
+			
+			return simplelog;
+		} catch(SVNException e){
+			e.printStackTrace();
+		}
+		
+		return simplelog;
 	}
 
 	public List<VCSimpleFileInfo> getGitFileInfoList(String commitID, String filePath) {
@@ -858,8 +922,41 @@ public class SVNUtil implements VCUtil{
 	}
 
 	public void getRepositoryZip(String commitName, String format, HttpServletResponse response) {
-		// TODO Auto-generated method stub
+		//Map<filepath, byte>를 만들어준다. (1차원적으로)//
+		
+		
+		
+		try {
+			ZipOutputStream zip = new ZipOutputStream(new BufferedOutputStream(response.getOutputStream()),Charset.forName("8859_1"));
+			/*commitname을 가지고 해당 리비전의 파일 리스트를 가져온다. 바이트값 (Map<>. 파일경로, 바이트값)을 가지고 zip에다가 넣어줌*/
+			
+			zip.close();
+		}catch(Exception e) {
+			System.err.println(e.getMessage());
+		}
+		//1. commitname을 가지고 해당 리비전의 파일 리스트를 가져온다. 바이트값 (Map<>. 파일경로, 바이트값)//
+		/* 응용, response == os//
+		public void dowloadCode(Code code, OutputStream os){
+		try {
+			ZipOutputStream zip = new ZipOutputStream(new BufferedOutputStream(os),Charset.forName("8859_1"));
+			//SimpleCode를 비슷하게 만들어준다.//
+			for(SimpleCode simpleCode :code.getCodes()){
+				zip.putNextEntry(new ZipEntry(new String (simpleCode.getFileName().getBytes(),"8859_1") ));
+				if(WebUtil.isCodeName(new String(simpleCode.getFileName().getBytes("8859_1"),"EUC-KR")))
+					zip.write(simpleCode.getContent().getBytes("EUC-KR"));
+				else
+					zip.write(simpleCode.getContent().getBytes("8859_1"));
 
+			}	
+			code.download();
+			codeDao.update(code);
+			zip.close();
+		} catch(Exception e) {
+			System.err.println(e.getMessage());
+		}
+	}
+		 */
+		
 	}
 
 	public void dolock(String lockfilepath){

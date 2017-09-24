@@ -84,7 +84,7 @@ fileBrowser.push({
 	"path" : "${gitFileInfo.path}",
 	"directory" : ${gitFileInfo.isDirectory},
 	"lock" : ${gitFileInfo.isLock()}, //락 관련 플래그//
-	"log" :  "${fn:substring(gitFileInfo.simpleLog,0,35)}",
+	"log" :  "${fn:substring(gitFileInfo.simpleLog,0,10)}",
 	"dateInt" :  ${gitFileInfo.commitDateInt},
 	"commiterName" :  "${gitFileInfo.commiterName}",
 	"commiterEmail" :  "${gitFileInfo.commiterEmail}",

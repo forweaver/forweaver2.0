@@ -137,12 +137,13 @@ public class CodeService {
 	}
 
 	/** 코드를 다운로드함.
-	 * @param code
+	 * @param code 
 	 * @param os
 	 */
 	public void dowloadCode(Code code, OutputStream os){
 		try {
 			ZipOutputStream zip = new ZipOutputStream(new BufferedOutputStream(os),Charset.forName("8859_1"));
+			//SimpleCode를 비슷하게 만들어준다.//
 			for(SimpleCode simpleCode :code.getCodes()){
 				zip.putNextEntry(new ZipEntry(new String (simpleCode.getFileName().getBytes(),"8859_1") ));
 				if(WebUtil.isCodeName(new String(simpleCode.getFileName().getBytes("8859_1"),"EUC-KR")))

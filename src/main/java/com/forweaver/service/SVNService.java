@@ -78,8 +78,15 @@ public class SVNService implements VCService{
 	}
 
 	public boolean existCommit(String parentDirctoryName, String repositoryName, String commit) {
-		// TODO Auto-generated method stub
-		return false;
+		svnUtil.RepoInt(parentDirctoryName,repositoryName);
+		try{
+			if(svnUtil.getVCCommit(commit) == null)
+				return false;
+			else
+				return true;
+		}catch(Exception e){
+			return false;
+		}
 	}
 
 	public int getCommitListCount(String parentDirctoryName, String repositoryName, String commit) {
@@ -114,12 +121,6 @@ public class SVNService implements VCService{
 		VCLog gitCommitLog = svnUtil.getCommitLog(commitID);
 		
 		return gitCommitLog;
-	}
-
-	public void getProjectZip(String parentDirctoryName, String repositoryName, String commitName, String format,
-			HttpServletResponse response) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	public SvnParentStatistics loadStatistics_svn(String parentDirctoryName, String repositoryName) {
@@ -176,5 +177,11 @@ public class SVNService implements VCService{
 	public void doUnLockservice(String parentDirctoryName, String repositoryName, String lockfilePath){
 		svnUtil.RepoInt(parentDirctoryName, repositoryName);
 		svnUtil.dounlock(lockfilePath);
+	}
+
+	public void getRepositoryZip(String parentDirctoryName, String repositoryName, String commitName, String format,
+			HttpServletResponse response) {
+		svnUtil.RepoInt(parentDirctoryName,repositoryName);
+		svnUtil.getRepositoryZip(commitName,format,response);
 	}
 }
