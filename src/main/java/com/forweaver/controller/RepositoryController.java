@@ -68,6 +68,8 @@ public class RepositoryController {
 	private DataService dataService;
 	@Autowired
 	private SVNService svnService;
+	@Autowired
+	private  WebUtil webUtil;
 
 	@RequestMapping("/")
 	public String repositorys() {
@@ -82,13 +84,21 @@ public class RepositoryController {
 			@PathVariable("logName") String logName,
 			HttpServletRequest request,
 			HttpServletResponse response) {
-
-		if(!gitService.existCommit(creatorName, repositoryName, logName))
-			return;
-		String url = request.getRequestURI();
-		String format = url.substring(url.lastIndexOf(".")+1);
-		gitService.getRepositoryZip(creatorName, repositoryName, logName, format,response);
-
+		logger.debug("********************** < /{creatorName}/{repositoryName}/{logName}/{download}.zip > *********************");
+		
+		Repository repository = repositoryService.get(creatorName+"/"+repositoryName);
+		
+		if(repository.getType() == 1){
+			if(!gitService.existCommit(creatorName, repositoryName, logName))
+				return;
+			String url = request.getRequestURI();
+			String format = url.substring(url.lastIndexOf(".")+1);
+			gitService.getRepositoryZip(creatorName, repositoryName, logName, format,response);
+		} else if(repository.getType() == 2){
+			logger.debug("svn project download zip");
+		}
+		
+		logger.debug("*********************************************************************************************************");
 		return;
 	}
 
@@ -321,8 +331,10 @@ public class RepositoryController {
 			} else if(repository.getType() == 2){
 				logger.debug("------------------------------> svn case");
 				
-				//숫자가 아닐경우 -1//
-				log = "-1";
+				//숫자가 아닐경우 -1(empty branches)일 경우 SVN은 -1//
+				if(webUtil.isNumber(log) == false){
+					log = "-1";
+				}
 				
 				logger.debug("==> Directory Info");
 				logger.debug("==> repositoryName: " + repositoryName);
@@ -340,7 +352,7 @@ public class RepositoryController {
 				model.addAttribute("gitFileInfoList", svnFileInfoList);
 				model.addAttribute("gitBranchList", "");
 				model.addAttribute("selectBranch",log);
-				model.addAttribute("readme","test READEME");
+				model.addAttribute("readme",svnService.getReadme(creatorName, repositoryName,log,svnFileInfoList));
 				model.addAttribute("filePath",filePath);
 				model.addAttribute("log",log);
 			}

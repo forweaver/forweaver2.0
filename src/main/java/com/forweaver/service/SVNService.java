@@ -143,16 +143,18 @@ public class SVNService implements VCService{
 	public String getReadme(String creatorName, String projectName, String commit,
 			List<VCSimpleFileInfo> svnFileInfoList) {
 		String readme = "";
-		if(svnFileInfoList != null) 
-			for(VCSimpleFileInfo svnSimpleFileInfo:svnFileInfoList)// 파일들을 검색해서 리드미 파일을 찾아냄
-				if(svnSimpleFileInfo.getName().toUpperCase().contains("README.md"))
+		if(svnFileInfoList != null){ 
+			for(VCSimpleFileInfo svnSimpleFileInfo:svnFileInfoList){// 파일들을 검색해서 리드미 파일을 찾아냄
+				if(svnSimpleFileInfo.getName().toUpperCase().contains("README.MD")){
 					readme = getFileInfo(
 							creatorName, 
 							projectName, 
 							commit, 
 							"/"+svnSimpleFileInfo.getName()).getContent();
+				}
+			}
+		}
 		
-		System.out.println("readme info: " + readme);
 		return readme;
 	}
 

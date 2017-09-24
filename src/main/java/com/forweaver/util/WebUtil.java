@@ -16,6 +16,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import org.apache.commons.compress.utils.IOUtils;
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.HtmlUtils;
 
@@ -27,6 +28,7 @@ import com.github.rjeschke.txtmark.Processor;
  * @author go
  *
  */
+@Component
 public class WebUtil {
 
 
@@ -353,4 +355,15 @@ public class WebUtil {
 		return result;
 	}
 
+	//숫자인지 검증//
+	public boolean isNumber(String check){
+		try{
+			Double.parseDouble(check); 
+		} catch(NumberFormatException exception){
+			//숫자로 파싱 시 에러가 나면 문자라는 소리//
+			return false;
+		}
+	
+		return true; //숫자라고 가정//
+	}
 }
