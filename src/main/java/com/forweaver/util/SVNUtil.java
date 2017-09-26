@@ -73,6 +73,10 @@ public class SVNUtil implements VCUtil{
 	private SVNRepository repository;
 	private SVNURL svnURL;
 	
+	//파일리스트 저장//
+	private List<String> zipfilenamelist;
+	private List<String> zipfilecontentlist;
+	
 	@Autowired
 	AnnotationHandler annotationhandler;
 
@@ -923,41 +927,91 @@ public class SVNUtil implements VCUtil{
 
 	public void getRepositoryZip(String commitName, String format, HttpServletResponse response) {
 		//Map<filepath, byte>를 만들어준다. (1차원적으로)//
+		logger.debug("commit name: " + commitName);
+		logger.debug("format: " + format);
 		
+		logger.debug("<><><><><><><><>");
 		
+		zipfilenamelist = new ArrayList<String>();
+    	zipfilecontentlist = new ArrayList<String>();
 		
 		try {
+			AllFilelistEntries(commitName, "/"); //List Setting//
+		} catch (SVNException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		logger.debug("<><><><><><><><>");
+		
+		try {
+			//Zip download 지원//
 			ZipOutputStream zip = new ZipOutputStream(new BufferedOutputStream(response.getOutputStream()),Charset.forName("8859_1"));
-			/*commitname을 가지고 해당 리비전의 파일 리스트를 가져온다. 바이트값 (Map<>. 파일경로, 바이트값)을 가지고 zip에다가 넣어줌*/
+			
+			for(int i=0; i<zipfilecontentlist.size(); i++){
+				
+				if(isDirectory(commitName, zipfilenamelist.get(i).toString()) == true){
+					//logger.debug("kind: dir");
+					zip.putNextEntry(new ZipEntry(zipfilenamelist.get(i).toString()+"/"));
+				} else{
+					//logger.debug("kind: file");
+					zip.putNextEntry(new ZipEntry(zipfilenamelist.get(i).toString()));
+					zip.write(zipfilecontentlist.get(i).getBytes());
+					zip.closeEntry();
+				}
+			}
 			
 			zip.close();
+			
+			zipfilecontentlist.removeAll(zipfilecontentlist);
+			zipfilenamelist.removeAll(zipfilenamelist);
 		}catch(Exception e) {
 			System.err.println(e.getMessage());
-		}
-		//1. commitname을 가지고 해당 리비전의 파일 리스트를 가져온다. 바이트값 (Map<>. 파일경로, 바이트값)//
-		/* 응용, response == os//
-		public void dowloadCode(Code code, OutputStream os){
-		try {
-			ZipOutputStream zip = new ZipOutputStream(new BufferedOutputStream(os),Charset.forName("8859_1"));
-			//SimpleCode를 비슷하게 만들어준다.//
-			for(SimpleCode simpleCode :code.getCodes()){
-				zip.putNextEntry(new ZipEntry(new String (simpleCode.getFileName().getBytes(),"8859_1") ));
-				if(WebUtil.isCodeName(new String(simpleCode.getFileName().getBytes("8859_1"),"EUC-KR")))
-					zip.write(simpleCode.getContent().getBytes("EUC-KR"));
-				else
-					zip.write(simpleCode.getContent().getBytes("8859_1"));
-
-			}	
-			code.download();
-			codeDao.update(code);
-			zip.close();
-		} catch(Exception e) {
-			System.err.println(e.getMessage());
-		}
-	}
-		 */
+		} finally{
 		
+		}
 	}
+	
+	public void AllFilelistEntries(String revesion, String path) throws SVNException {
+        try
+        {
+        	String name = "";
+        	String content = "";
+        	
+        	Collection entries = this.repository.getDir(path, Integer.parseInt(""+revesion), null, (Collection) null);
+        	
+            Iterator iterator = entries.iterator();
+            
+            int repptreecount = 0;
+            
+        	while (iterator.hasNext()) {
+                SVNDirEntry entry = (SVNDirEntry) iterator.next();
+                
+                //logger.debug("path: " + path + "/" + entry.getName());
+                //logger.debug("kind: " + entry.getKind());
+                
+                zipfilenamelist.add(path + "/" + entry.getName().toString());
+                
+                //종류에 따라서 파일이면 바이트 내용을 불러온다.//
+                if(entry.getKind().toString().equals("file")){
+                	String filecontent = doPrintFileStringcontent(path + "/" + entry.getName());
+                	//logger.debug("file date: " + filecontent);
+                	
+                	zipfilecontentlist.add(filecontent);
+                }  else if(entry.getKind().toString().equals("dir")){
+                	//logger.debug("dir data");
+                	zipfilecontentlist.add("dir");
+                }
+                
+                //재귀적으로 호출 시 하위구조의 정보까지 출력된다.//
+                if (entry.getKind() == SVNNodeKind.DIR) {
+                	AllFilelistEntries(revesion, (path.equals("")) ? entry.getName() : path + "/" + entry.getName());
+                }
+            }
+        } catch(SVNException e){
+        	e.printStackTrace();
+        }
+    }
 
 	public void dolock(String lockfilepath){
 		System.out.println("repository info: " + this.repository.getLocation() + "filepath: " + lockfilepath);
